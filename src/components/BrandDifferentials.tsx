@@ -69,10 +69,10 @@ export function BrandDifferentials() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="bg-card-elevated rounded-2xl p-6 md:p-7 flex flex-col justify-between min-h-[160px] min-w-[240px] md:min-w-[280px] flex-shrink-0"
+                className="bg-card-elevated rounded-2xl p-6 md:p-8 flex flex-col justify-between aspect-square min-w-[200px] w-[42vw] md:w-[260px] flex-shrink-0"
               >
-                <item.icon className="h-8 w-8 text-muted-foreground mb-6" strokeWidth={1.4} />
-                <p className="text-sm md:text-[15px] font-medium leading-snug text-foreground">
+                <item.icon className="h-9 w-9 text-muted-foreground" strokeWidth={1.4} />
+                <p className="text-base md:text-lg font-semibold leading-snug text-foreground">
                   {item.text}
                 </p>
               </motion.div>
