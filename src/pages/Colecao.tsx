@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
+import { FundamentosNarvo } from "@/components/FundamentosNarvo";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 
 export default function Colecao() {
@@ -49,6 +50,8 @@ export default function Colecao() {
           </div>
         )}
       </div>
+
+      <FundamentosNarvo />
     </section>
   );
 }
