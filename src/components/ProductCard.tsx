@@ -19,24 +19,26 @@ export function ProductCard({ product }: ProductCardProps) {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <Link to={`/produto/${handle}`} className="group block">
-        <div className="aspect-square bg-accent rounded overflow-hidden mb-4">
-          {image ? (
-            <img
-              src={image.url}
-              alt={image.altText || title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center opacity-20">
-              <span className="text-xs tracking-widest uppercase">Sem imagem</span>
-            </div>
-          )}
+        <div className="bg-card-elevated rounded-2xl overflow-hidden p-6 transition-shadow duration-300 group-hover:shadow-lg">
+          <div className="aspect-square flex items-center justify-center overflow-hidden mb-4">
+            {image ? (
+              <img
+                src={image.url}
+                alt={image.altText || title}
+                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center opacity-20">
+                <span className="text-xs tracking-widest uppercase">Sem imagem</span>
+              </div>
+            )}
+          </div>
+          <h3 className="text-sm font-medium text-foreground">{title}</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+          </p>
         </div>
-        <h3 className="text-sm font-medium">{title}</h3>
-        <p className="text-sm opacity-50 mt-1">
-          {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
-        </p>
       </Link>
     </motion.div>
   );
