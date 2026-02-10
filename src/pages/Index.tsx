@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
+import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 
 const fadeUp = {
@@ -190,6 +191,9 @@ export default function Index() {
           )}
         </div>
       </section>
+
+      {/* Diferenciais de Marca */}
+      <BrandDifferentials />
 
       {/* Manifesto */}
       <section className="py-24 md:py-32 px-6 md:px-10">
