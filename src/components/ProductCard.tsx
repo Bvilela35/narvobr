@@ -17,10 +17,11 @@ export function ProductCard({ product }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
+      className="h-full"
     >
-      <Link to={`/produto/${handle}`} className="group block">
-        <div className="bg-card-elevated rounded-2xl overflow-hidden p-6 transition-shadow duration-300 group-hover:shadow-lg">
-          <div className="aspect-square flex items-center justify-center overflow-hidden mb-4">
+      <Link to={`/produto/${handle}`} className="group block h-full">
+        <div className="bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
+          <div className="aspect-square w-full overflow-hidden p-4 md:p-6">
             {image ? (
               <img
                 src={image.url}
@@ -34,10 +35,12 @@ export function ProductCard({ product }: ProductCardProps) {
               </div>
             )}
           </div>
-          <h3 className="text-sm font-medium text-foreground">{title}</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
-          </p>
+          <div className="px-4 md:px-6 pb-4 md:pb-6">
+            <h3 className="text-sm font-medium text-foreground">{title}</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+            </p>
+          </div>
         </div>
       </Link>
     </motion.div>
