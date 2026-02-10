@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Layers, Target, Zap } from "lucide-react";
+import { ArrowRight, Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
@@ -18,6 +18,73 @@ const principles = [
   { icon: Target, title: "Precisão industrial.", desc: "Tolerâncias mínimas. Acabamento impecável." },
   { icon: Zap, title: "Menos distração. Mais entrega.", desc: "Cada peça resolve um problema real." },
 ];
+
+function ProductCarousel({ products }: { products: ShopifyProduct[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector<HTMLElement>(":scope > div")?.offsetWidth || 300;
+    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [products]);
+
+  return (
+    <div className="relative group/carousel">
+      <div
+        ref={scrollRef}
+        className="flex gap-5 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {products.map((product) => (
+          <div key={product.node.id} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </div>
+
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll("left")}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+          aria-label="Anterior"
+        >
+          <ChevronLeft className="h-5 w-5 text-foreground" />
+        </button>
+      )}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll("right")}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+          aria-label="Próximo"
+        >
+          <ChevronRight className="h-5 w-5 text-foreground" />
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function Index() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -41,7 +108,7 @@ export default function Index() {
             Engenharia<br />do Silêncio.
           </motion.h1>
           <motion.p
-            className="text-base md:text-lg opacity-50 mt-6 max-w-lg leading-relaxed"
+            className="text-base md:text-lg text-muted-foreground mt-6 max-w-lg leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
@@ -57,7 +124,7 @@ export default function Index() {
             <Button asChild className="h-12 px-8 rounded text-sm font-medium tracking-wide">
               <Link to="/colecao">Ver coleção <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
-            <Link to="/sobre" className="text-sm opacity-50 hover:opacity-100 transition-opacity underline underline-offset-4">
+            <Link to="/sobre" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4">
               Como funciona
             </Link>
           </motion.div>
@@ -67,7 +134,7 @@ export default function Index() {
       {/* Por que Narvo */}
       <section className="py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
-          <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase opacity-40 mb-16">
+          <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase text-muted-foreground mb-16">
             Por que Narvo
           </motion.h2>
           <div className="grid md:grid-cols-3 gap-12 md:gap-16">
@@ -79,9 +146,9 @@ export default function Index() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.15 }}
               >
-                <p.icon className="h-5 w-5 mb-4 opacity-40" strokeWidth={1.5} />
+                <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                 <h3 className="text-lg font-medium mb-2">{p.title}</h3>
-                <p className="text-sm opacity-50 leading-relaxed">{p.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -92,34 +159,34 @@ export default function Index() {
       <section className="py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex items-end justify-between mb-12">
-            <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase opacity-40">
-              Produtos
-            </motion.h2>
-            <Link to="/colecao" className="text-sm opacity-50 hover:opacity-100 transition-opacity underline underline-offset-4">
+            <motion.div {...fadeUp}>
+              <h2 className="text-2xl md:text-3xl font-semibold">
+                Produtos. <span className="font-light text-muted-foreground">Peças essenciais para o seu setup.</span>
+              </h2>
+            </motion.div>
+            <Link to="/colecao" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 flex-shrink-0 ml-4">
               Ver todos
             </Link>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <div className="flex gap-5 overflow-hidden">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <div className="aspect-square bg-accent rounded animate-pulse" />
-                  <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
-                  <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
+                <div key={i} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
+                  <div className="bg-card-elevated rounded-2xl p-6 space-y-4">
+                    <div className="aspect-square bg-accent rounded-xl animate-pulse" />
+                    <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
+                  </div>
                 </div>
               ))}
             </div>
           ) : products.length === 0 ? (
             <div className="py-20 text-center">
-              <p className="text-sm opacity-40">Nada encontrado. Menos, é mais.</p>
+              <p className="text-sm text-muted-foreground">Nada encontrado. Menos, é mais.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {products.map((product) => (
-                <ProductCard key={product.node.id} product={product} />
-              ))}
-            </div>
+            <ProductCarousel products={products} />
           )}
         </div>
       </section>
@@ -131,7 +198,7 @@ export default function Index() {
             <h2 className="text-3xl md:text-4xl font-light leading-tight mb-6">
               Sistema, não enfeite.
             </h2>
-            <p className="text-base opacity-50 leading-relaxed max-w-lg">
+            <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
               Cada peça Narvo foi projetada como parte de um sistema coeso. 
               Nada é decorativo — tudo tem função, propósito e lugar. 
               Organização sem esforço. Foco sem distração.
@@ -140,13 +207,14 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Testimonials placeholder */}
+      {/* Depoimentos */}
       <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
         <div className="max-w-[1400px] mx-auto">
-          <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase opacity-40 mb-16">
-            Depoimentos
+          <motion.h2 {...fadeUp}>
+            <span className="text-2xl md:text-3xl font-semibold">Depoimentos. </span>
+            <span className="text-2xl md:text-3xl font-light text-muted-foreground">O que dizem sobre a Narvo.</span>
           </motion.h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-5 mt-16">
             {[1, 2].map((i) => (
               <motion.div
                 key={i}
@@ -154,9 +222,9 @@ export default function Index() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="border border-border rounded p-8"
+                className="bg-card-elevated rounded-2xl p-8"
               >
-                <p className="text-sm opacity-40 italic leading-relaxed">
+                <p className="text-sm text-muted-foreground italic leading-relaxed">
                   Ainda sem avaliações.
                 </p>
               </motion.div>

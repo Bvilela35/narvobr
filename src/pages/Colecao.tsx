@@ -20,26 +20,29 @@ export default function Colecao() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h1 className="text-3xl md:text-4xl font-light mb-3">Coleção</h1>
-          <p className="text-sm opacity-50">Todas as peças do sistema Narvo.</p>
+          <h1 className="text-2xl md:text-3xl font-semibold">
+            Coleção. <span className="font-light text-muted-foreground">Todas as peças do sistema Narvo.</span>
+          </h1>
         </motion.div>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="aspect-square bg-accent rounded animate-pulse" />
-                <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
-                <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
+              <div key={i}>
+                <div className="bg-card-elevated rounded-2xl p-6 space-y-4">
+                  <div className="aspect-square bg-accent rounded-xl animate-pulse" />
+                  <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
+                </div>
               </div>
             ))}
           </div>
         ) : products.length === 0 ? (
           <div className="py-32 text-center">
-            <p className="text-sm opacity-40">Nada encontrado. Menos, é mais.</p>
+            <p className="text-sm text-muted-foreground">Nada encontrado. Menos, é mais.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {products.map((product) => (
               <ProductCard key={product.node.id} product={product} />
             ))}
