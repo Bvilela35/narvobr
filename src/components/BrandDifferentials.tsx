@@ -1,5 +1,6 @@
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Truck, Pencil, CreditCard } from "lucide-react";
+import { Shield, Truck, Pencil, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
 
 const items = [
   { icon: Shield, text: "Garantia de 12 meses em todos os produtos." },
@@ -9,6 +10,36 @@ const items = [
 ];
 
 export function BrandDifferentials() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector<HTMLElement>(":scope > div")?.offsetWidth || 280;
+    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, []);
+
   return (
     <section className="py-16 md:py-24 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
@@ -25,25 +56,47 @@ export function BrandDifferentials() {
           </span>
         </motion.h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {items.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="bg-card-elevated rounded-2xl p-6 md:p-7 flex flex-col justify-between min-h-[160px]"
+        <div className="relative group/carousel">
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {items.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="bg-card-elevated rounded-2xl p-6 md:p-7 flex flex-col justify-between min-h-[160px] min-w-[240px] md:min-w-[280px] flex-shrink-0"
+              >
+                <item.icon className="h-8 w-8 text-muted-foreground mb-6" strokeWidth={1.4} />
+                <p className="text-sm md:text-[15px] font-medium leading-snug text-foreground">
+                  {item.text}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          {canScrollLeft && (
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+              aria-label="Anterior"
             >
-              <item.icon
-                className="h-8 w-8 text-muted-foreground mb-6"
-                strokeWidth={1.4}
-              />
-              <p className="text-sm md:text-[15px] font-medium leading-snug text-foreground">
-                {item.text}
-              </p>
-            </motion.div>
-          ))}
+              <ChevronLeft className="h-5 w-5 text-foreground" />
+            </button>
+          )}
+          {canScrollRight && (
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+              aria-label="Próximo"
+            >
+              <ChevronRight className="h-5 w-5 text-foreground" />
+            </button>
+          )}
         </div>
       </div>
     </section>
