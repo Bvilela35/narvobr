@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { fetchProductByHandle, fetchProducts, ShopifyProduct } from "@/lib/shopify";
@@ -52,6 +52,7 @@ export default function Produto() {
   const { title, description, images, variants, options } = product.node;
   const imgs = images.edges;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
+  const totalImages = imgs.length;
 
   const handleAddToCart = async () => {
     if (!selectedVariant) return;
@@ -66,6 +67,9 @@ export default function Produto() {
     toast.success("Adicionado ao carrinho", { position: "top-center" });
   };
 
+  const prevImage = () => setSelectedImage((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  const nextImage = () => setSelectedImage((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+
   return (
     <>
       <section className="py-8 md:py-16 px-6 md:px-10">
@@ -74,37 +78,45 @@ export default function Produto() {
             <ArrowLeft className="h-4 w-4" /> Voltar
           </Link>
 
-          <div className="grid md:grid-cols-2 gap-10 md:gap-16">
-            {/* Gallery */}
+          <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-16">
+            {/* Gallery — large image with bottom nav */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
+              className="relative"
             >
-              <div className="aspect-square bg-accent rounded overflow-hidden mb-3">
+              <div className="aspect-square bg-card-elevated rounded-2xl overflow-hidden">
                 {imgs[selectedImage] ? (
                   <img
                     src={imgs[selectedImage].node.url}
                     alt={imgs[selectedImage].node.altText || title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center opacity-20 text-xs">Sem imagem</div>
                 )}
               </div>
-              {imgs.length > 1 && (
-                <div className="flex gap-2">
-                  {imgs.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedImage(i)}
-                      className={`w-16 h-16 rounded overflow-hidden border-2 transition-all ${
-                        i === selectedImage ? 'border-foreground' : 'border-transparent opacity-50 hover:opacity-80'
-                      }`}
-                    >
-                      <img src={img.node.url} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+
+              {totalImages > 1 && (
+                <div className="flex items-center gap-4 mt-4">
+                  <button
+                    onClick={prevImage}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/40 transition-colors"
+                    aria-label="Imagem anterior"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <span className="text-sm tabular-nums opacity-60">
+                    {selectedImage + 1} / {totalImages}
+                  </span>
+                  <button
+                    onClick={nextImage}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/40 transition-colors"
+                    aria-label="Próxima imagem"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 </div>
               )}
             </motion.div>
@@ -116,31 +128,37 @@ export default function Produto() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="flex flex-col"
             >
-              <h1 className="text-2xl md:text-3xl font-medium mb-2">{title}</h1>
-              <p className="text-lg font-medium mb-6">
-                {selectedVariant?.price.currencyCode} {parseFloat(selectedVariant?.price.amount || '0').toFixed(2)}
+              <h1 className="text-3xl md:text-4xl font-light leading-tight mb-4">{title}</h1>
+
+              <p className="text-lg font-medium">
+                R$ {parseFloat(selectedVariant?.price.amount || '0').toFixed(2).replace('.', ',')}
               </p>
 
               {description && (
-                <p className="text-sm opacity-60 leading-relaxed mb-8 max-w-md">{description}</p>
+                <>
+                  <div className="border-t border-border my-6" />
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-md">{description}</p>
+                </>
               )}
 
-              {/* Variant selector */}
+              {/* Variant selectors */}
               {options.length > 0 && options[0].name !== "Title" && (
-                <div className="mb-8">
+                <>
+                  <div className="border-t border-border my-6" />
                   {options.map((option) => (
-                    <div key={option.name} className="mb-4">
-                      <p className="text-xs tracking-widest uppercase opacity-40 mb-2">{option.name}</p>
-                      <div className="flex flex-wrap gap-2">
+                    <div key={option.name} className="mb-6">
+                      <p className="text-base font-medium mb-3">{option.name}</p>
+                      <div className="flex flex-wrap gap-3">
                         {variants.edges.map((v, i) => {
                           const optVal = v.node.selectedOptions.find(o => o.name === option.name)?.value;
+                          const isSelected = i === selectedVariantIdx;
                           return (
                             <button
                               key={v.node.id}
                               onClick={() => setSelectedVariantIdx(i)}
-                              className={`px-4 py-2 text-sm rounded border transition-all ${
-                                i === selectedVariantIdx
-                                  ? 'border-foreground bg-foreground text-background'
+                              className={`px-5 py-3 rounded-xl border-2 text-sm transition-all min-w-[80px] text-center ${
+                                isSelected
+                                  ? 'border-foreground'
                                   : 'border-border hover:border-foreground/30'
                               } ${!v.node.availableForSale ? 'opacity-30 line-through cursor-not-allowed' : ''}`}
                               disabled={!v.node.availableForSale}
@@ -152,13 +170,15 @@ export default function Produto() {
                       </div>
                     </div>
                   ))}
-                </div>
+                </>
               )}
+
+              <div className="border-t border-border my-6" />
 
               <Button
                 onClick={handleAddToCart}
                 disabled={isCartLoading || !selectedVariant?.availableForSale}
-                className="h-12 rounded text-sm font-medium tracking-wide w-full md:w-auto md:px-16"
+                className="h-13 rounded-lg text-sm font-medium tracking-wide w-full"
               >
                 {isCartLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Adicionar ao carrinho"}
               </Button>
@@ -168,7 +188,7 @@ export default function Produto() {
               )}
 
               {/* Info accordions */}
-              <Accordion type="single" collapsible className="mt-12 border-t border-border">
+              <Accordion type="single" collapsible className="mt-8 border-t border-border">
                 <AccordionItem value="materials">
                   <AccordionTrigger className="text-sm hover:no-underline">Materiais & Construção</AccordionTrigger>
                   <AccordionContent className="text-sm opacity-60 leading-relaxed">
