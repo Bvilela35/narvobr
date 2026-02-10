@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 
 const Colecao = lazy(() => import("./pages/Colecao"));
 const Produto = lazy(() => import("./pages/Produto"));
+const ProdutoEssss = lazy(() => import("./pages/ProdutoEssss"));
 const Sobre = lazy(() => import("./pages/Sobre"));
 const Suporte = lazy(() => import("./pages/Suporte"));
 const Trocas = lazy(() => import("./pages/Trocas"));
@@ -27,6 +28,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/colecao" element={<Colecao />} />
+          <Route path="/produto/essss" element={<ProdutoEssss />} />
           <Route path="/produto/:handle" element={<Produto />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/suporte" element={<Suporte />} />
