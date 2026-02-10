@@ -88,34 +88,24 @@ export function FundamentosNarvo() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="min-w-[280px] w-[80vw] md:w-[380px] flex-shrink-0 rounded-2xl overflow-hidden flex flex-col"
-                style={{ backgroundColor: "#0D0D0D" }}
+                className="min-w-[260px] w-[75vw] md:w-[340px] flex-shrink-0 rounded-2xl overflow-hidden bg-card-elevated"
               >
-                <div className="p-6 md:p-8 flex flex-col flex-1">
-                  <span
-                    className="text-xs tracking-widest uppercase mb-4"
-                    style={{ color: "#808080" }}
-                  >
+                <div className="p-5 md:p-6">
+                  <span className="text-xs font-medium tracking-wide text-muted-foreground">
                     {card.label}
                   </span>
-                  <h3
-                    className="text-xl md:text-2xl font-semibold leading-tight mb-3"
-                    style={{ color: "#E0E0E0" }}
-                  >
+                  <h3 className="text-lg md:text-xl font-bold leading-tight mt-2 text-foreground">
                     {card.headline}
                   </h3>
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "#999999" }}
-                  >
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-2">
                     {card.body}
                   </p>
                 </div>
-                <div className="px-6 md:px-8 pb-6 md:pb-8">
+                <div className="px-5 md:px-6 pb-5 md:pb-6">
                   <img
                     src={card.image}
                     alt={card.headline}
-                    className="w-full aspect-square object-cover rounded-xl"
+                    className="w-full aspect-[4/3] object-cover rounded-xl"
                     loading="lazy"
                   />
                 </div>
