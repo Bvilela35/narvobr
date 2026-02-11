@@ -68,7 +68,7 @@ export function TheSystemSection() {
                 </div>
 
                 {/* Image — bottom */}
-                <div className="relative w-full aspect-[16/10] overflow-hidden">
+                <div className="relative w-full aspect-[3/4] overflow-hidden">
                   <img
                     src={card.image}
                     alt={card.title}
