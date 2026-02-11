@@ -32,8 +32,8 @@ export function TheSystemSection() {
       <div className="max-w-[1400px] mx-auto">
         <motion.div {...fadeUp} className="mb-10 md:mb-14">
           <h2 className="text-2xl md:text-3xl leading-tight mb-2">
-            <span className="font-bold text-foreground">Organize o que você toca.</span>{" "}
-            <span className="font-light text-muted-foreground">Silencie o que você vê.</span>
+            <span className="font-bold text-foreground text-3xl">Organize o que você toca.</span>{" "}
+            <span className="font-light text-muted-foreground text-3xl">Silencie o que você vê.</span>
           </h2>
           <p className="text-sm text-muted-foreground">Dois planos. Um único objetivo: o silêncio visual absoluto.</p>
         </motion.div>

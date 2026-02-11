@@ -45,7 +45,7 @@ export function BeforeAfter() {
           
 
 
-          <p className="text-2xl md:text-3xl font-semibold">
+          <p className="md:text-3xl font-semibold text-3xl">
             O poder da organização.{" "}
             <span className="font-light text-muted-foreground">
               Menos caos, mais clareza.

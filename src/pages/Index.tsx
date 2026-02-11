@@ -114,20 +114,20 @@ export default function Index() {
         <div className="max-w-[1400px] mx-auto">
           <div className="relative md:hidden">
             <div id="principles-carousel" className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-              {principles.map((p, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                  className="min-w-[260px] flex-shrink-0 aspect-[4/3] rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
+              {principles.map((p, i) =>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
+            className="min-w-[260px] flex-shrink-0 aspect-[4/3] rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
                   <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                   <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
                 </motion.div>
-              ))}
+            )}
             </div>
             <div className="flex gap-2 justify-end mt-3">
-              <button onClick={() => { const el = document.getElementById("principles-carousel"); if (el) el.scrollBy({ left: -270, behavior: "smooth" }); }} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Anterior">
+              <button onClick={() => {const el = document.getElementById("principles-carousel");if (el) el.scrollBy({ left: -270, behavior: "smooth" });}} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Anterior">
                 <ChevronLeft className="h-5 w-5 text-foreground/60" />
               </button>
-              <button onClick={() => { const el = document.getElementById("principles-carousel"); if (el) el.scrollBy({ left: 270, behavior: "smooth" }); }} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Próximo">
+              <button onClick={() => {const el = document.getElementById("principles-carousel");if (el) el.scrollBy({ left: 270, behavior: "smooth" });}} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Próximo">
                 <ChevronRight className="h-5 w-5 text-foreground/80" />
               </button>
             </div>
@@ -135,14 +135,14 @@ export default function Index() {
 
           {/* Desktop: grid 3 colunas */}
           <div className="hidden md:grid md:grid-cols-3 gap-5">
-            {principles.map((p, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="aspect-[4/3] rounded-2xl p-8 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
+            {principles.map((p, i) =>
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
+          className="aspect-[4/3] rounded-2xl p-8 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
                 <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                 <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
               </motion.div>
-            ))}
+          )}
           </div>
         </div>
       </section>
@@ -152,7 +152,7 @@ export default function Index() {
         <div className="max-w-[1400px] mx-auto">
           <div className="flex items-end justify-between mb-12">
             <motion.div {...fadeUp}>
-              <h2 className="text-2xl font-semibold md:text-4xl">
+              <h2 className="font-semibold md:text-4xl text-3xl">
                 Produtos. <span className="text-muted-foreground font-extralight text-3xl">Peças essenciais para o seu setup.</span>
               </h2>
             </motion.div>
