@@ -1,23 +1,29 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroBanner from "@/assets/hero-banner.jpg";
+import { useRef } from "react";
 
 export function HeroBanner() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+
   return (
-    <section className="relative min-h-[85vh] flex items-end overflow-hidden">
-      {/* Full-bleed background image */}
-      <img
+    <section ref={sectionRef} className="relative min-h-[85vh] flex items-end overflow-hidden">
+      <motion.img
         src={heroBanner}
         alt="Setup minimalista com acessórios Narvo"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-[120%] object-cover"
         loading="eager"
+        style={{ y }}
       />
-      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-      {/* Content */}
       <div className="relative z-10 w-full px-6 md:px-10 pb-16 md:pb-20">
         <div className="max-w-[1400px] mx-auto flex flex-col items-center text-center">
           <motion.h1
