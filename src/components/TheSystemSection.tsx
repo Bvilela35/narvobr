@@ -41,7 +41,7 @@ export function TheSystemSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-3 md:gap-5">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5">
           {cards.map((card, i) => (
             <motion.div
               key={card.title}
@@ -52,7 +52,7 @@ export function TheSystemSection() {
             >
               <Link
                 to={card.link}
-                className="group relative block rounded-2xl overflow-hidden aspect-[3/4]"
+                className="group relative block rounded-2xl overflow-hidden aspect-[16/10] md:aspect-[4/3]"
               >
                 <img
                   src={card.image}
