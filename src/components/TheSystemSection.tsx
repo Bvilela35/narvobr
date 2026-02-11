@@ -15,7 +15,7 @@ const cards = [
 {
   title: "InSight™",
   copy: "Ferramentas sobre a mesa para organizar o fluxo de trabalho.",
-  link: "/colecao/insight",
+  link: "/colecao/narvo-insight",
   image: insightImg
 },
 {
