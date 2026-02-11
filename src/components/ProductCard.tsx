@@ -5,22 +5,28 @@ import { usePrefetchProduct } from "@/hooks/useShopify";
 
 interface ProductCardProps {
   product: ShopifyProduct;
+  disableAnimation?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, disableAnimation }: ProductCardProps) {
   const { title, handle, priceRange, images } = product.node;
   const image = images.edges[0]?.node;
   const price = priceRange.minVariantPrice;
   const prefetchProduct = usePrefetchProduct();
 
+  const Wrapper = disableAnimation ? "div" : motion.div;
+  const wrapperProps = disableAnimation
+    ? { className: "h-full" }
+    : {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-50px" },
+        transition: { duration: 0.6, ease: "easeOut" },
+        className: "h-full",
+      };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="h-full"
-    >
+    <Wrapper {...(wrapperProps as any)}>
       <Link
         to={`/produto/${handle}`}
         className="group block h-full"
@@ -49,6 +55,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </Wrapper>
   );
 }
