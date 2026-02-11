@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 
 const menuLinks = [
-  { label: "Coleção", href: "/colecao" },
-  { label: "Sistema", href: "/sobre" },
-  { label: "Sobre", href: "/sobre" },
-  { label: "Suporte", href: "/suporte" },
+  { label: "Construir Setup", href: "/colecao" },
+  { label: "InSight", href: "/colecao/narvo-insight" },
+  { label: "OutSight", href: "/colecao/narvo-outsight" },
+  { label: "Acessórios", href: "/colecao" },
+  { label: "Decoração", href: "/colecao" },
 ];
 
 interface MobileMenuProps {

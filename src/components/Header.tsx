@@ -9,10 +9,12 @@ import narvoLogo from "@/assets/narvo-logo.png";
 import { MobileMenu } from "./MobileMenu";
 
 const navLinks = [
-{ label: "Coleção", href: "/colecao" },
-{ label: "Sistema", href: "/sobre" },
-{ label: "Sobre", href: "/sobre" },
-{ label: "Suporte", href: "/suporte" }];
+  { label: "Construir Setup", href: "/colecao" },
+  { label: "InSight", href: "/colecao/narvo-insight" },
+  { label: "OutSight", href: "/colecao/narvo-outsight" },
+  { label: "Acessórios", href: "/colecao" },
+  { label: "Decoração", href: "/colecao" },
+];
 
 
 const categories = ["Todos os Produtos", "Novidades", "Mais Vendidos", "Acessórios", "Essenciais"];
