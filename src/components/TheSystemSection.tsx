@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Layers, Cable } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import insightImg from "@/assets/insight-card.jpg";
+import outsightImg from "@/assets/outsight-card.jpg";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -10,23 +12,23 @@ const fadeUp = {
 };
 
 const cards = [
-{
-  label: "InSight™",
-  caption: "Sobre a mesa.",
-  copy: "Ferramentas de contato. Aço, feltro e geometria projetados para elevar sua interação e organizar o fluxo de trabalho imediato.",
-  cta: "Explorar Superfície",
-  link: "/colecao?categoria=insight",
-  icon: Layers
-},
-{
-  label: "OutSight™",
-  caption: "Abaixo do horizonte.",
-  copy: "Engenharia invisível. Onde os cabos desaparecem e o ruído técnico é neutralizado para liberar espaço mental.",
-  cta: "Explorar Infraestrutura",
-  link: "/colecao?categoria=outsight",
-  icon: Cable
-}];
-
+  {
+    label: "InSight™",
+    caption: "Sobre a mesa.",
+    copy: "Ferramentas de contato. Aço, feltro e geometria projetados para elevar sua interação e organizar o fluxo de trabalho imediato.",
+    cta: "Explorar Superfície",
+    link: "/colecao?categoria=insight",
+    image: insightImg
+  },
+  {
+    label: "OutSight™",
+    caption: "Abaixo do horizonte.",
+    copy: "Engenharia invisível. Onde os cabos desaparecem e o ruído técnico é neutralizado para liberar espaço mental.",
+    cta: "Explorar Infraestrutura",
+    link: "/colecao?categoria=outsight",
+    image: outsightImg
+  }
+];
 
 export function TheSystemSection() {
   return (
@@ -42,49 +44,50 @@ export function TheSystemSection() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-4 md:gap-5">
-          {cards.map((card, i) =>
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.15 }}>
-
+          {cards.map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+            >
               <Link
-              to={card.link}
-              className="group flex flex-col md:flex-row bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 hover:shadow-lg h-full">
+                to={card.link}
+                className="group relative block rounded-2xl overflow-hidden aspect-[16/9]"
+              >
+                {/* Background image */}
+                <img
+                  src={card.image}
+                  alt={card.label}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
 
-                {/* Image placeholder */}
-                <div className="aspect-[4/3] md:aspect-auto md:w-2/5 bg-accent flex items-center justify-center flex-shrink-0">
-                  <card.icon
-                  className="h-10 w-10 text-muted-foreground/30"
-                  strokeWidth={1} />
+                {/* Dark overlay for text legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-                </div>
-
-                {/* Content */}
-                <div className="p-5 md:p-6 flex flex-col justify-between flex-1">
-                  <div>
-                    <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-muted-foreground">
-                      {card.label}
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1 mb-3">
-                      {card.caption}
-                    </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                      {card.copy}
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground group-hover:gap-3 transition-all duration-300">
+                {/* Text content */}
+                <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
+                  <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-white/70">
+                    {card.label}
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-light text-white mt-1 mb-2">
+                    {card.caption}
+                  </h3>
+                  <p className="text-sm text-white/80 leading-relaxed max-w-md mb-5">
+                    {card.copy}
+                  </p>
+                  <span className="inline-flex items-center gap-2 text-sm font-medium text-white border border-white/40 rounded-full px-5 py-2.5 w-fit group-hover:bg-white/10 transition-colors duration-300">
                     {card.cta}
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
               </Link>
             </motion.div>
-          )}
+          ))}
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }
