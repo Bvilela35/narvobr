@@ -1,95 +1,45 @@
 
 
-# NARVO — "Engenharia do Silêncio" Storefront
+## Banner Hero - Substituir "Engenharia do Silencio"
 
-## Overview
-A premium, ultra-minimalist storefront built in React, connected to your existing Shopify store. Clean aesthetic, surgical communication, zero visual noise.
+Substituir a secao hero atual por um banner no estilo da referencia: layout dividido em dois blocos (texto a esquerda, imagem grande a direita).
 
----
+### Estrutura do Layout
 
-## Phase 1: Design System & Foundation
+- **Esquerda**: Titulo principal da Narvo, descricao curta e botao CTA ("Ver colecao")
+- **Direita**: Card com cantos arredondados exibindo a imagem que voce enviar, com um badge ou label sobreposto (ex: "DESCUBRA" com seta)
 
-### Custom Theme
-- Off-white background (#F7F6F3), dark text (#1A1A1A), warm hover accents (#E0DDD6)
-- Inter font family with light hero text (300), medium titles (500), generous line-height
-- 8px spacing system with generous breathing room (96px+ section padding)
-- Minimal buttons: dark primary (4px radius), ghost/underline secondary
+### Estilo Visual
 
-### Global Header
-- "NARVO" logo text on the left
-- Center navigation: Coleção · Sistema · Sobre · Suporte
-- Cart icon with discrete counter on the right
-- Fixed position, clean, no shadow
+- Layout `flex` com `md:flex-row`, ocupando altura generosa (`min-h-[85vh]`)
+- Card da imagem com `rounded-2xl` e `overflow-hidden`, cobrindo todo o espaco
+- Animacoes de entrada com Framer Motion (fade-up no texto, scale-in no card)
+- Manter a paleta Narvo: fundo off-white, texto escuro, espacamento amplo
 
-### Global Footer
-- Organized link columns (Coleção, Sobre, Suporte, Políticas)
-- Closing phrase: "Clareza mental começa na mesa."
+### Detalhes Tecnicos
 
----
+**Arquivo editado:** `src/pages/Index.tsx`
+- Substituir a secao `{/* Hero */}` atual pelo novo banner
+- O bloco esquerdo mantem titulo, subtitulo e CTA
+- O bloco direito recebe a imagem via import de `src/assets/`
 
-## Phase 2: Home Page
+**Arquivo de imagem:** `src/assets/hero-banner.jpg` (ou formato que voce enviar)
+- Sera copiada do upload para `src/assets/`
+- Importada como modulo ES6 no componente
 
-- **Hero section**: "Engenharia do Silêncio." headline + subheadline about premium setup accessories + "Ver coleção" CTA + "Como funciona" secondary link
-- **"Por que Narvo"**: 3 minimal icon blocks — "Materiais sólidos." / "Precisão industrial." / "Menos distração. Mais entrega."
-- **Featured collections**: Grid of 2–4 collection cards with clean imagery
-- **Featured products**: Grid pulling real products from Shopify (image, name, price)
-- **Manifesto block**: "Sistema, não enfeite." — short text + contextual image
-- **Testimonials**: 2–4 minimalist quote cards (empty/placeholder, no fake reviews)
+### Copywriting (tom Narvo)
 
----
+- Titulo: "Engenharia do Silencio." (mantido, e a alma da marca)
+- Subtitulo: "Acessorios premium para seu setup. Projetados para quem exige silencio visual e maxima performance."
+- CTA: "Ver colecao"
+- Badge no card: "DESCUBRA" com seta
 
-## Phase 3: Collection Page (Listagem)
+### Mobile
 
-- Responsive grid (2–4 columns) with real Shopify products
-- Product cards: image, name, one-line benefit, price
-- Minimal discrete filters (category, color if available)
-- Clean, no pop-ups or visual noise
+- Em telas pequenas, o layout empilha verticalmente (imagem abaixo do texto)
+- Card da imagem com altura fixa para manter proporcao
 
----
+### Proximo passo
 
-## Phase 4: Product Detail Page (PDP)
-
-- Image gallery (3–6 images) with smooth zoom
-- Title + benefit phrase + price
-- Variant selector (if applicable) + "Adicionar ao carrinho" button
-- Content blocks: "Materiais & Construção", "Dimensões" (simple table), "No setup" (contextual photo)
-- Accordions: Envio / Garantia / Trocas
-- Cross-sell section: "Compatível com" — 4 related products
-
----
-
-## Phase 5: Cart (Slide-out Drawer)
-
-- Minimalist side drawer
-- Item list with image, name, quantity controls, price
-- Empty cart microcopy: "Silêncio por aqui. Escolha uma peça."
-- "Finalizar compra" button → redirects to Shopify checkout
-- Full Shopify Storefront API cart integration (real cart sync)
-
----
-
-## Phase 6: Static Pages
-
-### Sobre (About)
-- Calm, short manifesto
-- 3 principles: Precisão industrial / Conforto humano / Foco
-- Clean visuals, no dramatic storytelling
-
-### Suporte / FAQ
-- FAQ in accordions with common questions
-- Simple contact form (name, email, message)
-
-### Policy Pages
-- Trocas e Devoluções, Envio, Privacidade
-- Clean text, legible typography
-
----
-
-## Phase 7: Microinteractions & Polish
-
-- Subtle fade-in on scroll (elements appear calmly)
-- Hover effects on cards (slight elevation or opacity shift)
-- Smooth page transitions
-- Mobile-first responsive design
-- Branded microcopy throughout ("Nada encontrado. Menos, é mais.", "Transparente. Sem ruído.", "Construído para durar.")
+Apos aprovar o plano, envie a imagem que deseja usar no banner para que eu possa implementar.
 
