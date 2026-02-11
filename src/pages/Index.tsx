@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroBanner } from "@/components/HeroBanner";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
@@ -10,7 +9,8 @@ import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
-import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct } from "@/lib/shopify";
+import { useProducts } from "@/hooks/useShopify";
 const fadeUp = {
   initial: {
     opacity: 0,
@@ -97,11 +97,7 @@ function ProductCarousel({
     </div>;
 }
 export default function Index() {
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    fetchProducts(8).then(setProducts).catch(console.error).finally(() => setLoading(false));
-  }, []);
+  const { data: products = [], isLoading: loading } = useProducts(8);
   return <>
       {/* Hero */}
       <HeroBanner />
