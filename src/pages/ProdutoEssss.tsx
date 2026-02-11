@@ -80,7 +80,7 @@ export default function ProdutoEssss() {
             transition={{ duration: 0.8 }}
             className="relative bg-card-elevated flex items-center justify-center overflow-hidden"
           >
-            <div className="w-full h-full">
+            <div className="w-full aspect-video">
               {imgs[selectedImage] ? (
                 <img
                   src={imgs[selectedImage].node.url}
