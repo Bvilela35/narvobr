@@ -30,18 +30,18 @@ const cards = [
 
 export function TheSystemSection() {
   return (
-    <section className="py-16 md:py-24 px-6 md:px-10">
+    <section className="py-12 md:py-20 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
-        <motion.div {...fadeUp} className="mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-light leading-tight mb-3">
+        <motion.div {...fadeUp} className="mb-10 md:mb-14">
+          <h2 className="text-2xl md:text-3xl font-light leading-tight mb-2">
             A arquitetura do foco.
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-lg">
+          <p className="text-sm text-muted-foreground">
             Dois planos. Um único objetivo: o silêncio visual absoluto.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
           {cards.map((card, i) => (
             <motion.div
               key={card.label}
@@ -52,27 +52,29 @@ export function TheSystemSection() {
             >
               <Link
                 to={card.link}
-                className="group block bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 hover:shadow-lg"
+                className="group flex flex-col md:flex-row bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 hover:shadow-lg h-full"
               >
                 {/* Image placeholder */}
-                <div className="aspect-[4/3] bg-accent flex items-center justify-center">
+                <div className="aspect-[4/3] md:aspect-auto md:w-2/5 bg-accent flex items-center justify-center flex-shrink-0">
                   <card.icon
-                    className="h-12 w-12 text-muted-foreground/40"
+                    className="h-10 w-10 text-muted-foreground/30"
                     strokeWidth={1}
                   />
                 </div>
 
                 {/* Content */}
-                <div className="p-6 md:p-8">
-                  <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-muted-foreground">
-                    {card.label}
-                  </span>
-                  <p className="text-sm text-muted-foreground mt-1 mb-4">
-                    {card.caption}
-                  </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                    {card.copy}
-                  </p>
+                <div className="p-5 md:p-6 flex flex-col justify-between flex-1">
+                  <div>
+                    <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-muted-foreground">
+                      {card.label}
+                    </span>
+                    <p className="text-xs text-muted-foreground mt-1 mb-3">
+                      {card.caption}
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                      {card.copy}
+                    </p>
+                  </div>
                   <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground group-hover:gap-3 transition-all duration-300">
                     {card.cta}
                     <ArrowRight className="h-4 w-4" />
