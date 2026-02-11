@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
+import { HeroBanner } from "@/components/HeroBanner";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
@@ -102,53 +103,7 @@ export default function Index() {
   }, []);
   return <>
       {/* Hero */}
-      <section className="min-h-[85vh] flex items-center px-6 md:px-10">
-        <div className="max-w-[1400px] mx-auto w-full">
-          <motion.h1 className="text-4xl md:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight max-w-3xl" initial={{
-          opacity: 0,
-          y: 40
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 1,
-          ease: "easeOut"
-        }}>
-            Engenharia<br />do Silêncio.
-          </motion.h1>
-          <motion.p className="text-base md:text-lg text-muted-foreground mt-6 max-w-lg leading-relaxed" initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.3,
-          ease: "easeOut"
-        }}>
-            Acessórios premium para seu setup. Projetados para quem exige silêncio visual e máxima performance.
-          </motion.p>
-          <motion.div className="flex items-center gap-6 mt-10" initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.5,
-          ease: "easeOut"
-        }}>
-            <Button asChild className="h-12 px-8 rounded text-sm font-medium tracking-wide">
-              <Link to="/colecao">Ver coleção <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-            <Link to="/sobre" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4">
-              Como funciona
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      <HeroBanner />
 
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
