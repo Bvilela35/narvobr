@@ -180,7 +180,7 @@ export default function Index() {
           <div className="flex items-end justify-between mb-12">
             <motion.div {...fadeUp}>
               <h2 className="text-2xl font-semibold md:text-4xl">
-                Produtos. <span className="text-muted-foreground font-extralight text-4xl">Peças essenciais para o seu setup.</span>
+                Produtos. <span className="text-muted-foreground font-extralight text-3xl">Peças essenciais para o seu setup.</span>
               </h2>
             </motion.div>
             <Link to="/colecao" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 flex-shrink-0 ml-4">
