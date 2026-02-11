@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingBag, Search, X, Loader2 } from "lucide-react";
+import { ShoppingBag, Search, X, Loader2, Menu } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import narvoLogo from "@/assets/narvo-logo.png";
+import { MobileMenu } from "./MobileMenu";
 
 const navLinks = [
   { label: "Coleção", href: "/colecao" },
@@ -25,6 +26,7 @@ export function Header({ onCartOpen }: HeaderProps) {
   const navigate = useNavigate();
   const totalItems = useCartStore((state) => state.items.reduce((sum, item) => sum + item.quantity, 0));
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ShopifyProduct[]>([]);
@@ -132,6 +134,15 @@ export function Header({ onCartOpen }: HeaderProps) {
                   {totalItems}
                 </span>
               )}
+            </button>
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 transition-opacity hover:opacity-60 md:hidden"
+              aria-label="Abrir menu"
+            >
+              <Menu className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
         </div>
@@ -261,6 +272,8 @@ export function Header({ onCartOpen }: HeaderProps) {
           </>
         )}
       </AnimatePresence>
+
+      <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </>
   );
 }
