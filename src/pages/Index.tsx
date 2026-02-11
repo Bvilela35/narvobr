@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { CorporateSection } from "@/components/CorporateSection";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 const fadeUp = {
   initial: {
@@ -230,6 +231,9 @@ export default function Index() {
           </motion.div>
         </div>
       </section>
+
+      {/* Vendas Corporativas */}
+      <CorporateSection />
 
       {/* Depoimentos */}
       <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
