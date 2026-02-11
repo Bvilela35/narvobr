@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { X, User } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 
@@ -67,25 +67,6 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
               </motion.div>
             ))}
           </nav>
-
-          {/* Meus Pedidos - bottom right */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.4, ease: "easeOut" }}
-            className="absolute bottom-8 right-8"
-          >
-            <a
-              href="https://efxqrr-1y.myshopify.com/account"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onClose}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <User className="h-5 w-5" strokeWidth={1.5} />
-              Meus Pedidos
-            </a>
-          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
