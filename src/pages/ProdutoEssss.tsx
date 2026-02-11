@@ -71,14 +71,14 @@ export default function ProdutoEssss() {
 
   return (
     <>
-      <section className="min-h-[calc(100vh-4rem)]">
-        <div className="grid md:grid-cols-[2fr_1fr] min-h-[calc(100vh-4rem)]">
-          {/* Image — 2/3 of layout */}
+      <section className="py-8 md:py-12 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto grid md:grid-cols-[3fr_2fr] gap-8 md:gap-12 items-start">
+          {/* Image — Apple-style 16:9 block */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative bg-card-elevated flex items-center justify-center overflow-hidden"
+            className="relative bg-card-elevated rounded-2xl overflow-hidden"
           >
             <div className="w-full aspect-video">
               {imgs[selectedImage] ? (
