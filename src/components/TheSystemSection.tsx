@@ -31,7 +31,10 @@ export function TheSystemSection() {
     <section className="py-12 px-6 md:px-10 md:py-[79px]">
       <div className="max-w-[1400px] mx-auto">
         <motion.div {...fadeUp} className="mb-10 md:mb-14">
-          <h2 className="text-2xl md:text-3xl font-light leading-tight mb-2">A arquitetura do foco.</h2>
+          <h2 className="text-2xl md:text-3xl leading-tight mb-2">
+            <span className="font-bold text-foreground">Organize o que você toca.</span>{" "}
+            <span className="font-light text-muted-foreground">Silencie o que você vê.</span>
+          </h2>
           <p className="text-sm text-muted-foreground">Dois planos. Um único objetivo: o silêncio visual absoluto.</p>
         </motion.div>
 
