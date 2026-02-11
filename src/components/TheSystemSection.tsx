@@ -52,29 +52,25 @@ export function TheSystemSection() {
             >
               <Link
                 to={card.link}
-                className="group block bg-card-elevated rounded-2xl overflow-hidden"
+                className="group relative block rounded-2xl overflow-hidden aspect-[3/4]"
               >
-                {/* Text content — top */}
-                <div className="px-5 pt-5 pb-2 md:px-7 md:pt-7 md:pb-3">
-                  <h3 className="text-lg md:text-[22px] font-semibold leading-tight mb-1">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+                <div className="relative z-10 p-5 md:p-7">
+                  <h3 className="text-lg md:text-[22px] font-semibold leading-tight mb-1 text-white">
                     {card.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-snug">
+                  <p className="text-sm text-white/80 leading-snug">
                     {card.copy}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-white/70 mt-1">
                     {card.price}
                   </p>
-                </div>
-
-                {/* Image — bottom */}
-                <div className="relative w-full aspect-[3/4] overflow-hidden">
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
-                  />
                 </div>
               </Link>
             </motion.div>
