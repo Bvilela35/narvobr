@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingBag, Search, X, Loader2, Menu } from "lucide-react";
+import { ShoppingBag, Search, X, Loader2, Menu, User } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
@@ -122,6 +122,15 @@ export function Header({ onCartOpen }: HeaderProps) {
               <Search className="h-5 w-5" strokeWidth={1.5} />
               }
             </button>
+
+            <a
+              href="https://efxqrr-1y.myshopify.com/account"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex p-2 transition-opacity hover:opacity-60"
+              aria-label="Meus pedidos">
+              <User className="h-5 w-5" strokeWidth={1.5} />
+            </a>
 
             <button
               onClick={onCartOpen}
