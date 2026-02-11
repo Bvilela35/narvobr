@@ -6,8 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { useCartSync } from "./hooks/useCartSync";
-import Index from "./pages/Index";
-
+const Index = lazy(() => import("./pages/Index"));
 const Colecao = lazy(() => import("./pages/Colecao"));
 const Produto = lazy(() => import("./pages/Produto"));
 const ProdutoEssss = lazy(() => import("./pages/ProdutoEssss"));
