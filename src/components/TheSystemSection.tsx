@@ -15,13 +15,13 @@ const cards = [
 {
   title: "InSight™",
   copy: "Ferramentas sobre a mesa para organizar o fluxo de trabalho.",
-  link: "/colecao?categoria=insight",
+  link: "/colecao/insight",
   image: insightImg
 },
 {
   title: "OutSight™",
   copy: "Engenharia invisível para eliminar o ruído técnico.",
-  link: "/colecao?categoria=outsight",
+  link: "/colecao/outsight",
   image: outsightImg
 }];
 
