@@ -9,6 +9,7 @@ import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
+import { TheSystemSection } from "@/components/TheSystemSection";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 const fadeUp = {
   initial: {
@@ -104,6 +105,9 @@ export default function Index() {
   return <>
       {/* Hero */}
       <HeroBanner />
+
+      {/* The System: InSight & OutSight */}
+      <TheSystemSection />
 
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
