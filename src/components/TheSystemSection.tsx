@@ -15,14 +15,12 @@ const cards = [
   {
     title: "InSight™",
     copy: "Ferramentas sobre a mesa para organizar o fluxo de trabalho.",
-    price: "A partir de R$ 89",
     link: "/colecao?categoria=insight",
     image: insightImg
   },
   {
     title: "OutSight™",
     copy: "Engenharia invisível para eliminar o ruído técnico.",
-    price: "A partir de R$ 69",
     link: "/colecao?categoria=outsight",
     image: outsightImg
   }
@@ -67,9 +65,6 @@ export function TheSystemSection() {
                   </h3>
                   <p className="text-sm text-white/80 leading-snug">
                     {card.copy}
-                  </p>
-                  <p className="text-sm text-white/70 mt-1">
-                    {card.price}
                   </p>
                 </div>
               </Link>
