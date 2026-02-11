@@ -112,9 +112,9 @@ export default function Index() {
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
         <div className="max-w-[1400px] mx-auto">
-          <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase text-muted-foreground mb-16">
-            Por que Narvo
-          </motion.h2>
+          
+
+
           <div className="grid md:grid-cols-3 gap-12 md:gap-16">
             {principles.map((p, i) => <motion.div key={i} initial={{
             opacity: 0,
