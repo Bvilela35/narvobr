@@ -5,6 +5,7 @@ import { ArrowRight, Layers, Target, Zap, ChevronLeft, ChevronRight } from "luci
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
+import { BlogSection } from "@/components/BlogSection";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 const fadeUp = {
   initial: {
@@ -206,6 +207,9 @@ export default function Index() {
 
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
+
+      {/* Blog */}
+      <BlogSection />
 
       {/* Manifesto */}
       <section className="py-24 md:py-32 px-6 md:px-10">
