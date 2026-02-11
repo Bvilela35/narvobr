@@ -97,7 +97,7 @@ export function Header({ onCartOpen }: HeaderProps) {
             <img alt="NARVO" className="h-28 object-cover" src="/lovable-uploads/7d9ccf03-8171-466d-9771-2d6306af8551.png" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) =>
             <Link
               key={link.label}
@@ -129,7 +129,7 @@ export function Header({ onCartOpen }: HeaderProps) {
               href="https://efxqrr-1y.myshopify.com/account"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:flex p-2 transition-opacity hover:opacity-60"
+              className="hidden lg:flex p-2 transition-opacity hover:opacity-60"
               aria-label="Meus pedidos">
               <User className="h-5 w-5" strokeWidth={1.5} />
             </a>
@@ -150,7 +150,7 @@ export function Header({ onCartOpen }: HeaderProps) {
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 transition-opacity hover:opacity-60 md:hidden"
+              className="p-2 transition-opacity hover:opacity-60 lg:hidden"
               aria-label="Abrir menu">
 
               <Menu className="h-5 w-5" strokeWidth={1.5} />
