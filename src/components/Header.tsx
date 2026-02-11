@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import narvoLogo from "@/assets/narvo-logo.png";
 
 const navLinks = [
   { label: "Coleção", href: "/colecao" },
@@ -82,8 +83,8 @@ export function Header({ onCartOpen }: HeaderProps) {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 md:px-10 h-16">
-          <Link to="/" className="text-base font-medium tracking-[0.3em] uppercase">
-            NARVO
+          <Link to="/" className="flex items-center">
+            <img src={narvoLogo} alt="NARVO" className="h-6" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
