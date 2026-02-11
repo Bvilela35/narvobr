@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+
 import insightImg from "@/assets/insight-card.jpg";
 import outsightImg from "@/assets/outsight-card.jpg";
 
@@ -13,18 +13,16 @@ const fadeUp = {
 
 const cards = [
   {
-    label: "InSight™",
-    caption: "Sobre a mesa.",
-    copy: "Ferramentas de contato. Aço, feltro e geometria projetados para elevar sua interação e organizar o fluxo de trabalho imediato.",
-    cta: "Explorar Superfície",
+    title: "InSight™",
+    copy: "Ferramentas sobre a mesa para organizar o fluxo de trabalho.",
+    price: "A partir de R$ 89",
     link: "/colecao?categoria=insight",
     image: insightImg
   },
   {
-    label: "OutSight™",
-    caption: "Abaixo do horizonte.",
-    copy: "Engenharia invisível. Onde os cabos desaparecem e o ruído técnico é neutralizado para liberar espaço mental.",
-    cta: "Explorar Infraestrutura",
+    title: "OutSight™",
+    copy: "Engenharia invisível para eliminar o ruído técnico.",
+    price: "A partir de R$ 69",
     link: "/colecao?categoria=outsight",
     image: outsightImg
   }
@@ -43,10 +41,10 @@ export function TheSystemSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 gap-3 md:gap-5">
           {cards.map((card, i) => (
             <motion.div
-              key={card.label}
+              key={card.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -54,34 +52,29 @@ export function TheSystemSection() {
             >
               <Link
                 to={card.link}
-                className="group relative block rounded-2xl overflow-hidden aspect-[16/9]"
+                className="group block bg-card-elevated rounded-2xl overflow-hidden"
               >
-                {/* Background image */}
-                <img
-                  src={card.image}
-                  alt={card.label}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
-
-                {/* Dark overlay for text legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-
-                {/* Text content */}
-                <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
-                  <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-white/70">
-                    {card.label}
-                  </span>
-                  <h3 className="text-xl md:text-2xl font-light text-white mt-1 mb-2">
-                    {card.caption}
+                {/* Text content — top */}
+                <div className="px-5 pt-5 pb-2 md:px-7 md:pt-7 md:pb-3">
+                  <h3 className="text-lg md:text-[22px] font-semibold leading-tight mb-1">
+                    {card.title}
                   </h3>
-                  <p className="text-sm text-white/80 leading-relaxed max-w-md mb-5">
+                  <p className="text-sm text-muted-foreground leading-snug">
                     {card.copy}
                   </p>
-                  <span className="inline-flex items-center gap-2 text-sm font-medium text-white border border-white/40 rounded-full px-5 py-2.5 w-fit group-hover:bg-white/10 transition-colors duration-300">
-                    {card.cta}
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {card.price}
+                  </p>
+                </div>
+
+                {/* Image — bottom */}
+                <div className="relative w-full aspect-[16/10] overflow-hidden">
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 </div>
               </Link>
             </motion.div>
