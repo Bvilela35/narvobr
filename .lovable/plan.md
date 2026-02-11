@@ -1,45 +1,68 @@
 
 
-## Banner Hero - Substituir "Engenharia do Silencio"
+## Secao "The System: InSight & OutSight"
 
-Substituir a secao hero atual por um banner no estilo da referencia: layout dividido em dois blocos (texto a esquerda, imagem grande a direita).
+Nova secao de categorias posicionada logo abaixo do HeroBanner, antes da secao "Por que Narvo".
 
-### Estrutura do Layout
+### Posicao na Home
 
-- **Esquerda**: Titulo principal da Narvo, descricao curta e botao CTA ("Ver colecao")
-- **Direita**: Card com cantos arredondados exibindo a imagem que voce enviar, com um badge ou label sobreposto (ex: "DESCUBRA" com seta)
+```text
+HeroBanner
+   |
+   v
+[NOVA SECAO - The System]  <-- aqui
+   |
+   v
+Por que Narvo
+   |
+   v
+Produtos em destaque
+...
+```
 
-### Estilo Visual
+### Estrutura Visual
 
-- Layout `flex` com `md:flex-row`, ocupando altura generosa (`min-h-[85vh]`)
-- Card da imagem com `rounded-2xl` e `overflow-hidden`, cobrindo todo o espaco
-- Animacoes de entrada com Framer Motion (fade-up no texto, scale-in no card)
-- Manter a paleta Narvo: fundo off-white, texto escuro, espacamento amplo
+- **Headline**: "A arquitetura do foco." (font-light, texto grande)
+- **Subheadline**: "Dois planos. Um unico objetivo: o silencio visual absoluto." (text-muted-foreground)
+- **Grid de 2 cards** lado a lado (`grid md:grid-cols-2 gap-5`), inspirado na referencia com fundo `bg-card-elevated` e `rounded-2xl`
+
+### Conteudo dos Cards
+
+**Card InSight:**
+- Label: "InSight(TM)"
+- Legenda: "Sobre a mesa."
+- Copy tecnica sobre ferramentas de contato, aco, feltro e geometria
+- CTA: "Explorar Superficie" com seta (Link para `/colecao?categoria=insight` ou `/colecao`)
+- Area de imagem placeholder (icone/ilustracao minimalista representando superficie de mesa)
+
+**Card OutSight:**
+- Label: "OutSight(TM)"
+- Legenda: "Abaixo do horizonte."
+- Copy sobre engenharia invisivel e organizacao de cabos
+- CTA: "Explorar Infraestrutura" com seta (Link para `/colecao?categoria=outsight` ou `/colecao`)
+- Area de imagem placeholder (icone/ilustracao minimalista representando infraestrutura)
 
 ### Detalhes Tecnicos
 
+**Novo arquivo:** `src/components/TheSystemSection.tsx`
+- Componente isolado com framer-motion para animacoes de entrada (fade-up)
+- Cards com layout vertical: area de imagem placeholder no topo (aspect-ratio 4:3, fundo neutro com icone SVG minimalista), texto e CTA embaixo
+- Responsivo: cards empilham verticalmente em mobile
+
 **Arquivo editado:** `src/pages/Index.tsx`
-- Substituir a secao `{/* Hero */}` atual pelo novo banner
-- O bloco esquerdo mantem titulo, subtitulo e CTA
-- O bloco direito recebe a imagem via import de `src/assets/`
+- Importar `TheSystemSection`
+- Inserir `<TheSystemSection />` entre `<HeroBanner />` e a secao "Por que Narvo"
 
-**Arquivo de imagem:** `src/assets/hero-banner.jpg` (ou formato que voce enviar)
-- Sera copiada do upload para `src/assets/`
-- Importada como modulo ES6 no componente
+### Estilo
 
-### Copywriting (tom Narvo)
-
-- Titulo: "Engenharia do Silencio." (mantido, e a alma da marca)
-- Subtitulo: "Acessorios premium para seu setup. Projetados para quem exige silencio visual e maxima performance."
-- CTA: "Ver colecao"
-- Badge no card: "DESCUBRA" com seta
+- Espacamento: `py-16 md:py-24 px-6 md:px-10`
+- Cards: `bg-card-elevated rounded-2xl p-6 md:p-8`
+- Tipografia sem serifa, tracking amplo nos labels
+- Imagens placeholder com fundo levemente mais claro e icones em stroke fino (Lucide) representando cada categoria ate que imagens reais sejam fornecidas
+- Hover sutil nos cards (scale ou shadow transition)
 
 ### Mobile
 
-- Em telas pequenas, o layout empilha verticalmente (imagem abaixo do texto)
-- Card da imagem com altura fixa para manter proporcao
-
-### Proximo passo
-
-Apos aprovar o plano, envie a imagem que deseja usar no banner para que eu possa implementar.
+- Cards empilham verticalmente com gap de 4
+- Headline e subheadline centralizados ou alinhados a esquerda conforme padrao existente
 
