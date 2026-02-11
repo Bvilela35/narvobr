@@ -116,7 +116,7 @@ export default function Index() {
             <div id="principles-carousel" className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
               {principles.map((p, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                  className="min-w-[260px] flex-shrink-0 aspect-square rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
+                  className="min-w-[260px] flex-shrink-0 aspect-[4/3] rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
                   <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                   <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
@@ -137,7 +137,7 @@ export default function Index() {
           <div className="hidden md:grid md:grid-cols-3 gap-5">
             {principles.map((p, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="aspect-square rounded-2xl p-8 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
+                className="aspect-[4/3] rounded-2xl p-8 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
                 <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                 <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
