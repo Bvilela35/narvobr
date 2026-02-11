@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useRef, useCallback } from "react";
 import beforeDesk from "@/assets/before-desk.jpg";
 import afterDesk from "@/assets/after-desk.jpg";
 
@@ -10,6 +11,33 @@ const fadeUp = {
 };
 
 export function BeforeAfter() {
+  const [position, setPosition] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const updatePosition = useCallback((clientX: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    setPosition((x / rect.width) * 100);
+  }, []);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    dragging.current = true;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    updatePosition(e.clientX);
+  }, [updatePosition]);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    updatePosition(e.clientX);
+  }, [updatePosition]);
+
+  const onPointerUp = useCallback(() => {
+    dragging.current = false;
+  }, []);
+
   return (
     <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
       <div className="max-w-[1400px] mx-auto">
@@ -25,45 +53,67 @@ export function BeforeAfter() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <div
+            ref={containerRef}
+            className="relative rounded-2xl overflow-hidden select-none touch-none cursor-ew-resize aspect-[16/10]"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
           >
-            <div className="relative rounded-2xl overflow-hidden">
+            {/* After (background - full) */}
+            <img
+              src={afterDesk}
+              alt="Mesa organizada com acessórios Narvo"
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
+            />
+
+            {/* Before (clipped) */}
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{ width: `${position}%` }}
+            >
               <img
                 src={beforeDesk}
-                alt="Mesa de trabalho desorganizada com cabos e objetos espalhados"
-                className="w-full aspect-[16/10] object-cover"
-                loading="lazy"
+                alt="Mesa desorganizada"
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ width: `${containerRef.current?.offsetWidth || 9999}px`, maxWidth: "none" }}
+                draggable={false}
               />
-              <span className="absolute top-4 left-4 bg-foreground/80 text-background text-[11px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium">
-                Antes
-              </span>
             </div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-          >
-            <div className="relative rounded-2xl overflow-hidden">
-              <img
-                src={afterDesk}
-                alt="Mesa de trabalho organizada com acessórios Narvo em alumínio e madeira"
-                className="w-full aspect-[16/10] object-cover"
-                loading="lazy"
-              />
-              <span className="absolute top-4 left-4 bg-foreground/80 text-background text-[11px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium">
-                Depois
-              </span>
+            {/* Divider line */}
+            <div
+              className="absolute top-0 bottom-0 w-0.5 bg-background/80 z-10"
+              style={{ left: `${position}%`, transform: "translateX(-50%)" }}
+            />
+
+            {/* Handle */}
+            <div
+              className="absolute top-1/2 z-20 w-10 h-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background shadow-lg flex items-center justify-center"
+              style={{ left: `${position}%` }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-foreground">
+                <path d="M5 3L2 8L5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11 3L14 8L11 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
-          </motion.div>
-        </div>
+
+            {/* Labels */}
+            <span className="absolute top-4 left-4 bg-foreground/80 text-background text-[11px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium z-10">
+              Antes
+            </span>
+            <span className="absolute top-4 right-4 bg-foreground/80 text-background text-[11px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium z-10">
+              Depois
+            </span>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
