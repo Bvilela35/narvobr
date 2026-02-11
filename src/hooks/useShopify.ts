@@ -1,0 +1,71 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import {
+  fetchProducts,
+  fetchProductByHandle,
+  fetchCollectionByHandle,
+  ShopifyProduct,
+} from "@/lib/shopify";
+
+// Query keys
+export const shopifyKeys = {
+  products: (first: number, query?: string) => ["shopify", "products", first, query] as const,
+  product: (handle: string) => ["shopify", "product", handle] as const,
+  collection: (handle: string, first: number) => ["shopify", "collection", handle, first] as const,
+};
+
+// Hooks
+export function useProducts(first = 20, query?: string) {
+  return useQuery({
+    queryKey: shopifyKeys.products(first, query),
+    queryFn: () => fetchProducts(first, query),
+    staleTime: 5 * 60 * 1000, // 5 min
+  });
+}
+
+export function useProductByHandle(handle: string | undefined) {
+  return useQuery({
+    queryKey: shopifyKeys.product(handle!),
+    queryFn: () => fetchProductByHandle(handle!),
+    enabled: !!handle,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useCollectionByHandle(handle: string | undefined, first = 40) {
+  return useQuery({
+    queryKey: shopifyKeys.collection(handle!, first),
+    queryFn: () => fetchCollectionByHandle(handle!, first),
+    enabled: !!handle,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Prefetch helpers
+export function usePrefetchProduct() {
+  const qc = useQueryClient();
+  return useCallback(
+    (handle: string) => {
+      qc.prefetchQuery({
+        queryKey: shopifyKeys.product(handle),
+        queryFn: () => fetchProductByHandle(handle),
+        staleTime: 5 * 60 * 1000,
+      });
+    },
+    [qc]
+  );
+}
+
+export function usePrefetchCollection() {
+  const qc = useQueryClient();
+  return useCallback(
+    (handle: string, first = 40) => {
+      qc.prefetchQuery({
+        queryKey: shopifyKeys.collection(handle, first),
+        queryFn: () => fetchCollectionByHandle(handle, first),
+        staleTime: 5 * 60 * 1000,
+      });
+    },
+    [qc]
+  );
+}

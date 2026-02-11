@@ -1,30 +1,15 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
-import { fetchCollectionByHandle, ShopifyProduct } from "@/lib/shopify";
+import { useCollectionByHandle } from "@/hooks/useShopify";
 
 export default function ColecaoHandle() {
   const { handle } = useParams<{ handle: string }>();
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { data: collection, isLoading: loading } = useCollectionByHandle(handle);
 
-  useEffect(() => {
-    if (!handle) return;
-    setLoading(true);
-    fetchCollectionByHandle(handle, 40)
-      .then((col) => {
-        if (col) {
-          setTitle(col.title);
-          setDescription(col.description);
-          setProducts(col.products);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [handle]);
+  const title = collection?.title || "Coleção";
+  const description = collection?.description || "Peças do sistema Narvo.";
+  const products = collection?.products || [];
 
   return (
     <section className="py-16 md:py-24 px-6 md:px-10">
@@ -36,9 +21,9 @@ export default function ColecaoHandle() {
           className="mb-16"
         >
           <h1 className="text-2xl md:text-3xl font-semibold">
-            {title || "Coleção"}.{" "}
+            {title}.{" "}
             <span className="font-light text-muted-foreground">
-              {description || "Peças do sistema Narvo."}
+              {description}
             </span>
           </h1>
         </motion.div>

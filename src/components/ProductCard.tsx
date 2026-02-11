@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
+import { usePrefetchProduct } from "@/hooks/useShopify";
 
 interface ProductCardProps {
   product: ShopifyProduct;
@@ -10,6 +11,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const { title, handle, priceRange, images } = product.node;
   const image = images.edges[0]?.node;
   const price = priceRange.minVariantPrice;
+  const prefetchProduct = usePrefetchProduct();
 
   return (
     <motion.div
@@ -19,7 +21,11 @@ export function ProductCard({ product }: ProductCardProps) {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="h-full"
     >
-      <Link to={`/produto/${handle}`} className="group block h-full">
+      <Link
+        to={`/produto/${handle}`}
+        className="group block h-full"
+        onMouseEnter={() => prefetchProduct(handle)}
+      >
         <div className="bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
           <div className="relative w-full pt-[100%] overflow-hidden">
             {image ? (

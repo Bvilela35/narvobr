@@ -1,16 +1,10 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ProductCard } from "@/components/ProductCard";
 import { FundamentosNarvo } from "@/components/FundamentosNarvo";
-import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
+import { useProducts } from "@/hooks/useShopify";
 
 export default function Colecao() {
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchProducts(20).then(setProducts).catch(console.error).finally(() => setLoading(false));
-  }, []);
+  const { data: products = [], isLoading: loading } = useProducts(20);
 
   return (
     <section className="py-16 md:py-24 px-6 md:px-10">
