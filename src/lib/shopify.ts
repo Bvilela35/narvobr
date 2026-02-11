@@ -174,6 +174,61 @@ const PRODUCT_BY_HANDLE_QUERY = `
   }
 `;
 
+const COLLECTION_BY_HANDLE_QUERY = `
+  query GetCollectionByHandle($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      id
+      title
+      description
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 6) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export async function fetchProducts(first = 20, query?: string) {
   const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
   return (data?.data?.products?.edges || []) as ShopifyProduct[];
@@ -184,6 +239,17 @@ export async function fetchProductByHandle(handle: string) {
   const product = data?.data?.product;
   if (!product) return null;
   return { node: product } as ShopifyProduct;
+}
+
+export async function fetchCollectionByHandle(handle: string, first = 20) {
+  const data = await storefrontApiRequest(COLLECTION_BY_HANDLE_QUERY, { handle, first });
+  const collection = data?.data?.collection;
+  if (!collection) return null;
+  return {
+    title: collection.title as string,
+    description: collection.description as string,
+    products: (collection.products.edges || []) as ShopifyProduct[],
+  };
 }
 
 // Cart mutations
