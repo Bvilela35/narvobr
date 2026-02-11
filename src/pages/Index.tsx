@@ -84,7 +84,7 @@ function ProductCarousel({
       msOverflowStyle: "none"
     }}>
         {products.map((product) => <div key={product.node.id} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
-            <ProductCard product={product} />
+            <ProductCard product={product} disableAnimation />
           </div>)}
       </div>
 
@@ -111,12 +111,12 @@ export default function Index() {
           <div className="relative md:hidden">
             <div id="principles-carousel" className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
               {principles.map((p, i) =>
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
+            <div key={i}
             className="min-w-[260px] flex-shrink-0 aspect-[4/3] rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
                   <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                   <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-                </motion.div>
+                </div>
             )}
             </div>
             <div className="flex gap-2 justify-end mt-3">
