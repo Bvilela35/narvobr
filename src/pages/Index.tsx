@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
+import { BeforeAfter } from "@/components/BeforeAfter";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 const fadeUp = {
   initial: {
@@ -204,6 +205,9 @@ export default function Index() {
             </div> : <ProductCarousel products={products} />}
         </div>
       </section>
+
+      {/* Antes e Depois */}
+      <BeforeAfter />
 
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
