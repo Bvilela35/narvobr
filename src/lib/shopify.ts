@@ -180,6 +180,10 @@ const COLLECTION_BY_HANDLE_QUERY = `
       id
       title
       description
+      image {
+        url
+        altText
+      }
       products(first: $first) {
         edges {
           node {
