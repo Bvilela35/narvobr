@@ -86,7 +86,7 @@ export function Header({
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 md:px-10 h-16">
           <Link to="/" className="flex items-center">
-            <img src={narvoLogo} alt="NARVO" className="h-9 object-scale-down" />
+            <img src={narvoLogo} alt="NARVO" className="h-6 object-cover" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
