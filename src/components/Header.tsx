@@ -110,7 +110,7 @@ export function Header({ onCartOpen }: HeaderProps) {
             )}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-0">
             <button
               onClick={() => searchOpen ? closeSearch() : setSearchOpen(true)}
               className="p-2 transition-opacity hover:opacity-60"
