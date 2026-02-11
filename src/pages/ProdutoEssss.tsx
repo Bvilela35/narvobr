@@ -78,14 +78,14 @@ export default function ProdutoEssss() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative bg-card-elevated flex items-center justify-center p-8 md:p-16"
+            className="relative bg-card-elevated flex items-center justify-center overflow-hidden"
           >
-            <div className="w-full max-w-[700px] aspect-square">
+            <div className="w-full h-full">
               {imgs[selectedImage] ? (
                 <img
                   src={imgs[selectedImage].node.url}
                   alt={imgs[selectedImage].node.altText || title}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center opacity-20 text-xs">Sem imagem</div>
