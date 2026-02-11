@@ -41,9 +41,9 @@ const principles = [{
 }];
 function ProductCarousel({
   products
-}: {
-  products: ShopifyProduct[];
-}) {
+
+
+}: {products: ShopifyProduct[];}) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -80,7 +80,7 @@ function ProductCarousel({
       scrollbarWidth: "none",
       msOverflowStyle: "none"
     }}>
-        {products.map(product => <div key={product.node.id} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
+        {products.map((product) => <div key={product.node.id} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
             <ProductCard product={product} />
           </div>)}
       </div>
@@ -150,7 +150,7 @@ export default function Index() {
       </section>
 
       {/* Por que Narvo */}
-      <section className="md:py-32 px-6 md:px-10 py-[13px]">
+      <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
         <div className="max-w-[1400px] mx-auto">
           <motion.h2 {...fadeUp} className="text-xs font-medium tracking-[0.3em] uppercase text-muted-foreground mb-16">
             Por que Narvo
@@ -239,7 +239,7 @@ export default function Index() {
             <span className="text-2xl md:text-3xl font-light text-muted-foreground">O que dizem sobre a Narvo.</span>
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-5 mt-16">
-            {[1, 2].map(i => <motion.div key={i} initial={{
+            {[1, 2].map((i) => <motion.div key={i} initial={{
             opacity: 0,
             y: 20
           }} whileInView={{

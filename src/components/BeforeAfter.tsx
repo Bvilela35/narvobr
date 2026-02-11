@@ -7,7 +7,7 @@ const fadeUp = {
   initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.8, ease: "easeOut" as const },
+  transition: { duration: 0.8, ease: "easeOut" as const }
 };
 
 export function BeforeAfter() {
@@ -20,7 +20,7 @@ export function BeforeAfter() {
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    setPosition((x / rect.width) * 100);
+    setPosition(x / rect.width * 100);
   }, []);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -39,12 +39,12 @@ export function BeforeAfter() {
   }, []);
 
   return (
-    <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
+    <section className="py-24 px-6 md:px-10 border-t border-border md:py-[29px]">
       <div className="max-w-[1400px] mx-auto">
         <motion.div {...fadeUp} className="mb-16">
-          <h2 className="text-xs font-medium tracking-[0.3em] uppercase text-muted-foreground mb-4">
-            Transformação
-          </h2>
+          
+
+
           <p className="text-2xl md:text-3xl font-semibold">
             O poder da organização.{" "}
             <span className="font-light text-muted-foreground">
@@ -57,51 +57,51 @@ export function BeforeAfter() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
+          transition={{ duration: 0.7 }}>
+
           <div
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden select-none touch-none cursor-ew-resize aspect-[16/10]"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-          >
+            onPointerUp={onPointerUp}>
+
             {/* After (background - full) */}
             <img
               src={afterDesk}
               alt="Mesa organizada com acessórios Narvo"
               className="absolute inset-0 w-full h-full object-cover"
-              draggable={false}
-            />
+              draggable={false} />
+
 
             {/* Before (clipped) */}
             <div
               className="absolute inset-0 overflow-hidden"
-              style={{ width: `${position}%` }}
-            >
+              style={{ width: `${position}%` }}>
+
               <img
                 src={beforeDesk}
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ width: `${containerRef.current?.offsetWidth || 9999}px`, maxWidth: "none" }}
-                draggable={false}
-              />
+                draggable={false} />
+
             </div>
 
             {/* Divider line */}
             <div
               className="absolute top-0 bottom-0 w-0.5 bg-background/80 z-10"
-              style={{ left: `${position}%`, transform: "translateX(-50%)" }}
-            />
+              style={{ left: `${position}%`, transform: "translateX(-50%)" }} />
+
 
             {/* Handle */}
             <div
               className="absolute top-1/2 z-20 w-10 h-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background shadow-lg flex items-center justify-center"
-              style={{ left: `${position}%` }}
-            >
+              style={{ left: `${position}%` }}>
+
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-foreground">
-                <path d="M5 3L2 8L5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M11 3L14 8L11 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 3L2 8L5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M11 3L14 8L11 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
 
@@ -115,6 +115,6 @@ export function BeforeAfter() {
           </div>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
