@@ -112,37 +112,26 @@ export default function Index() {
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
         <div className="max-w-[1400px] mx-auto">
-          <div className="relative md:hidden">
-            <div id="principles-carousel" className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-              {principles.map((p, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                  className="min-w-[260px] flex-shrink-0 aspect-[4/3] rounded-2xl p-6 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
-                  <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
-                  <h3 className="text-lg font-medium mb-2">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-            <div className="flex gap-2 justify-end mt-3">
-              <button onClick={() => { const el = document.getElementById("principles-carousel"); if (el) el.scrollBy({ left: -270, behavior: "smooth" }); }} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Anterior">
-                <ChevronLeft className="h-5 w-5 text-foreground/60" />
-              </button>
-              <button onClick={() => { const el = document.getElementById("principles-carousel"); if (el) el.scrollBy({ left: 270, behavior: "smooth" }); }} className="w-10 h-10 rounded-full bg-[#e0e0e0] flex items-center justify-center" aria-label="Próximo">
-                <ChevronRight className="h-5 w-5 text-foreground/80" />
-              </button>
-            </div>
-          </div>
+          
 
-          {/* Desktop: grid 3 colunas */}
-          <div className="hidden md:grid md:grid-cols-3 gap-5">
-            {principles.map((p, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="aspect-[4/3] rounded-2xl p-8 flex flex-col justify-end" style={{ backgroundColor: "#f0f0f0" }}>
+
+          <div className="grid md:grid-cols-3 gap-12 md:gap-16">
+            {principles.map((p, i) => <motion.div key={i} initial={{
+            opacity: 0,
+            y: 20
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            duration: 0.6,
+            delay: i * 0.15
+          }}>
                 <p.icon className="h-5 w-5 mb-4 text-muted-foreground" strokeWidth={1.5} />
                 <h3 className="text-lg font-medium mb-2">{p.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </motion.div>
-            ))}
+              </motion.div>)}
           </div>
         </div>
       </section>
