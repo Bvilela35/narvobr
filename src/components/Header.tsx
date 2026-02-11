@@ -90,7 +90,7 @@ export function Header({ onCartOpen }: HeaderProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 md:px-10 h-16">
           <Link to="/" className="flex items-center">
-            <img src={narvoLogo} alt="NARVO" className="h-16" />
+            <img src={narvoLogo} alt="NARVO" className="h-20" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
