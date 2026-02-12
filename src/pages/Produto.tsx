@@ -631,10 +631,9 @@ export default function Produto() {
               </p>
 
               {description &&
-              <>
-                  <hr className="pdp__divider" />
-                  
-                </>
+                <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px' }}>
+                  {description}
+                </p>
               }
 
               {/* Variant selector */}
