@@ -172,7 +172,7 @@ export default function Produto() {
             align-items: center;
             gap: 6px;
             font-size: 14px;
-            color: var(--pdp-text-secondary);
+            color: #000;
             text-decoration: none;
             margin-bottom: 32px;
             transition: color 0.15s;
