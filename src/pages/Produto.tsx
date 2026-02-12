@@ -140,7 +140,7 @@ export default function Produto() {
             --pdp-link: #1A73E8;
             --pdp-btn-disabled-bg: #E5E7EB;
             --pdp-btn-disabled-text: #9CA3AF;
-            --pdp-btn-bg: #111827;
+            --pdp-btn-bg: #0f3d2e;
             --pdp-btn-text: #FFFFFF;
             --pdp-radius-gallery: 28px;
             --pdp-radius-buybox: 24px;
