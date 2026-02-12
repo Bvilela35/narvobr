@@ -23,13 +23,13 @@ function formatCep(v: string) {
 export default function Produto() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { handle } = useParams<{ handle: string }>();
+  const { handle } = useParams<{handle: string;}>();
   const { data: product, isLoading: loadingProduct } = useProductByHandle(handle);
   const { data: allProducts = [] } = useProducts(4);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [cep, setCep] = useState("");
-  const [cepResult, setCepResult] = useState<{ type: string; dateRange: string } | null>(null);
+  const [cepResult, setCepResult] = useState<{type: string;dateRange: string;} | null>(null);
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
@@ -56,16 +56,16 @@ export default function Produto() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin opacity-30" />
-      </div>
-    );
+      </div>);
+
   }
 
   if (!product) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <p className="text-sm opacity-40">Produto não encontrado.</p>
-      </div>
-    );
+      </div>);
+
   }
 
   const { title, description, images, variants, options } = product.node;
@@ -75,8 +75,8 @@ export default function Produto() {
   const hasOptions = options.length > 0 && options[0].name !== "Title";
 
   const canBuy =
-    selectedVariant?.availableForSale &&
-    (!hasOptions || selectedVariantIdx >= 0);
+  selectedVariant?.availableForSale && (
+  !hasOptions || selectedVariantIdx >= 0);
 
   function formatDateRange(minDays: number, maxDays: number) {
     const now = new Date();
@@ -95,7 +95,7 @@ export default function Produto() {
   function getShippingRegion(cepValue: string) {
     const prefix = parseInt(cepValue.substring(0, 2), 10);
     if (prefix >= 1 && prefix <= 39) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
-    if ((prefix >= 70 && prefix <= 76) || (prefix >= 78 && prefix <= 79)) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
+    if (prefix >= 70 && prefix <= 76 || prefix >= 78 && prefix <= 79) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
     if (prefix >= 80 && prefix <= 99) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
     return { type: "Envio Normal", dateRange: formatDateRange(4, 12) };
   }
@@ -109,9 +109,9 @@ export default function Produto() {
   }
 
   const prevImage = () =>
-    setSelectedImage((p) => (p === 0 ? totalImages - 1 : p - 1));
+  setSelectedImage((p) => p === 0 ? totalImages - 1 : p - 1);
   const nextImage = () =>
-    setSelectedImage((p) => (p === totalImages - 1 ? 0 : p + 1));
+  setSelectedImage((p) => p === totalImages - 1 ? 0 : p + 1);
 
   const handleAdd = async () => {
     if (!canBuy || !selectedVariant) return;
@@ -122,7 +122,7 @@ export default function Produto() {
       variantTitle: selectedVariant.title,
       price: selectedVariant.price,
       quantity: 1,
-      selectedOptions: selectedVariant.selectedOptions || [],
+      selectedOptions: selectedVariant.selectedOptions || []
     });
     navigate(`/produto/${handle}/adicionado`);
   };
@@ -172,7 +172,7 @@ export default function Produto() {
             align-items: center;
             gap: 6px;
             font-size: 14px;
-            color: #000;
+            color: var(--pdp-text-secondary);
             text-decoration: none;
             margin-bottom: 32px;
             transition: color 0.15s;
@@ -581,31 +581,31 @@ export default function Produto() {
 
         <div className="pdp__container">
           <Link to="/colecao" className="pdp__back">
-            <ArrowLeft size={24} />
+            <ArrowLeft size={16} /> Voltar
           </Link>
 
           <div className="pdp__grid">
             {/* Gallery */}
             <div className="pdp__gallery" role="region" aria-label="Galeria do produto">
-              {imgs[selectedImage] ? (
-                <AnimatePresence mode="wait">
+              {imgs[selectedImage] ?
+              <AnimatePresence mode="wait">
                   <motion.img
-                    key={selectedImage}
-                    src={imgs[selectedImage].node.url}
-                    alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
-                    className="pdp__gallery-img"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                  />
-                </AnimatePresence>
-              ) : (
-                <div className="pdp__gallery-placeholder">Sem imagem</div>
-              )}
+                  key={selectedImage}
+                  src={imgs[selectedImage].node.url}
+                  alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
+                  className="pdp__gallery-img"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }} />
 
-              {totalImages > 1 && (
-                <div className="pdp__gallery-nav">
+                </AnimatePresence> :
+
+              <div className="pdp__gallery-placeholder">Sem imagem</div>
+              }
+
+              {totalImages > 1 &&
+              <div className="pdp__gallery-nav">
                   <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
                     <ChevronLeft size={18} strokeWidth={2} />
                   </button>
@@ -616,7 +616,7 @@ export default function Produto() {
                     <ChevronRight size={18} strokeWidth={2} />
                   </button>
                 </div>
-              )}
+              }
             </div>
 
             {/* Info */}
@@ -630,43 +630,43 @@ export default function Produto() {
                 ou R$ {installmentValue}/mês em até 10x sem juros
               </p>
 
-              {description && (
-                <>
+              {description &&
+              <>
                   <hr className="pdp__divider" />
-                  <p className="pdp__description">{description}</p>
+                  
                 </>
-              )}
+              }
 
               {/* Variant selector */}
-              {hasOptions && (
-                <>
+              {hasOptions &&
+              <>
                   <hr className="pdp__divider" />
                   {options.map((option) => {
-                    const isColor = option.name.toLowerCase() === 'cor';
-                    return (
-                      <div key={option.name} id={`option-group-${option.name}`} style={{ marginBottom: 24 }}>
+                  const isColor = option.name.toLowerCase() === 'cor';
+                  return (
+                    <div key={option.name} id={`option-group-${option.name}`} style={{ marginBottom: 24 }}>
                         <p className="pdp__option-title">
-                          {isColor ? (
-                            <>
+                          {isColor ?
+                        <>
                               {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
-                            </>
-                          ) : option.name}
+                            </> :
+                        option.name}
                         </p>
                         <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
                           {variants.edges.map((v, i) => {
-                            const optVal = v.node.selectedOptions.find(
-                              (o) => o.name === option.name
-                            )?.value;
-                            const isSelected = i === selectedVariantIdx;
-                            const swatchColor = isColor ? (optVal?.toLowerCase() === 'preto' ? '#1a1a1a' : optVal?.toLowerCase() === 'branco' ? '#f5f5f5' : optVal?.toLowerCase() === 'cinza' ? '#9e9e9e' : optVal?.toLowerCase() === 'prata' ? '#c0c0c0' : optVal?.toLowerCase() === 'natural' ? '#d4c5a9' : '#888') : null;
-                            return (
-                              <div className="pdp__option-item" key={v.node.id}>
+                          const optVal = v.node.selectedOptions.find(
+                            (o) => o.name === option.name
+                          )?.value;
+                          const isSelected = i === selectedVariantIdx;
+                          const swatchColor = isColor ? optVal?.toLowerCase() === 'preto' ? '#1a1a1a' : optVal?.toLowerCase() === 'branco' ? '#f5f5f5' : optVal?.toLowerCase() === 'cinza' ? '#9e9e9e' : optVal?.toLowerCase() === 'prata' ? '#c0c0c0' : optVal?.toLowerCase() === 'natural' ? '#d4c5a9' : '#888' : null;
+                          return (
+                            <div className="pdp__option-item" key={v.node.id}>
                                 <input
-                                  type="radio"
-                                  name={`option-${option.name}`}
-                                  id={`opt-${v.node.id}`}
-                                  value={i}
-                                  checked={isSelected}
+                                type="radio"
+                                name={`option-${option.name}`}
+                                id={`opt-${v.node.id}`}
+                                value={i}
+                                checked={isSelected}
                                 onChange={() => {
                                   setSelectedVariantIdx(i);
                                   // Auto-scroll to next option or buy button
@@ -683,24 +683,24 @@ export default function Produto() {
                                     }
                                   }, 100);
                                 }}
-                                  className="pdp__option-input"
-                                  disabled={!v.node.availableForSale}
-                                />
+                                className="pdp__option-input"
+                                disabled={!v.node.availableForSale} />
+
                                 <label htmlFor={`opt-${v.node.id}`} className="pdp__option-label">
-                                  {isColor && swatchColor && (
-                                    <span className="pdp__color-swatch" style={{ backgroundColor: swatchColor }} />
-                                  )}
+                                  {isColor && swatchColor &&
+                                <span className="pdp__color-swatch" style={{ backgroundColor: swatchColor }} />
+                                }
                                   <span className="pdp__option-name">{optVal}</span>
                                 </label>
-                              </div>
-                            );
-                          })}
+                              </div>);
+
+                        })}
                         </div>
-                      </div>
-                    );
-                  })}
+                      </div>);
+
+                })}
                 </>
-              )}
+              }
 
               {/* Buy box */}
               <div className="pdp__buybox" id="pdp-buybox">
@@ -715,39 +715,39 @@ export default function Produto() {
                   className="pdp__add-btn"
                   disabled={!canBuy || added || isCartLoading}
                   onClick={handleAdd}
-                  aria-label="Adicionar ao carrinho"
-                >
-                  {isCartLoading ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : added ? (
-                    "Adicionado ✓"
-                  ) : (
-                    "Adicionar ao carrinho"
-                  )}
+                  aria-label="Adicionar ao carrinho">
+
+                  {isCartLoading ?
+                  <Loader2 size={18} className="animate-spin" /> :
+                  added ?
+                  "Adicionado ✓" :
+
+                  "Adicionar ao carrinho"
+                  }
                 </button>
 
-                {!selectedVariant?.availableForSale && (
-                  <p className="pdp__unavailable">Esgotado</p>
-                )}
+                {!selectedVariant?.availableForSale &&
+                <p className="pdp__unavailable">Esgotado</p>
+                }
 
                 <div className="pdp__shipping">
                   <Truck size={20} className="pdp__shipping-icon" />
-                  {cepResult ? (
-                    <div className="pdp__shipping-result">
+                  {cepResult ?
+                  <div className="pdp__shipping-result">
                       <strong>Frete Grátis</strong> · {cepResult.type}: Entre {cepResult.dateRange} para{" "}
-                      <button className="pdp__shipping-cep-link" onClick={() => { setCepInput(formatCep(cep)); setShowCepModal(true); }}>
+                      <button className="pdp__shipping-cep-link" onClick={() => {setCepInput(formatCep(cep));setShowCepModal(true);}}>
                         {formatCep(cep)}
                       </button>
-                    </div>
-                  ) : (
-                    <div className="pdp__shipping-text">
+                    </div> :
+
+                  <div className="pdp__shipping-text">
                       Digite seu CEP{" "}
-                      <button className="pdp__shipping-link" onClick={() => { setCepInput(""); setShowCepModal(true); }}>
+                      <button className="pdp__shipping-link" onClick={() => {setCepInput("");setShowCepModal(true);}}>
                         aqui
                       </button>{" "}
                       para saber quando seu pedido chega
                     </div>
-                  )}
+                  }
                 </div>
               </div>
             </div>
@@ -756,24 +756,24 @@ export default function Produto() {
       </section>
 
       {/* Related products */}
-      {related.length > 0 && (
-        <section style={{ padding: "80px 24px", borderTop: "1px solid #E5E7EB" }}>
+      {related.length > 0 &&
+      <section style={{ padding: "80px 24px", borderTop: "1px solid #E5E7EB" }}>
           <div style={{ maxWidth: 1240, margin: "0 auto" }}>
             <h2 style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.4, marginBottom: 48 }}>
               Compatível com
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {related.map((p) => (
-                <ProductCard key={p.node.id} product={p} />
-              ))}
+              {related.map((p) =>
+            <ProductCard key={p.node.id} product={p} />
+            )}
             </div>
           </div>
         </section>
-      )}
+      }
 
       {/* CEP Modal */}
-      {showCepModal && (
-        <div className="pdp__cep-overlay" onClick={() => setShowCepModal(false)}>
+      {showCepModal &&
+      <div className="pdp__cep-overlay" onClick={() => setShowCepModal(false)}>
           <div className="pdp__cep-modal" onClick={(e) => e.stopPropagation()}>
             <button className="pdp__cep-modal-close" onClick={() => setShowCepModal(false)} aria-label="Fechar">
               <X size={20} />
@@ -781,28 +781,28 @@ export default function Produto() {
             <h3>Digite seu CEP</h3>
             <div className="pdp__cep-modal-row">
               <input
-                type="text"
-                className="pdp__cep-modal-input"
-                placeholder="00000-000"
-                value={formatCep(cepInput)}
-                onChange={(e) => setCepInput(e.target.value)}
-                inputMode="numeric"
-                maxLength={9}
-                aria-label="CEP"
-                autoFocus
-                onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()}
-              />
+              type="text"
+              className="pdp__cep-modal-input"
+              placeholder="00000-000"
+              value={formatCep(cepInput)}
+              onChange={(e) => setCepInput(e.target.value)}
+              inputMode="numeric"
+              maxLength={9}
+              aria-label="CEP"
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()} />
+
               <button
-                className="pdp__cep-modal-btn"
-                onClick={handleCepSubmit}
-                disabled={normalizeCep(cepInput).length !== 8}
-              >
+              className="pdp__cep-modal-btn"
+              onClick={handleCepSubmit}
+              disabled={normalizeCep(cepInput).length !== 8}>
+
                 Atualizar
               </button>
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }
