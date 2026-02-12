@@ -311,6 +311,21 @@ export default function Produto() {
             font-weight: 600;
             margin: 0 0 16px;
           }
+          .pdp__option-title-hint {
+            font-weight: 300;
+            color: #888;
+          }
+          .pdp__option-title-accent {
+            color: #0f3d2e;
+          }
+
+          .pdp__color-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid #e0e0e0;
+            flex-shrink: 0;
+          }
 
           .pdp__option-grid {
             display: grid;
@@ -636,36 +651,49 @@ export default function Produto() {
               {hasOptions && (
                 <>
                   <hr className="pdp__divider" />
-                  {options.map((option) => (
-                    <div key={option.name} style={{ marginBottom: 24 }}>
-                      <p className="pdp__option-title">{option.name}</p>
-                      <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
-                        {variants.edges.map((v, i) => {
-                          const optVal = v.node.selectedOptions.find(
-                            (o) => o.name === option.name
-                          )?.value;
-                          const isSelected = i === selectedVariantIdx;
-                          return (
-                            <div className="pdp__option-item" key={v.node.id}>
-                              <input
-                                type="radio"
-                                name={`option-${option.name}`}
-                                id={`opt-${v.node.id}`}
-                                value={i}
-                                checked={isSelected}
-                                onChange={() => setSelectedVariantIdx(i)}
-                                className="pdp__option-input"
-                                disabled={!v.node.availableForSale}
-                              />
-                              <label htmlFor={`opt-${v.node.id}`} className="pdp__option-label">
-                                <span className="pdp__option-name">{optVal}</span>
-                              </label>
-                            </div>
-                          );
-                        })}
+                  {options.map((option) => {
+                    const isColor = option.name.toLowerCase() === 'cor';
+                    return (
+                      <div key={option.name} style={{ marginBottom: 24 }}>
+                        <p className="pdp__option-title">
+                          {isColor ? (
+                            <>
+                              {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
+                            </>
+                          ) : option.name}
+                        </p>
+                        <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
+                          {variants.edges.map((v, i) => {
+                            const optVal = v.node.selectedOptions.find(
+                              (o) => o.name === option.name
+                            )?.value;
+                            const isSelected = i === selectedVariantIdx;
+                            const swatchColor = isColor ? (optVal?.toLowerCase() === 'preto' ? '#1a1a1a' : optVal?.toLowerCase() === 'branco' ? '#f5f5f5' : optVal?.toLowerCase() === 'cinza' ? '#9e9e9e' : optVal?.toLowerCase() === 'prata' ? '#c0c0c0' : optVal?.toLowerCase() === 'natural' ? '#d4c5a9' : '#888') : null;
+                            return (
+                              <div className="pdp__option-item" key={v.node.id}>
+                                <input
+                                  type="radio"
+                                  name={`option-${option.name}`}
+                                  id={`opt-${v.node.id}`}
+                                  value={i}
+                                  checked={isSelected}
+                                  onChange={() => setSelectedVariantIdx(i)}
+                                  className="pdp__option-input"
+                                  disabled={!v.node.availableForSale}
+                                />
+                                <label htmlFor={`opt-${v.node.id}`} className="pdp__option-label">
+                                  {isColor && swatchColor && (
+                                    <span className="pdp__color-swatch" style={{ backgroundColor: swatchColor }} />
+                                  )}
+                                  <span className="pdp__option-name">{optVal}</span>
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </>
               )}
 
