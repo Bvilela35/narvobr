@@ -566,7 +566,7 @@ export default function Produto() {
           }
 
           @media (max-width: 768px) {
-            .pdp__container { padding: 24px 16px 120px; }
+            .pdp__container { padding: 24px 16px 40px; }
             .pdp__grid {
               grid-template-columns: 1fr;
               gap: 24px;
@@ -575,17 +575,7 @@ export default function Produto() {
             .pdp__title { font-size: 28px; }
             .pdp__option-grid { grid-template-columns: repeat(2, 1fr); }
 
-            .pdp__buybox {
-              position: fixed;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              border-radius: 20px 20px 0 0;
-              z-index: 50;
-              box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-              padding: 16px 20px;
-            }
-            .pdp__buybox .pdp__shipping { display: none; }
+            .pdp__container { padding: 24px 16px 40px; }
           }
         `}</style>
 
@@ -654,7 +644,7 @@ export default function Produto() {
                   {options.map((option) => {
                     const isColor = option.name.toLowerCase() === 'cor';
                     return (
-                      <div key={option.name} style={{ marginBottom: 24 }}>
+                      <div key={option.name} id={`option-group-${option.name}`} style={{ marginBottom: 24 }}>
                         <p className="pdp__option-title">
                           {isColor ? (
                             <>
@@ -677,7 +667,22 @@ export default function Produto() {
                                   id={`opt-${v.node.id}`}
                                   value={i}
                                   checked={isSelected}
-                                  onChange={() => setSelectedVariantIdx(i)}
+                                onChange={() => {
+                                  setSelectedVariantIdx(i);
+                                  // Auto-scroll to next option or buy button
+                                  setTimeout(() => {
+                                    const currentOptionEl = document.getElementById(`option-group-${option.name}`);
+                                    if (currentOptionEl) {
+                                      const nextSibling = currentOptionEl.nextElementSibling as HTMLElement;
+                                      if (nextSibling) {
+                                        nextSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      } else {
+                                        const buybox = document.getElementById('pdp-buybox');
+                                        buybox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      }
+                                    }
+                                  }, 100);
+                                }}
                                   className="pdp__option-input"
                                   disabled={!v.node.availableForSale}
                                 />
@@ -698,7 +703,7 @@ export default function Produto() {
               )}
 
               {/* Buy box */}
-              <div className="pdp__buybox">
+              <div className="pdp__buybox" id="pdp-buybox">
                 <div className="pdp__price-row">
                   <span className="pdp__price">{formatPrice(price)}</span>
                 </div>
