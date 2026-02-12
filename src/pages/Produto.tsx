@@ -68,7 +68,7 @@ export default function Produto() {
 
   }
 
-  const { title, description, images, variants, options, productType } = product.node;
+  const { title, description, images, variants, options } = product.node;
   const imgs = images.edges;
   const totalImages = imgs.length;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
@@ -622,9 +622,6 @@ export default function Produto() {
             {/* Info */}
             <div className="pdp__info">
               <h1 className="pdp__title">{title}</h1>
-              {productType && (
-                <p style={{ fontSize: '14px', fontWeight: 600, color: '#666', marginTop: '4px', marginBottom: '4px' }}>{productType}</p>
-              )}
 
               <div className="pdp__price-row">
                 <span className="pdp__price">{formatPrice(price)}</span>
