@@ -256,7 +256,58 @@ export async function fetchCollectionByHandle(handle: string, first = 20) {
   };
 }
 
-// Cart mutations
+const PRODUCT_RECOMMENDATIONS_QUERY = `
+  query GetProductRecommendations($productId: ID!) {
+    productRecommendations(productId: $productId, intent: COMPLEMENTARY) {
+      id
+      title
+      description
+      handle
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 3) {
+        edges {
+          node {
+            url
+            altText
+          }
+        }
+      }
+      variants(first: 10) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
+      options {
+        name
+        values
+      }
+    }
+  }
+`;
+
+export async function fetchProductRecommendations(productId: string): Promise<ShopifyProduct[]> {
+  const data = await storefrontApiRequest(PRODUCT_RECOMMENDATIONS_QUERY, { productId });
+  const recs = data?.data?.productRecommendations || [];
+  return recs.map((node: ShopifyProduct['node']) => ({ node }));
+}
+
 const CART_QUERY = `query cart($id: ID!) { cart(id: $id) { id totalQuantity } }`;
 
 const CART_CREATE_MUTATION = `

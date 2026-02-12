@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
@@ -6,6 +6,12 @@ import { WhatsAppBanner } from "./WhatsAppBanner";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setCartOpen(true);
+    window.addEventListener("narvo:open-cart", handler);
+    return () => window.removeEventListener("narvo:open-cart", handler);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
