@@ -129,7 +129,7 @@ export default function Produto() {
 
   const price = selectedVariant?.price.amount || "0";
   const compareAtPrice = product.node.priceRange?.minVariantPrice?.amount;
-  const installmentValue = (parseFloat(price) / 12).toFixed(2).replace(".", ",");
+  const installmentValue = (parseFloat(price) / 10).toFixed(2).replace(".", ",");
 
   return (
     <>
@@ -637,7 +637,7 @@ export default function Produto() {
                 <span className="pdp__price">{formatPrice(price)}</span>
               </div>
               <p className="pdp__installment">
-                ou R$ {installmentValue}/mês em até 12x*
+                ou R$ {installmentValue}/mês em até 10x sem juros
               </p>
 
               {description && (
@@ -703,7 +703,7 @@ export default function Produto() {
                   <span className="pdp__price">{formatPrice(price)}</span>
                 </div>
                 <p className="pdp__installment">
-                  ou R$ {installmentValue}/mês em até 12x*
+                  ou R$ {installmentValue}/mês em até 10x sem juros
                 </p>
 
                 <button
