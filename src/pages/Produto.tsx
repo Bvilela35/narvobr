@@ -189,7 +189,7 @@ export default function Produto() {
           .pdp__gallery {
             background: var(--pdp-surface);
             border-radius: var(--pdp-radius-gallery);
-            padding: 28px;
+            padding: 0;
             position: relative;
             aspect-ratio: 1 / 1;
             display: flex;
@@ -201,7 +201,7 @@ export default function Produto() {
           .pdp__gallery-img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
           }
 
           .pdp__gallery-placeholder {
