@@ -392,7 +392,12 @@ export default function Produto() {
             background: var(--pdp-btn-bg);
             color: var(--pdp-btn-text);
           }
-          .pdp__add-btn:not(:disabled):hover { opacity: 0.88; }
+          .pdp__add-btn:not(:disabled):hover,
+          .pdp__add-btn:not(:disabled):active {
+            background: #b6e36d;
+            color: #0f3d2e;
+            opacity: 1;
+          }
           .pdp__add-btn:focus-visible {
             outline: 2px solid var(--pdp-link);
             outline-offset: 2px;
