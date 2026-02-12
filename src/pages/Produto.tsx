@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
-import { toast } from "sonner";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
@@ -22,6 +21,8 @@ function formatCep(v: string) {
 }
 
 export default function Produto() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { handle } = useParams<{ handle: string }>();
   const { data: product, isLoading: loadingProduct } = useProductByHandle(handle);
   const { data: allProducts = [] } = useProducts(4);
@@ -40,6 +41,14 @@ export default function Produto() {
     setSelectedVariantIdx(0);
     setCep("");
   }, [handle]);
+
+  // Open cart drawer when navigated back with openCart state
+  useEffect(() => {
+    if (location.state?.openCart) {
+      window.dispatchEvent(new Event("narvo:open-cart"));
+      window.history.replaceState({}, "");
+    }
+  }, [location.state]);
 
   const related = allProducts.filter((p) => p.node.handle !== handle).slice(0, 4);
 
@@ -115,11 +124,7 @@ export default function Produto() {
       quantity: 1,
       selectedOptions: selectedVariant.selectedOptions || [],
     });
-    toast.success("Adicionado ao carrinho", {
-      position: "top-center",
-      duration: 3000,
-    });
-    setTimeout(() => setAdded(false), 2000);
+    navigate(`/produto/${handle}/adicionado`);
   };
 
   const price = selectedVariant?.price.amount || "0";

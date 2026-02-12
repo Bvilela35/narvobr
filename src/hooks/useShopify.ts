@@ -4,6 +4,7 @@ import {
   fetchProducts,
   fetchProductByHandle,
   fetchCollectionByHandle,
+  fetchProductRecommendations,
   ShopifyProduct,
 } from "@/lib/shopify";
 
@@ -12,6 +13,7 @@ export const shopifyKeys = {
   products: (first: number, query?: string) => ["shopify", "products", first, query] as const,
   product: (handle: string) => ["shopify", "product", handle] as const,
   collection: (handle: string, first: number) => ["shopify", "collection", handle, first] as const,
+  recommendations: (productId: string) => ["shopify", "recommendations", productId] as const,
 };
 
 // Hooks
@@ -37,6 +39,15 @@ export function useCollectionByHandle(handle: string | undefined, first = 40) {
     queryKey: shopifyKeys.collection(handle!, first),
     queryFn: () => fetchCollectionByHandle(handle!, first),
     enabled: !!handle,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useProductRecommendations(productId: string | undefined) {
+  return useQuery({
+    queryKey: shopifyKeys.recommendations(productId!),
+    queryFn: () => fetchProductRecommendations(productId!),
+    enabled: !!productId,
     staleTime: 5 * 60 * 1000,
   });
 }
