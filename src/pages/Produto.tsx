@@ -581,7 +581,7 @@ export default function Produto() {
 
         <div className="pdp__container">
           <Link to="/colecao" className="pdp__back">
-            <ArrowLeft size={16} /> Voltar
+            <ArrowLeft size={28} color="#000" />
           </Link>
 
           <div className="pdp__grid">
