@@ -28,7 +28,7 @@ export default function Produto() {
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [cep, setCep] = useState("");
-  const [cepResult, setCepResult] = useState<{ type: string; days: string } | null>(null);
+  const [cepResult, setCepResult] = useState<{ type: string; dateRange: string } | null>(null);
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
@@ -69,12 +69,26 @@ export default function Produto() {
     selectedVariant?.availableForSale &&
     (!hasOptions || selectedVariantIdx >= 0);
 
+  function formatDateRange(minDays: number, maxDays: number) {
+    const now = new Date();
+    const from = new Date(now);
+    from.setDate(from.getDate() + minDays);
+    const to = new Date(now);
+    to.setDate(to.getDate() + maxDays);
+    const months = ["jan.", "fev.", "mar.", "abr.", "mai.", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+    const sameMonth = from.getMonth() === to.getMonth();
+    if (sameMonth) {
+      return `${from.getDate()}–${to.getDate()} de ${months[from.getMonth()]}`;
+    }
+    return `${from.getDate()} de ${months[from.getMonth()]} – ${to.getDate()} de ${months[to.getMonth()]}`;
+  }
+
   function getShippingRegion(cepValue: string) {
     const prefix = parseInt(cepValue.substring(0, 2), 10);
-    if (prefix >= 1 && prefix <= 39) return { type: "Envio Rápido", days: "2–5 dias" };
-    if ((prefix >= 70 && prefix <= 76) || (prefix >= 78 && prefix <= 79)) return { type: "Envio Rápido", days: "2–5 dias" };
-    if (prefix >= 80 && prefix <= 99) return { type: "Envio Rápido", days: "2–5 dias" };
-    return { type: "Envio Normal", days: "4–12 dias" };
+    if (prefix >= 1 && prefix <= 39) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
+    if ((prefix >= 70 && prefix <= 76) || (prefix >= 78 && prefix <= 79)) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
+    if (prefix >= 80 && prefix <= 99) return { type: "Envio Rápido", dateRange: formatDateRange(2, 5) };
+    return { type: "Envio Normal", dateRange: formatDateRange(4, 12) };
   }
 
   function handleCepSubmit() {
@@ -677,7 +691,7 @@ export default function Produto() {
                   <Truck size={20} className="pdp__shipping-icon" />
                   {cepResult ? (
                     <div className="pdp__shipping-result">
-                      <strong>Frete Grátis</strong> · {cepResult.type}: {cepResult.days} para{" "}
+                      <strong>Frete Grátis</strong> · {cepResult.type}: Entre {cepResult.dateRange} para{" "}
                       <button className="pdp__shipping-cep-link" onClick={() => { setCepInput(formatCep(cep)); setShowCepModal(true); }}>
                         {formatCep(cep)}
                       </button>
