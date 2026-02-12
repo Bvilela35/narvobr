@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Package, Loader2, ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -28,6 +28,9 @@ export default function Produto() {
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [cep, setCep] = useState("");
+  const [cepResult, setCepResult] = useState<{ type: string; days: string } | null>(null);
+  const [showCepModal, setShowCepModal] = useState(false);
+  const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
@@ -62,11 +65,25 @@ export default function Produto() {
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
   const hasOptions = options.length > 0 && options[0].name !== "Title";
 
-  const cepValid = normalizeCep(cep).length === 8;
   const canBuy =
     selectedVariant?.availableForSale &&
-    cepValid &&
     (!hasOptions || selectedVariantIdx >= 0);
+
+  function getShippingRegion(cepValue: string) {
+    const prefix = parseInt(cepValue.substring(0, 2), 10);
+    if (prefix >= 1 && prefix <= 39) return { type: "Envio Rápido", days: "2–5 dias" };
+    if ((prefix >= 70 && prefix <= 76) || (prefix >= 78 && prefix <= 79)) return { type: "Envio Rápido", days: "2–5 dias" };
+    if (prefix >= 80 && prefix <= 99) return { type: "Envio Rápido", days: "2–5 dias" };
+    return { type: "Envio Normal", days: "4–12 dias" };
+  }
+
+  function handleCepSubmit() {
+    const digits = normalizeCep(cepInput);
+    if (digits.length !== 8) return;
+    setCep(digits);
+    setCepResult(getShippingRegion(digits));
+    setShowCepModal(false);
+  }
 
   const prevImage = () =>
     setSelectedImage((p) => (p === 0 ? totalImages - 1 : p - 1));
@@ -367,38 +384,133 @@ export default function Produto() {
             outline-offset: 2px;
           }
 
-          .pdp__cep {
+          .pdp__shipping {
             margin-top: 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
           }
 
-          .pdp__cep-icon {
+          .pdp__shipping-icon {
             flex-shrink: 0;
             color: var(--pdp-text-secondary);
+            margin-top: 1px;
           }
 
-          .pdp__cep-text {
+          .pdp__shipping-text {
             font-size: 13px;
             color: var(--pdp-text-secondary);
-            line-height: 1.4;
+            line-height: 1.5;
           }
 
-          .pdp__cep-input {
-            font-family: var(--pdp-font);
+          .pdp__shipping-link {
+            color: var(--pdp-link);
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font: inherit;
             font-size: 13px;
-            border: 1px solid var(--pdp-border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            width: 110px;
+            padding: 0;
+          }
+          .pdp__shipping-link:hover { opacity: 0.8; }
+
+          .pdp__shipping-result {
+            font-size: 13px;
+            line-height: 1.5;
+          }
+          .pdp__shipping-result strong {
+            color: #16a34a;
+            font-weight: 600;
+          }
+          .pdp__shipping-result .pdp__shipping-cep-link {
+            color: var(--pdp-text-secondary);
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font: inherit;
+            font-size: 13px;
+            padding: 0;
+          }
+
+          /* CEP Modal */
+          .pdp__cep-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+
+          .pdp__cep-modal {
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            position: relative;
+          }
+
+          .pdp__cep-modal h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 20px;
+          }
+
+          .pdp__cep-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--pdp-text-secondary);
+            padding: 4px;
+            border-radius: 50%;
+            display: flex;
+          }
+          .pdp__cep-modal-close:hover { color: var(--pdp-text); }
+
+          .pdp__cep-modal-row {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+          }
+
+          .pdp__cep-modal-input {
+            flex: 1;
+            font-family: var(--pdp-font);
+            font-size: 15px;
+            border: 1.5px solid var(--pdp-border);
+            border-radius: 10px;
+            padding: 10px 14px;
             outline: none;
             transition: border-color 0.15s;
-            margin-top: 4px;
           }
-          .pdp__cep-input:focus {
+          .pdp__cep-modal-input:focus {
             border-color: var(--pdp-border-active);
           }
+
+          .pdp__cep-modal-btn {
+            font-family: var(--pdp-font);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 1.5px solid var(--pdp-border);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            color: var(--pdp-text);
+            transition: background 0.15s;
+          }
+          .pdp__cep-modal-btn:hover { background: var(--pdp-surface); }
+          .pdp__cep-modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
           .pdp__unavailable {
             font-size: 13px;
@@ -434,7 +546,7 @@ export default function Produto() {
               box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
               padding: 16px 20px;
             }
-            .pdp__buybox .pdp__cep { display: none; }
+            .pdp__buybox .pdp__shipping { display: none; }
           }
         `}</style>
 
@@ -561,22 +673,24 @@ export default function Produto() {
                   <p className="pdp__unavailable">Esgotado</p>
                 )}
 
-                <div className="pdp__cep">
-                  <Package size={20} className="pdp__cep-icon" />
-                  <div className="pdp__cep-text">
-                    <span>Digite seu CEP para calcular entrega</span>
-                    <br />
-                    <input
-                      type="text"
-                      className="pdp__cep-input"
-                      placeholder="00000-000"
-                      value={formatCep(cep)}
-                      onChange={(e) => setCep(e.target.value)}
-                      inputMode="numeric"
-                      maxLength={9}
-                      aria-label="CEP para entrega"
-                    />
-                  </div>
+                <div className="pdp__shipping">
+                  <Truck size={20} className="pdp__shipping-icon" />
+                  {cepResult ? (
+                    <div className="pdp__shipping-result">
+                      <strong>Frete Grátis</strong> · {cepResult.type}: {cepResult.days} para{" "}
+                      <button className="pdp__shipping-cep-link" onClick={() => { setCepInput(formatCep(cep)); setShowCepModal(true); }}>
+                        {formatCep(cep)}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="pdp__shipping-text">
+                      Digite seu CEP{" "}
+                      <button className="pdp__shipping-link" onClick={() => { setCepInput(""); setShowCepModal(true); }}>
+                        aqui
+                      </button>{" "}
+                      para saber quando seu pedido chega
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -598,6 +712,39 @@ export default function Produto() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* CEP Modal */}
+      {showCepModal && (
+        <div className="pdp__cep-overlay" onClick={() => setShowCepModal(false)}>
+          <div className="pdp__cep-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="pdp__cep-modal-close" onClick={() => setShowCepModal(false)} aria-label="Fechar">
+              <X size={20} />
+            </button>
+            <h3>Digite seu CEP</h3>
+            <div className="pdp__cep-modal-row">
+              <input
+                type="text"
+                className="pdp__cep-modal-input"
+                placeholder="00000-000"
+                value={formatCep(cepInput)}
+                onChange={(e) => setCepInput(e.target.value)}
+                inputMode="numeric"
+                maxLength={9}
+                aria-label="CEP"
+                autoFocus
+                onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()}
+              />
+              <button
+                className="pdp__cep-modal-btn"
+                onClick={handleCepSubmit}
+                disabled={normalizeCep(cepInput).length !== 8}
+              >
+                Atualizar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
