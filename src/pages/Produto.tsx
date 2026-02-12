@@ -640,7 +640,7 @@ export default function Produto() {
               {/* Variant selector */}
               {hasOptions &&
               <>
-                  <hr className="pdp__divider" />
+                  
                   {options.map((option) => {
                   const isColor = option.name.toLowerCase() === 'cor';
                   return (
