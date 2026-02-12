@@ -631,7 +631,7 @@ export default function Produto() {
               </p>
 
               {description &&
-                <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px' }}>
+              <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px' }} className="py-[23px] font-medium text-xl">
                   {description}
                 </p>
               }
