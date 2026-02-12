@@ -258,7 +258,7 @@ export async function fetchCollectionByHandle(handle: string, first = 20) {
 
 const PRODUCT_RECOMMENDATIONS_QUERY = `
   query GetProductRecommendations($productId: ID!) {
-    productRecommendations(productId: $productId, intent: COMPLEMENTARY) {
+    productRecommendations(productId: $productId, intent: RELATED) {
       id
       title
       description
@@ -302,7 +302,136 @@ const PRODUCT_RECOMMENDATIONS_QUERY = `
   }
 `;
 
+const PRODUCT_METAFIELD_REFS_QUERY = `
+  query GetProductMetafieldRefs($productId: ID!) {
+    product(id: $productId) {
+      relatedProducts: metafield(namespace: "shopify--discovery--product_recommendation", key: "related_products") {
+        references(first: 10) {
+          edges {
+            node {
+              ... on Product {
+                id
+                title
+                description
+                handle
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 3) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+                options {
+                  name
+                  values
+                }
+              }
+            }
+          }
+        }
+      }
+      complementaryProducts: metafield(namespace: "shopify--discovery--product_recommendation", key: "complementary_products") {
+        references(first: 10) {
+          edges {
+            node {
+              ... on Product {
+                id
+                title
+                description
+                handle
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 3) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+                options {
+                  name
+                  values
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export async function fetchProductRecommendations(productId: string): Promise<ShopifyProduct[]> {
+  // Try metafield-based recommendations first (manually set in Shopify admin)
+  try {
+    const metaData = await storefrontApiRequest(PRODUCT_METAFIELD_REFS_QUERY, { productId });
+    const product = metaData?.data?.product;
+    const relatedEdges = product?.relatedProducts?.references?.edges || [];
+    const complementaryEdges = product?.complementaryProducts?.references?.edges || [];
+    const metafieldProducts = [...complementaryEdges, ...relatedEdges];
+    
+    if (metafieldProducts.length > 0) {
+      // Deduplicate by id
+      const seen = new Set<string>();
+      return metafieldProducts
+        .filter((e: { node: ShopifyProduct['node'] }) => {
+          if (seen.has(e.node.id)) return false;
+          seen.add(e.node.id);
+          return true;
+        })
+        .map((e: { node: ShopifyProduct['node'] }) => ({ node: e.node }));
+    }
+  } catch (err) {
+    console.warn('Metafield recommendations query failed, falling back:', err);
+  }
+
+  // Fallback to algorithmic recommendations
   const data = await storefrontApiRequest(PRODUCT_RECOMMENDATIONS_QUERY, { productId });
   const recs = data?.data?.productRecommendations || [];
   return recs.map((node: ShopifyProduct['node']) => ({ node }));
