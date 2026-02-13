@@ -1,1 +1,4 @@
 project_id = "swkzreayulbvahthaxsk"
+
+[functions.judgeme-health]
+verify_jwt = false
