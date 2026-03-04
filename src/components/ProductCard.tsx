@@ -47,10 +47,13 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               </div>
             )}
           </div>
-          <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2">
-            <h3 className="text-sm font-medium text-foreground">{title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+          <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2 space-y-1">
+            <h3 className="text-sm font-semibold text-foreground leading-snug">{title}</h3>
+            <p className="text-sm font-semibold text-foreground">
+              R$ {parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Até 10x de R$ {(parseFloat(price.amount) / 10).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
         </div>
