@@ -54,8 +54,9 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
         className="group block h-full"
         onMouseEnter={() => prefetchProduct(handle)}
       >
-        <div className="bg-card-elevated rounded-2xl overflow-hidden transition-shadow duration-300 group-hover:shadow-lg h-full flex flex-col">
-          <div className="relative w-full pt-[100%] overflow-hidden">
+        <div className="h-full flex flex-col">
+          {/* Image container with rounded corners and grey bg */}
+          <div className="relative w-full pt-[100%] overflow-hidden rounded-2xl bg-card-elevated">
             {image ? (
               <img
                 src={image.url}
@@ -69,7 +70,9 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               </div>
             )}
           </div>
-          <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2 space-y-1">
+
+          {/* Text info below the image, no card background */}
+          <div className="pt-4 pb-2 space-y-1">
             <h3 className="text-sm font-semibold text-foreground leading-snug">{title}</h3>
             <p className="text-sm font-semibold text-foreground">
               R$ {parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
