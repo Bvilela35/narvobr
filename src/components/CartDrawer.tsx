@@ -1,8 +1,15 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+
+const EMPTY_CART_SUGGESTIONS = [
+  { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
+  { label: "OutSight", href: "/colecao/narvo-outsight", icon: "💼" },
+  { label: "Acessórios", href: "/colecao/acessorios", icon: "🎨" },
+];
 
 interface CartDrawerProps {
   open: boolean;
