@@ -34,11 +34,11 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0">
-        <SheetHeader className="px-6 pt-6 pb-4 border-b border-border flex-shrink-0">
-          <SheetTitle className="text-base font-medium tracking-wide">Carrinho</SheetTitle>
-          <SheetDescription className="text-sm opacity-50">
-            {totalItems === 0 ? "Silêncio por aqui. Escolha uma peça." : `${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`}
+       <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0 rounded-l-3xl">
+        <SheetHeader className="px-8 pt-8 pb-5 border-b border-border flex-shrink-0">
+          <SheetTitle className="text-xl font-bold tracking-tight">Carrinho</SheetTitle>
+          <SheetDescription className="text-sm text-muted-foreground">
+            {totalItems === 0 ? "Nenhum item adicionado." : `${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`}
           </SheetDescription>
         </SheetHeader>
 
