@@ -61,7 +61,7 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               <img
                 src={image.url}
                 alt={image.altText || title}
-                className="absolute inset-0 w-full h-full object-contain p-4 md:p-6 transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
               />
             ) : (
