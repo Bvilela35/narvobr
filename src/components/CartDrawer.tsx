@@ -1,8 +1,15 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+
+const EMPTY_CART_SUGGESTIONS = [
+  { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
+  { label: "OutSight", href: "/colecao/narvo-outsight", icon: "💼" },
+  { label: "Acessórios", href: "/colecao/acessorios", icon: "🎨" },
+];
 
 interface CartDrawerProps {
   open: boolean;
@@ -36,10 +43,25 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
         </SheetHeader>
 
         {items.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center px-6">
-            <p className="text-sm opacity-40 text-center">
-              Silêncio por aqui.<br />Escolha uma peça.
-            </p>
+          <div className="flex-1 flex flex-col items-center justify-center px-6">
+            <h3 className="text-xl font-semibold text-foreground text-center leading-snug mb-3">
+              Seu carrinho está<br />vazio no momento.
+            </h3>
+            <p className="text-sm text-muted-foreground mb-8">Aceita algumas sugestões?</p>
+            <div className="w-full max-w-xs space-y-3">
+              {EMPTY_CART_SUGGESTIONS.map((s) => (
+                <Link
+                  key={s.href}
+                  to={s.href}
+                  onClick={() => onOpenChange(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border hover:bg-accent/50 transition-colors"
+                >
+                  <span className="text-lg">{s.icon}</span>
+                  <span className="text-sm font-medium text-foreground flex-1">{s.label}</span>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
           </div>
         ) : (
           <>
