@@ -193,9 +193,20 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               <div className="flex justify-between items-baseline">
                 <span className="text-base font-bold">Subtotal</span>
                 <div className="text-right">
-                  <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  {discountCode && discountedTotal ? (
+                    <>
+                      <span className="text-sm text-muted-foreground line-through mr-2">
+                        R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                      <span className="text-xl font-bold">
+                        R$ {parseFloat(discountedTotal) % 1 === 0 ? parseFloat(discountedTotal).toLocaleString("pt-BR") : parseFloat(discountedTotal).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  )}
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    ou até 10x de R$ {(() => { const v = totalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
+                    ou até 10x de R$ {(() => { const finalPrice = discountCode && discountedTotal ? parseFloat(discountedTotal) : totalPrice; const v = finalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
                   </p>
                 </div>
               </div>
