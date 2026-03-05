@@ -1,23 +1,26 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const FREE_SHIPPING_THRESHOLD = 399;
 const GIFT_THRESHOLD = 699;
 const GIFT_WRAP_PRICE = 9.9;
+const WARRANTY_PRICE = 39.9;
 
 export default function Carrinho() {
   const navigate = useNavigate();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
+  const [extendedWarranty, setExtendedWarranty] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
   const finalSubtotal = discountCode && discountedTotal ? parseFloat(discountedTotal) : subtotal;
   const giftExtra = giftWrap ? GIFT_WRAP_PRICE : 0;
-  const total = finalSubtotal + giftExtra;
+  const warrantyExtra = extendedWarranty ? WARRANTY_PRICE : 0;
+  const total = finalSubtotal + giftExtra + warrantyExtra;
   const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - finalSubtotal);
   const hasFreeShipping = finalSubtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingProgress = Math.min(100, (finalSubtotal / FREE_SHIPPING_THRESHOLD) * 100);
@@ -35,16 +38,13 @@ export default function Carrinho() {
           finalUrl = url.toString();
         } catch { /* keep original */ }
       }
-      if (giftWrap && giftMessage) {
+      const notes: string[] = [];
+      if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
+      if (extendedWarranty) notes.push("🛡️ Garantia estendida");
+      if (notes.length > 0) {
         try {
           const url = new URL(finalUrl);
-          url.searchParams.set("note", `🎁 Presente — Mensagem do cartão: "${giftMessage}"`);
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      } else if (giftWrap) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set("note", "🎁 Embalagem para presente");
+          url.searchParams.set("note", notes.join(" | "));
           finalUrl = url.toString();
         } catch { /* keep original */ }
       }
@@ -88,51 +88,28 @@ export default function Carrinho() {
       </h1>
 
       {/* Status blocks */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row gap-3 mb-10">
         {/* Frete block */}
-        <div className="bg-accent/60 rounded-2xl p-5 space-y-3">
-          <div className="flex items-center gap-2">
-            <Truck className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-semibold">Frete</span>
-          </div>
+        <div className="flex-1 bg-accent/50 rounded-xl px-4 py-3 flex items-center gap-3">
+          <Truck className="h-4 w-4 text-muted-foreground flex-shrink-0" />
           {hasFreeShipping ? (
-            <p className="text-sm font-semibold text-[#b6e36d]">Frete grátis desbloqueado ✓</p>
+            <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis ✓</span>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
-            </p>
+            </span>
           )}
-          <div className="h-1 w-full bg-background rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: `${shippingProgress}%`,
-                backgroundColor: hasFreeShipping ? "#b6e36d" : "hsl(var(--foreground))",
-              }}
-            />
-          </div>
         </div>
 
         {/* Brinde block */}
-        <div className="bg-accent/60 rounded-2xl p-5 space-y-3">
-          <div className="flex items-center gap-2">
-            <Gift className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-semibold">Brinde exclusivo</span>
-          </div>
+        <div className="flex-1 bg-accent/50 rounded-xl px-4 py-3 flex items-center gap-3">
+          <Gift className="h-4 w-4 text-muted-foreground flex-shrink-0" />
           {hasGift ? (
-            <p className="text-sm font-semibold text-[#b6e36d]">Presente exclusivo garantido ✓</p>
+            <span className="text-sm font-semibold text-[#b6e36d]">Brinde exclusivo garantido ✓</span>
           ) : (
-            <>
-              <p className="text-sm text-muted-foreground">
-                Faltam <span className="font-semibold text-foreground">R$ {formatPrice(giftRemaining)}</span> para ganhar um brinde exclusivo
-              </p>
-              <Link
-                to="/colecao"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:underline"
-              >
-                Ver mais vendidos <ArrowRight className="h-3 w-3" />
-              </Link>
-            </>
+            <span className="text-sm text-muted-foreground">
+              Faltam R$ {formatPrice(giftRemaining)} · <Link to="/colecao" className="underline text-foreground">ver coleção</Link>
+            </span>
           )}
         </div>
       </div>
@@ -196,29 +173,6 @@ export default function Carrinho() {
           <div className="lg:sticky lg:top-24 space-y-6">
             <h2 className="text-xl font-bold">Resumo do pedido</h2>
 
-            {/* Free shipping bar */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-muted-foreground" />
-                {hasFreeShipping ? (
-                  <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis! 🎉</span>
-                ) : (
-                  <span className="text-sm text-muted-foreground">
-                    Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
-                  </span>
-                )}
-              </div>
-              <div className="h-1.5 w-full bg-accent rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${shippingProgress}%`,
-                    backgroundColor: hasFreeShipping ? "#b6e36d" : "hsl(var(--foreground))",
-                  }}
-                />
-              </div>
-            </div>
-
             {/* Gift option */}
             <div className="border border-border rounded-2xl p-4 space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
@@ -254,6 +208,29 @@ export default function Carrinho() {
               )}
             </div>
 
+            {/* Extended warranty */}
+            <div className="border border-border rounded-2xl p-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <button
+                  onClick={() => setExtendedWarranty(!extendedWarranty)}
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors flex-shrink-0 ${
+                    extendedWarranty ? "bg-foreground border-foreground" : "border-border hover:border-foreground/50"
+                  }`}
+                >
+                  {extendedWarranty && <Check className="h-3 w-3 text-background" />}
+                </button>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">Garantia estendida</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    +12 meses de cobertura total · + R$ {formatPrice(WARRANTY_PRICE)}
+                  </p>
+                </div>
+              </label>
+            </div>
+
             {/* Price breakdown */}
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -284,12 +261,12 @@ export default function Carrinho() {
                 </div>
               )}
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Envio</span>
-                <span className={`font-semibold ${hasFreeShipping ? "text-[#b6e36d]" : ""}`}>
-                  {hasFreeShipping ? "Grátis" : "Calculado no checkout"}
-                </span>
-              </div>
+              {extendedWarranty && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Garantia estendida</span>
+                  <span className="font-semibold">R$ {formatPrice(WARRANTY_PRICE)}</span>
+                </div>
+              )}
 
               <div className="h-px bg-border" />
 
