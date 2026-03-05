@@ -553,4 +553,31 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   return { success: true };
 }
 
+const CART_DISCOUNT_CODES_UPDATE = `
+  mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+      cart { id }
+      userErrors { field message }
+    }
+  }
+`;
+
+export async function applyDiscountToCart(cartId: string, discountCode: string): Promise<{ success: boolean }> {
+  try {
+    const data = await storefrontApiRequest(CART_DISCOUNT_CODES_UPDATE, {
+      cartId,
+      discountCodes: [discountCode],
+    });
+    const userErrors = data?.data?.cartDiscountCodesUpdate?.userErrors || [];
+    if (userErrors.length > 0) {
+      console.error('Apply discount failed:', userErrors);
+      return { success: false };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to apply discount:', error);
+    return { success: false };
+  }
+}
+
 export { CART_QUERY };
