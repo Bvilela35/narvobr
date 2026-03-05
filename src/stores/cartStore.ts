@@ -97,8 +97,22 @@ export const useCartStore = create<CartStore>()(
         finally { set({ isLoading: false }); }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
+      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null }),
       getCheckoutUrl: () => get().checkoutUrl,
+
+      applyDiscount: async (code: string) => {
+        const { cartId } = get();
+        if (!cartId) {
+          // Store for later application when cart is created
+          set({ discountCode: code });
+          return true;
+        }
+        const result = await applyDiscountToCart(cartId, code);
+        if (result.success) {
+          set({ discountCode: code });
+        }
+        return result.success;
+      },
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
