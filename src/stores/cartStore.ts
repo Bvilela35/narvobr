@@ -46,6 +46,11 @@ export const useCartStore = create<CartStore>()(
             const result = await createShopifyCart({ ...item, lineId: null });
             if (result) {
               set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: [{ ...item, lineId: result.lineId }] });
+              // Auto-apply pending discount code
+              const pendingDiscount = get().discountCode;
+              if (pendingDiscount) {
+                await applyDiscountToCart(result.cartId, pendingDiscount);
+              }
             }
           } else if (existingItem) {
             const newQuantity = existingItem.quantity + item.quantity;
