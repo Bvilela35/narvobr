@@ -220,7 +220,7 @@ export default function Carrinho() {
             </div>
 
             {/* Extended warranty */}
-            <div className="bg-[#E8E5DF] rounded-2xl p-4">
+            <div className="bg-white rounded-2xl p-4">
               <div className="flex items-center gap-3 cursor-pointer" onClick={() => setExtendedWarranty(!extendedWarranty)}>
                 <div
                   className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors flex-shrink-0 ${
