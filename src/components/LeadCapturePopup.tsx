@@ -92,7 +92,7 @@ function CouponDisplay({ coupon, onApplied }: { coupon: typeof COUPONS.new; onAp
           className="p-2.5 rounded-xl border border-border hover:bg-accent transition-colors"
           aria-label="Copiar cupom"
         >
-          {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
+          {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
         </button>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
