@@ -184,8 +184,10 @@ export default function Carrinho() {
 
         {/* Summary sidebar */}
         <div className="w-full lg:w-[380px] flex-shrink-0">
-          <div className="lg:sticky lg:top-24 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
-            <h2 className="text-xl font-bold">Detalhes</h2>
+          <div className="lg:sticky lg:top-24 space-y-4">
+            {/* Add-ons block */}
+            <div className="bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Opcionais</h2>
 
             {/* Gift option */}
             <div className="bg-white rounded-2xl p-4 space-y-3">
@@ -240,6 +242,11 @@ export default function Carrinho() {
                 </div>
               </div>
             </div>
+            </div>
+
+            {/* Detalhes block */}
+            <div className="bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
+              <h2 className="text-xl font-bold">Detalhes</h2>
 
             {/* Price breakdown */}
             <div className="space-y-3 text-sm">
@@ -302,6 +309,7 @@ export default function Carrinho() {
                 <>Finalizar compra <ExternalLink className="w-4 h-4 ml-2" /></>
               )}
             </Button>
+            </div>
           </div>
         </div>
       </div>
