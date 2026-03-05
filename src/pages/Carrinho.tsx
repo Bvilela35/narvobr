@@ -87,6 +87,56 @@ export default function Carrinho() {
         </span>
       </h1>
 
+      {/* Status blocks */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+        {/* Frete block */}
+        <div className="bg-accent/60 rounded-2xl p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold">Frete</span>
+          </div>
+          {hasFreeShipping ? (
+            <p className="text-sm font-semibold text-[#b6e36d]">Frete grátis desbloqueado ✓</p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
+            </p>
+          )}
+          <div className="h-1 w-full bg-background rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${shippingProgress}%`,
+                backgroundColor: hasFreeShipping ? "#b6e36d" : "hsl(var(--foreground))",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Brinde block */}
+        <div className="bg-accent/60 rounded-2xl p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Gift className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold">Brinde exclusivo</span>
+          </div>
+          {hasGift ? (
+            <p className="text-sm font-semibold text-[#b6e36d]">Presente exclusivo garantido ✓</p>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Faltam <span className="font-semibold text-foreground">R$ {formatPrice(giftRemaining)}</span> para ganhar um brinde exclusivo
+              </p>
+              <Link
+                to="/colecao"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:underline"
+              >
+                Ver mais vendidos <ArrowRight className="h-3 w-3" />
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-14">
         {/* Items */}
         <div className="flex-1 space-y-6">
