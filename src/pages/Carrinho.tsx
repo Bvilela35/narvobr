@@ -188,18 +188,15 @@ export default function Carrinho() {
             <h2 className="text-xl font-bold">Resumo do pedido</h2>
 
             {/* Gift option */}
-            <div className="border border-border rounded-2xl p-4 space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <button
-                  onClick={() => setGiftWrap(!giftWrap)}
+            <div className="bg-[#E8E5DF] rounded-2xl p-4 space-y-3">
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setGiftWrap(!giftWrap)}>
+                <div
                   className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors flex-shrink-0 ${
-                    giftWrap
-                      ? "bg-foreground border-foreground"
-                      : "border-border hover:border-foreground/50"
+                    giftWrap ? "bg-foreground border-foreground" : "border-border hover:border-foreground/50"
                   }`}
                 >
                   {giftWrap && <Check className="h-3 w-3 text-background" />}
-                </button>
+                </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <Gift className="h-4 w-4 text-muted-foreground" />
@@ -209,7 +206,7 @@ export default function Carrinho() {
                     Inclui cartão especial com sua mensagem · + R$ {formatPrice(GIFT_WRAP_PRICE)}
                   </p>
                 </div>
-              </label>
+              </div>
               {giftWrap && (
                 <textarea
                   value={giftMessage}
@@ -223,16 +220,15 @@ export default function Carrinho() {
             </div>
 
             {/* Extended warranty */}
-            <div className="border border-border rounded-2xl p-4">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <button
-                  onClick={() => setExtendedWarranty(!extendedWarranty)}
+            <div className="bg-[#E8E5DF] rounded-2xl p-4">
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setExtendedWarranty(!extendedWarranty)}>
+                <div
                   className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors flex-shrink-0 ${
                     extendedWarranty ? "bg-foreground border-foreground" : "border-border hover:border-foreground/50"
                   }`}
                 >
                   {extendedWarranty && <Check className="h-3 w-3 text-background" />}
-                </button>
+                </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-muted-foreground" />
@@ -242,7 +238,7 @@ export default function Carrinho() {
                     +12 meses de cobertura total · + R$ {formatPrice(WARRANTY_PRICE)}
                   </p>
                 </div>
-              </label>
+              </div>
             </div>
 
             {/* Price breakdown */}
