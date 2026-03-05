@@ -566,24 +566,37 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
 const CART_DISCOUNT_CODES_UPDATE = `
   mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
     cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
-      cart { id }
+      cart { 
+        id 
+        cost {
+          totalAmount { amount currencyCode }
+          subtotalAmount { amount currencyCode }
+        }
+        discountCodes { code applicable }
+      }
       userErrors { field message }
     }
   }
 `;
 
-export async function applyDiscountToCart(cartId: string, discountCode: string): Promise<{ success: boolean }> {
+export async function applyDiscountToCart(cartId: string, discountCode: string): Promise<{ success: boolean; applicable?: boolean; totalAmount?: string; discountCodes?: Array<{ code: string; applicable: boolean }> }> {
   try {
+    const codes = discountCode ? [discountCode] : [];
     const data = await storefrontApiRequest(CART_DISCOUNT_CODES_UPDATE, {
       cartId,
-      discountCodes: [discountCode],
+      discountCodes: codes,
     });
     const userErrors = data?.data?.cartDiscountCodesUpdate?.userErrors || [];
     if (userErrors.length > 0) {
       console.error('Apply discount failed:', userErrors);
       return { success: false };
     }
-    return { success: true };
+    const cart = data?.data?.cartDiscountCodesUpdate?.cart;
+    const discountCodesResult = cart?.discountCodes || [];
+    const totalAmount = cart?.cost?.totalAmount?.amount;
+    // Check if the code was applicable
+    const applicable = discountCode ? discountCodesResult.some((dc: { code: string; applicable: boolean }) => dc.code === discountCode && dc.applicable) : true;
+    return { success: true, applicable, totalAmount, discountCodes: discountCodesResult };
   } catch (error) {
     console.error('Failed to apply discount:', error);
     return { success: false };
