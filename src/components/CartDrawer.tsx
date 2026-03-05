@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -26,8 +26,20 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const [couponOpen, setCouponOpen] = useState(false);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState("");
+  const [couponJustApplied, setCouponJustApplied] = useState(false);
+  const prevDiscountCode = useRef(discountCode);
 
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
+
+  // Animate badge when discount code changes from null to a value
+  useEffect(() => {
+    if (discountCode && !prevDiscountCode.current) {
+      setCouponJustApplied(true);
+      const timer = setTimeout(() => setCouponJustApplied(false), 1500);
+      return () => clearTimeout(timer);
+    }
+    prevDiscountCode.current = discountCode;
+  }, [discountCode]);
 
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
@@ -149,10 +161,13 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-4">
               {/* Applied coupon badge */}
               {discountCode && (
-                <div className="flex items-center justify-between bg-accent/50 px-4 py-2.5 rounded-xl border border-border">
+                <div className={`flex items-center justify-between px-4 py-2.5 rounded-xl border transition-all duration-500 ${couponJustApplied ? "bg-primary/10 border-primary/30 scale-[1.02] shadow-[0_0_12px_hsl(var(--primary)/0.15)]" : "bg-accent/50 border-border"}`}>
                   <div className="flex items-center gap-2">
-                    <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Tag className={`h-3.5 w-3.5 transition-colors duration-500 ${couponJustApplied ? "text-primary" : "text-muted-foreground"}`} />
                     <span className="text-sm font-semibold tracking-wide font-mono">{discountCode}</span>
+                    {couponJustApplied && (
+                      <span className="text-[10px] text-primary font-medium animate-fade-in">Aplicado ✓</span>
+                    )}
                   </div>
                   <button
                     onClick={handleRemoveCoupon}
