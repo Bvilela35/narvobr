@@ -185,7 +185,7 @@ export default function Carrinho() {
         {/* Summary sidebar */}
         <div className="w-full lg:w-[380px] flex-shrink-0">
           <div className="lg:sticky lg:top-24 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
-            <h2 className="text-xl font-bold">Resumo do pedido</h2>
+            <h2 className="text-xl font-bold">Detalhes</h2>
 
             {/* Gift option */}
             <div className="bg-white rounded-2xl p-4 space-y-3">
@@ -281,7 +281,7 @@ export default function Carrinho() {
               <div className="h-px bg-border" />
 
               <div className="flex justify-between items-baseline">
-                <span className="text-base font-bold">Total estimado</span>
+                <span className="text-base font-bold">Total</span>
                 <div className="text-right">
                   <span className="text-xl font-bold">R$ {formatPrice(total)}</span>
                   <p className="text-xs text-muted-foreground mt-0.5">
