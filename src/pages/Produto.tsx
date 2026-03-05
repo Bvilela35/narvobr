@@ -99,37 +99,7 @@ export default function Produto() {
 
   }
 
-  const { title, description, images, variants, options, seo, handle: productHandle } = product.node;
-
-  // SEO: inherit meta title, description and canonical from Shopify
-  useEffect(() => {
-    const seoTitle = seo?.title || title;
-    document.title = seoTitle;
-
-    const seoDesc = seo?.description || description || "";
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.setAttribute("name", "description");
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute("content", seoDesc);
-
-    // Canonical based on handle (slug)
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", `${window.location.origin}/produto/${productHandle}`);
-
-    return () => {
-      document.title = "Narvo";
-      metaDesc?.setAttribute("content", "");
-      canonical?.setAttribute("href", window.location.origin);
-    };
-  }, [seo, title, description, productHandle]);
+  const { title, description, images, variants, options } = product.node;
   const imgs = images.edges;
   const totalImages = imgs.length;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
