@@ -81,13 +81,19 @@ export const useCartStore = create<CartStore>()(
         const { items, cartId, clearCart } = get();
         const item = items.find(i => i.variantId === variantId);
         if (!item?.lineId || !cartId) return;
-        set({ isLoading: true });
+        const previousItems = [...items];
+        // Optimistic update — UI reflects immediately
+        set({ items: items.map(i => i.variantId === variantId ? { ...i, quantity } : i), isLoading: true });
         try {
           const result = await updateShopifyCartLine(cartId, item.lineId, quantity);
-          if (result.success) {
-            set({ items: get().items.map(i => i.variantId === variantId ? { ...i, quantity } : i) });
-          } else if (result.cartNotFound) clearCart();
-        } catch (error) { console.error('Failed to update:', error); }
+          if (!result.success) {
+            if (result.cartNotFound) clearCart();
+            else set({ items: previousItems }); // Revert on failure
+          }
+        } catch (error) {
+          console.error('Failed to update:', error);
+          set({ items: previousItems }); // Revert on error
+        }
         finally { set({ isLoading: false }); }
       },
 
