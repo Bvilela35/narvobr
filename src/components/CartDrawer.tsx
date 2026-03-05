@@ -170,9 +170,9 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                         type="text"
                         placeholder="Código do cupom"
                         value={couponInput}
-                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(""); }}
                         onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-                        className="flex-1 h-10 px-4 rounded-xl border border-border bg-card text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all uppercase tracking-wider"
+                        className={`flex-1 h-10 px-4 rounded-xl border bg-card text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all uppercase tracking-wider ${couponError ? "border-destructive" : "border-border"}`}
                         disabled={applyingCoupon}
                       />
                       <button
@@ -183,6 +183,9 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                         {applyingCoupon ? <Loader2 className="h-4 w-4 animate-spin" /> : "Aplicar"}
                       </button>
                     </div>
+                    {couponError && (
+                      <p className="text-xs text-destructive mt-1.5">{couponError}</p>
+                    )}
                   </CollapsibleContent>
                 </Collapsible>
               )}
