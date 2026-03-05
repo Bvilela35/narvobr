@@ -50,7 +50,10 @@ export const useCartStore = create<CartStore>()(
               // Auto-apply pending discount code
               const pendingDiscount = get().discountCode;
               if (pendingDiscount) {
-                await applyDiscountToCart(result.cartId, pendingDiscount);
+                const discountResult = await applyDiscountToCart(result.cartId, pendingDiscount);
+                if (discountResult.success && discountResult.applicable) {
+                  set({ discountedTotal: discountResult.totalAmount || null });
+                }
               }
             }
           } else if (existingItem) {
