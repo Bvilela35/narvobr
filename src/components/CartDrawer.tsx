@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight, Tag, ChevronDown, X } from "lucide-react";
@@ -18,6 +18,7 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
+  const navigate = useNavigate();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, discountCode, discountedTotal, applyDiscount } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
@@ -42,19 +43,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   }, [discountCode]);
 
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      let finalUrl = checkoutUrl;
-      if (discountCode) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set('discount', discountCode);
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      }
-      window.open(finalUrl, '_blank');
-      onOpenChange(false);
-    }
+    onOpenChange(false);
+    navigate("/carrinho");
   };
 
   const handleApplyCoupon = async () => {

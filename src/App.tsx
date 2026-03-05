@@ -19,6 +19,7 @@ const Suporte = lazy(() => import("./pages/Suporte"));
 const Trocas = lazy(() => import("./pages/Trocas"));
 const Envio = lazy(() => import("./pages/Envio"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
+const Carrinho = lazy(() => import("./pages/Carrinho"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ function AppContent() {
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/colecao" element={<Colecao />} />
           <Route path="/colecao/:handle" element={<ColecaoHandle />} />
           <Route path="/produto/essss" element={<ProdutoEssss />} />
