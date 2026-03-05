@@ -19,7 +19,8 @@ export default function Carrinho() {
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
   const finalSubtotal = discountCode && discountedTotal ? parseFloat(discountedTotal) : subtotal;
   const giftExtra = giftWrap ? GIFT_WRAP_PRICE : 0;
-  const total = finalSubtotal + giftExtra;
+  const warrantyExtra = extendedWarranty ? WARRANTY_PRICE : 0;
+  const total = finalSubtotal + giftExtra + warrantyExtra;
   const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - finalSubtotal);
   const hasFreeShipping = finalSubtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingProgress = Math.min(100, (finalSubtotal / FREE_SHIPPING_THRESHOLD) * 100);
