@@ -243,6 +243,10 @@ export default function Carrinho() {
               </div>
             </div>
 
+            {/* Detalhes block */}
+            <div className="bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
+              <h2 className="text-xl font-bold">Detalhes</h2>
+
             {/* Price breakdown */}
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
