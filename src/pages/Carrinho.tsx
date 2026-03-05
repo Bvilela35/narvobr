@@ -90,26 +90,40 @@ export default function Carrinho() {
       {/* Status blocks */}
       <div className="flex flex-col sm:flex-row gap-3 mb-10">
         {/* Frete block */}
-        <div className="flex-1 bg-accent/50 rounded-xl px-4 py-3 flex items-center gap-3">
-          <Truck className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          {hasFreeShipping ? (
-            <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis ✓</span>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
-            </span>
+        <div className="flex-1 bg-[#E8E5DF] rounded-xl px-4 py-3 space-y-1">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            {hasFreeShipping ? (
+              <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis desbloqueado ✓</span>
+            ) : (
+              <span className="text-sm text-muted-foreground">
+                Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
+              </span>
+            )}
+          </div>
+          {!hasFreeShipping && (
+            <Link to="/colecao" className="text-xs text-foreground underline">
+              Explorar a coleção
+            </Link>
           )}
         </div>
 
         {/* Brinde block */}
-        <div className="flex-1 bg-accent/50 rounded-xl px-4 py-3 flex items-center gap-3">
-          <Gift className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          {hasGift ? (
-            <span className="text-sm font-semibold text-[#b6e36d]">Brinde exclusivo garantido ✓</span>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              Faltam R$ {formatPrice(giftRemaining)} · <Link to="/colecao" className="underline text-foreground">ver coleção</Link>
-            </span>
+        <div className="flex-1 bg-[#E8E5DF] rounded-xl px-4 py-3 space-y-1">
+          <div className="flex items-center gap-2">
+            <Gift className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            {hasGift ? (
+              <span className="text-sm font-semibold text-[#b6e36d]">Brinde exclusivo Narvo garantido ✓</span>
+            ) : (
+              <span className="text-sm text-muted-foreground">
+                Desbloqueie com mais <span className="font-semibold text-foreground">R$ {formatPrice(giftRemaining)}</span> o brinde exclusivo Narvo
+              </span>
+            )}
+          </div>
+          {!hasGift && (
+            <Link to="/colecao" className="text-xs text-foreground underline">
+              Ver mais vendidos
+            </Link>
           )}
         </div>
       </div>
