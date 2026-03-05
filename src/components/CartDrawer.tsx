@@ -29,6 +29,16 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
+  // Animate badge when discount code changes from null to a value
+  useEffect(() => {
+    if (discountCode && !prevDiscountCode.current) {
+      setCouponJustApplied(true);
+      const timer = setTimeout(() => setCouponJustApplied(false), 1500);
+      return () => clearTimeout(timer);
+    }
+    prevDiscountCode.current = discountCode;
+  }, [discountCode]);
+
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
