@@ -36,6 +36,19 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
     }
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setApplyingCoupon(true);
+    await applyDiscount(couponInput.trim().toUpperCase());
+    setCouponInput("");
+    setCouponOpen(false);
+    setApplyingCoupon(false);
+  };
+
+  const handleRemoveCoupon = async () => {
+    await applyDiscount("");
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
        <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0 rounded-l-3xl">
