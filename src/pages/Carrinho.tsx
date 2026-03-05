@@ -130,7 +130,7 @@ export default function Carrinho() {
 
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-14">
         {/* Items */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
           {items.map((item) => (
             <div key={item.variantId} className="flex gap-5 pb-6 border-b border-border last:border-0">
               <Link
@@ -184,7 +184,7 @@ export default function Carrinho() {
 
         {/* Summary sidebar */}
         <div className="w-full lg:w-[380px] flex-shrink-0">
-          <div className="lg:sticky lg:top-24 space-y-6">
+          <div className="lg:sticky lg:top-24 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
             <h2 className="text-xl font-bold">Resumo do pedido</h2>
 
             {/* Gift option */}
