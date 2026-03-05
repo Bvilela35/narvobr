@@ -242,6 +242,7 @@ export default function Carrinho() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Detalhes block */}
             <div className="bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
