@@ -281,7 +281,7 @@ export default function Carrinho() {
               <div className="h-px bg-border" />
 
               <div className="flex justify-between items-baseline">
-                <span className="text-base font-bold">Total estimado</span>
+                <span className="text-base font-bold">Total</span>
                 <div className="text-right">
                   <span className="text-xl font-bold">R$ {formatPrice(total)}</span>
                   <p className="text-xs text-muted-foreground mt-0.5">
