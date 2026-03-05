@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight, Tag, ChevronDown, X } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const EMPTY_CART_SUGGESTIONS = [
   { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
@@ -17,10 +18,13 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, discountCode, applyDiscount } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const currency = items[0]?.price.currencyCode || 'BRL';
+  const [couponInput, setCouponInput] = useState("");
+  const [couponOpen, setCouponOpen] = useState(false);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
@@ -30,6 +34,19 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
       window.open(checkoutUrl, '_blank');
       onOpenChange(false);
     }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setApplyingCoupon(true);
+    await applyDiscount(couponInput.trim().toUpperCase());
+    setCouponInput("");
+    setCouponOpen(false);
+    setApplyingCoupon(false);
+  };
+
+  const handleRemoveCoupon = async () => {
+    await applyDiscount("");
   };
 
   return (
@@ -113,7 +130,55 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               </div>
             </div>
 
-            <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-3">
+            <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-4">
+              {/* Applied coupon badge */}
+              {discountCode && (
+                <div className="flex items-center justify-between bg-accent/50 px-4 py-2.5 rounded-xl border border-border">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-sm font-semibold tracking-wide font-mono">{discountCode}</span>
+                  </div>
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className="p-1 rounded-full hover:bg-background transition-colors"
+                    aria-label="Remover cupom"
+                  >
+                    <X className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                </div>
+              )}
+
+              {/* Discrete coupon input */}
+              {!discountCode && (
+                <Collapsible open={couponOpen} onOpenChange={setCouponOpen}>
+                  <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <Tag className="h-3 w-3" />
+                    <span>Adicionar cupom</span>
+                    <ChevronDown className={`h-3 w-3 transition-transform ${couponOpen ? "rotate-180" : ""}`} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Código do cupom"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                        className="flex-1 h-10 px-4 rounded-xl border border-border bg-card text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all uppercase tracking-wider"
+                        disabled={applyingCoupon}
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={applyingCoupon || !couponInput.trim()}
+                        className="h-10 px-4 rounded-xl bg-foreground text-background text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
+                      >
+                        {applyingCoupon ? <Loader2 className="h-4 w-4 animate-spin" /> : "Aplicar"}
+                      </button>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
               <div className="flex justify-between items-baseline">
                 <span className="text-base font-bold">Subtotal</span>
                 <div className="text-right">
