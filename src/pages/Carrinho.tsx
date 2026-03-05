@@ -14,6 +14,7 @@ export default function Carrinho() {
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
+  const [extendedWarranty, setExtendedWarranty] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
   const finalSubtotal = discountCode && discountedTotal ? parseFloat(discountedTotal) : subtotal;
