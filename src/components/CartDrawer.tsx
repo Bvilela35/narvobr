@@ -113,14 +113,19 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               </div>
             </div>
 
-            <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-base text-muted-foreground font-medium">Total</span>
-                <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-3">
+              <div className="flex justify-between items-baseline">
+                <span className="text-base font-bold">Subtotal</span>
+                <div className="text-right">
+                  <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    ou até 10x de R$ {(() => { const v = totalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
+                  </p>
+                </div>
               </div>
               <Button
                 onClick={handleCheckout}
-                className="w-full h-14 rounded-2xl text-base font-semibold tracking-wide"
+                className="w-full h-14 rounded-2xl text-base font-semibold tracking-wide bg-[#0f3d2e] hover:bg-[#0d3326] text-white"
                 disabled={items.length === 0 || isLoading || isSyncing}
               >
                 {isLoading || isSyncing ? (
