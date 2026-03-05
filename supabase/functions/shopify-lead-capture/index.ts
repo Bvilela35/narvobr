@@ -22,7 +22,6 @@ Deno.serve(async (req) => {
     }
 
     const shopifyToken = Deno.env.get("SHOPIFY_ACCESS_TOKEN");
-    console.log("Token prefix:", shopifyToken?.substring(0, 10), "length:", shopifyToken?.length);
     if (!shopifyToken) {
       throw new Error("SHOPIFY_ACCESS_TOKEN not configured");
     }
