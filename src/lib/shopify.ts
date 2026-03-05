@@ -139,6 +139,10 @@ const PRODUCT_BY_HANDLE_QUERY = `
       title
       description
       handle
+      seo {
+        title
+        description
+      }
       priceRange {
         minVariantPrice {
           amount
