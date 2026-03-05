@@ -21,6 +21,8 @@ export default function Carrinho() {
   const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - finalSubtotal);
   const hasFreeShipping = finalSubtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingProgress = Math.min(100, (finalSubtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const giftRemaining = Math.max(0, GIFT_THRESHOLD - finalSubtotal);
+  const hasGift = finalSubtotal >= GIFT_THRESHOLD;
 
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
