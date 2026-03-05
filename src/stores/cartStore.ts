@@ -110,14 +110,25 @@ export const useCartStore = create<CartStore>()(
         const { cartId } = get();
         if (!cartId) {
           // Store for later application when cart is created
-          set({ discountCode: code });
-          return true;
+          if (code) set({ discountCode: code });
+          return { success: true, applicable: true };
         }
         const result = await applyDiscountToCart(cartId, code);
         if (result.success) {
-          set({ discountCode: code });
+          if (!code) {
+            // Removing discount
+            set({ discountCode: null, discountedTotal: null });
+            return { success: true, applicable: true };
+          }
+          if (result.applicable) {
+            set({ discountCode: code, discountedTotal: result.totalAmount || null });
+          } else {
+            // Code not applicable — remove it from cart
+            await applyDiscountToCart(cartId, "");
+            return { success: true, applicable: false };
+          }
         }
-        return result.success;
+        return { success: result.success, applicable: result.applicable };
       },
 
       syncCart: async () => {
