@@ -184,8 +184,10 @@ export default function Carrinho() {
 
         {/* Summary sidebar */}
         <div className="w-full lg:w-[380px] flex-shrink-0">
-          <div className="lg:sticky lg:top-24 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
-            <h2 className="text-xl font-bold">Detalhes</h2>
+          <div className="lg:sticky lg:top-24 space-y-4">
+            {/* Add-ons block */}
+            <div className="bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-4">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Opcionais</h2>
 
             {/* Gift option */}
             <div className="bg-white rounded-2xl p-4 space-y-3">
