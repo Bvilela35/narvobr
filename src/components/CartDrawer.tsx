@@ -39,10 +39,17 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) return;
+    setCouponError("");
     setApplyingCoupon(true);
-    await applyDiscount(couponInput.trim().toUpperCase());
-    setCouponInput("");
-    setCouponOpen(false);
+    const result = await applyDiscount(couponInput.trim().toUpperCase());
+    if (result.success && result.applicable) {
+      setCouponInput("");
+      setCouponOpen(false);
+    } else if (result.success && !result.applicable) {
+      setCouponError("Cupom não encontrado ou inválido.");
+    } else {
+      setCouponError("Erro ao aplicar cupom. Tente novamente.");
+    }
     setApplyingCoupon(false);
   };
 
