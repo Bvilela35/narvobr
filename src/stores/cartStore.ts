@@ -8,6 +8,7 @@ import {
   removeLineFromShopifyCart,
   storefrontApiRequest,
   CART_QUERY,
+  applyDiscountToCart,
 } from '@/lib/shopify';
 
 interface CartStore {
