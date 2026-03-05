@@ -37,7 +37,7 @@ export const useCartStore = create<CartStore>()(
       isLoading: false,
       isSyncing: false,
       discountCode: null,
-
+      discountedTotal: null,
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
         const existingItem = items.find(i => i.variantId === item.variantId);
