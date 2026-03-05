@@ -20,6 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 pt-16">{children}</main>
       <WhatsAppBanner />
       <Footer />
+      <LeadCapturePopup />
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </div>
   );
