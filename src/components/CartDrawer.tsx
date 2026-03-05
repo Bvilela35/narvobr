@@ -26,6 +26,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const [couponOpen, setCouponOpen] = useState(false);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState("");
+  const [couponJustApplied, setCouponJustApplied] = useState(false);
+  const prevDiscountCode = useRef(discountCode);
 
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
