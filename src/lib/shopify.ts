@@ -437,7 +437,17 @@ export async function fetchProductRecommendations(productId: string): Promise<Sh
   return recs.map((node: ShopifyProduct['node']) => ({ node }));
 }
 
-const CART_QUERY = `query cart($id: ID!) { cart(id: $id) { id totalQuantity } }`;
+const CART_QUERY = `query cart($id: ID!) { 
+  cart(id: $id) { 
+    id 
+    totalQuantity 
+    cost {
+      totalAmount { amount currencyCode }
+      subtotalAmount { amount currencyCode }
+    }
+    discountCodes { code applicable }
+  } 
+}`;
 
 const CART_CREATE_MUTATION = `
   mutation cartCreate($input: CartInput!) {
