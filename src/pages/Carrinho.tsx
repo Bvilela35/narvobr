@@ -90,9 +90,9 @@ export default function Carrinho() {
       {/* Status blocks */}
       <div className="flex flex-col sm:flex-row gap-3 mb-10">
         {/* Frete block */}
-        <div className="flex-1 bg-[#E8E5DF] rounded-xl px-4 py-3 space-y-1">
+        <div className="flex-1 border border-border rounded-xl px-4 py-3 space-y-1">
           <div className="flex items-center gap-2">
-            <Truck className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <Truck className="h-4 w-4 text-[#0f3d2e] flex-shrink-0" />
             {hasFreeShipping ? (
               <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis desbloqueado ✓</span>
             ) : (
@@ -102,16 +102,16 @@ export default function Carrinho() {
             )}
           </div>
           {!hasFreeShipping && (
-            <Link to="/colecao" className="text-xs text-foreground underline">
+            <Link to="/colecao" className="text-xs text-[#0f3d2e] underline">
               Explorar a coleção
             </Link>
           )}
         </div>
 
         {/* Brinde block */}
-        <div className="flex-1 bg-[#E8E5DF] rounded-xl px-4 py-3 space-y-1">
+        <div className="flex-1 border border-border rounded-xl px-4 py-3 space-y-1">
           <div className="flex items-center gap-2">
-            <Gift className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <Gift className="h-4 w-4 text-[#0f3d2e] flex-shrink-0" />
             {hasGift ? (
               <span className="text-sm font-semibold text-[#b6e36d]">Brinde exclusivo Narvo garantido ✓</span>
             ) : (
@@ -121,7 +121,7 @@ export default function Carrinho() {
             )}
           </div>
           {!hasGift && (
-            <Link to="/colecao" className="text-xs text-foreground underline">
+            <Link to="/colecao" className="text-xs text-[#0f3d2e] underline">
               Ver mais vendidos
             </Link>
           )}
