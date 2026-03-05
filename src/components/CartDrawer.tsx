@@ -32,7 +32,15 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+      let finalUrl = checkoutUrl;
+      if (discountCode) {
+        try {
+          const url = new URL(finalUrl);
+          url.searchParams.set('discount', discountCode);
+          finalUrl = url.toString();
+        } catch { /* keep original */ }
+      }
+      window.open(finalUrl, '_blank');
       onOpenChange(false);
     }
   };
