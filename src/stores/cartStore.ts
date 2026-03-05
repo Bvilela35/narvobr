@@ -8,6 +8,7 @@ import {
   removeLineFromShopifyCart,
   storefrontApiRequest,
   CART_QUERY,
+  applyDiscountToCart,
 } from '@/lib/shopify';
 
 interface CartStore {
@@ -16,12 +17,14 @@ interface CartStore {
   checkoutUrl: string | null;
   isLoading: boolean;
   isSyncing: boolean;
+  discountCode: string | null;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
+  applyDiscount: (code: string) => Promise<boolean>;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -32,6 +35,7 @@ export const useCartStore = create<CartStore>()(
       checkoutUrl: null,
       isLoading: false,
       isSyncing: false,
+      discountCode: null,
 
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
@@ -42,6 +46,11 @@ export const useCartStore = create<CartStore>()(
             const result = await createShopifyCart({ ...item, lineId: null });
             if (result) {
               set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: [{ ...item, lineId: result.lineId }] });
+              // Auto-apply pending discount code
+              const pendingDiscount = get().discountCode;
+              if (pendingDiscount) {
+                await applyDiscountToCart(result.cartId, pendingDiscount);
+              }
             }
           } else if (existingItem) {
             const newQuantity = existingItem.quantity + item.quantity;
@@ -93,8 +102,22 @@ export const useCartStore = create<CartStore>()(
         finally { set({ isLoading: false }); }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
+      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null }),
       getCheckoutUrl: () => get().checkoutUrl,
+
+      applyDiscount: async (code: string) => {
+        const { cartId } = get();
+        if (!cartId) {
+          // Store for later application when cart is created
+          set({ discountCode: code });
+          return true;
+        }
+        const result = await applyDiscountToCart(cartId, code);
+        if (result.success) {
+          set({ discountCode: code });
+        }
+        return result.success;
+      },
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
@@ -112,7 +135,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'narvo-cart',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl }),
+      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl, discountCode: state.discountCode }),
     }
   )
 );
