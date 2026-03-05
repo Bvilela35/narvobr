@@ -50,6 +50,37 @@ export default function Produto() {
     }
   }, [location.state]);
 
+  // SEO: inherit meta title, description and canonical from Shopify
+  useEffect(() => {
+    if (!product) return;
+    const { title, description, seo, handle: productHandle } = product.node;
+    const seoTitle = seo?.title || title;
+    document.title = seoTitle;
+
+    const seoDesc = seo?.description || description || "";
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", seoDesc);
+
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", `${window.location.origin}/produto/${productHandle}`);
+
+    return () => {
+      document.title = "Narvo";
+      metaDesc?.setAttribute("content", "");
+      canonical?.setAttribute("href", window.location.origin);
+    };
+  }, [product]);
+
   const related = allProducts.filter((p) => p.node.handle !== handle).slice(0, 4);
 
   if (loadingProduct) {
