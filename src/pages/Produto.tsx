@@ -74,10 +74,44 @@ export default function Produto() {
     }
     canonical.setAttribute("href", `${window.location.origin}/produto/${productHandle}`);
 
+    // JSON-LD Product structured data
+    const { images, variants, priceRange } = product.node;
+    const image = images.edges[0]?.node?.url;
+    const price = priceRange.minVariantPrice.amount;
+    const currency = priceRange.minVariantPrice.currencyCode || "BRL";
+    const available = variants.edges.some(v => v.node.availableForSale);
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: seoTitle,
+      description: seoDesc,
+      image: image || undefined,
+      url: `${window.location.origin}/produto/${productHandle}`,
+      brand: { "@type": "Brand", name: "Narvo" },
+      offers: {
+        "@type": "Offer",
+        price,
+        priceCurrency: currency,
+        availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        url: `${window.location.origin}/produto/${productHandle}`,
+      },
+    };
+
+    let scriptTag = document.querySelector('script[data-narvo-jsonld]') as HTMLScriptElement | null;
+    if (!scriptTag) {
+      scriptTag = document.createElement("script");
+      scriptTag.setAttribute("type", "application/ld+json");
+      scriptTag.setAttribute("data-narvo-jsonld", "true");
+      document.head.appendChild(scriptTag);
+    }
+    scriptTag.textContent = JSON.stringify(jsonLd);
+
     return () => {
       document.title = "Narvo";
       metaDesc?.setAttribute("content", "");
       canonical?.setAttribute("href", window.location.origin);
+      scriptTag?.remove();
     };
   }, [product]);
 
