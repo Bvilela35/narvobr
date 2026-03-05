@@ -174,20 +174,15 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             <div className="flex-shrink-0 px-8 py-6 border-t border-border space-y-4">
               {/* Applied coupon badge */}
               {discountCode && (
-                <div className={`flex items-center justify-between px-4 py-2.5 rounded-xl border transition-all duration-500 ${couponJustApplied ? "bg-primary/10 border-primary/30 scale-[1.02] shadow-[0_0_12px_hsl(var(--primary)/0.15)]" : "bg-accent/50 border-border"}`}>
-                  <div className="flex items-center gap-2">
-                    <Tag className={`h-3.5 w-3.5 transition-colors duration-500 ${couponJustApplied ? "text-primary" : "text-muted-foreground"}`} />
-                    <span className="text-sm font-semibold tracking-wide font-mono">{discountCode}</span>
-                    {couponJustApplied && (
-                      <span className="text-[10px] text-primary font-medium animate-fade-in">Aplicado ✓</span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Tag className="h-3.5 w-3.5 text-[#b6e36d]" />
+                  <span className="text-sm font-semibold tracking-wide font-mono text-[#b6e36d]">{discountCode}</span>
                   <button
                     onClick={handleRemoveCoupon}
-                    className="p-1 rounded-full hover:bg-background transition-colors"
+                    className="p-0.5 hover:opacity-70 transition-opacity"
                     aria-label="Remover cupom"
                   >
-                    <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    <X className="h-3 w-3 text-muted-foreground" />
                   </button>
                 </div>
               )}
