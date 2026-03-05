@@ -81,7 +81,7 @@ export default function Carrinho() {
       </button>
 
       <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-10">
-        Carrinho
+        Resumo
         <span className="text-lg font-semibold text-muted-foreground ml-2">
           ({items.reduce((s, i) => s + i.quantity, 0)} {items.reduce((s, i) => s + i.quantity, 0) === 1 ? "item" : "itens"})
         </span>
