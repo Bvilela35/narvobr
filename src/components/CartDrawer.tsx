@@ -117,7 +117,11 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               <div className="space-y-6">
                 {items.map((item) => (
                   <div key={item.variantId} className="flex gap-4">
-                    <div className="w-24 h-24 bg-accent rounded-2xl overflow-hidden flex-shrink-0">
+                    <Link
+                      to={`/produto/${item.product.node.handle}`}
+                      onClick={() => onOpenChange(false)}
+                      className="w-24 h-24 bg-accent rounded-2xl overflow-hidden flex-shrink-0"
+                    >
                       {item.product.node.images?.edges?.[0]?.node && (
                         <img
                           src={item.product.node.images.edges[0].node.url}
@@ -125,9 +129,15 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                           className="w-full h-full object-cover"
                         />
                       )}
-                    </div>
+                    </Link>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-semibold truncate">{item.product.node.title}</h4>
+                      <Link
+                        to={`/produto/${item.product.node.handle}`}
+                        onClick={() => onOpenChange(false)}
+                        className="text-base font-semibold truncate block hover:underline"
+                      >
+                        {item.product.node.title}
+                      </Link>
                       {item.variantTitle !== "Default Title" && (
                         <p className="text-xs text-muted-foreground mt-0.5">{item.variantTitle}</p>
                       )}
