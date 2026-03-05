@@ -79,7 +79,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-       <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0 rounded-l-3xl">
+       <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0 sm:rounded-l-3xl rounded-none">
         <SheetHeader className="px-8 pt-8 pb-5 border-b border-border flex-shrink-0">
           <SheetTitle className="text-3xl font-bold tracking-tight flex items-start gap-0">
             Carrinho
