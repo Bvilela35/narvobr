@@ -81,10 +81,13 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
        <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background p-0 rounded-l-3xl">
         <SheetHeader className="px-8 pt-8 pb-5 border-b border-border flex-shrink-0">
-          <SheetTitle className="text-xl font-bold tracking-tight">Carrinho</SheetTitle>
-          <SheetDescription className="text-sm text-muted-foreground">
-            {totalItems === 0 ? "Nenhum item adicionado." : `${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`}
-          </SheetDescription>
+          <SheetTitle className="text-3xl font-bold tracking-tight flex items-start gap-0">
+            Carrinho
+            {totalItems > 0 && (
+              <span className="text-sm font-semibold text-muted-foreground -mt-0.5 ml-0.5">{totalItems}</span>
+            )}
+          </SheetTitle>
+          <SheetDescription className="sr-only">Seu carrinho de compras</SheetDescription>
         </SheetHeader>
 
         {items.length === 0 ? (
