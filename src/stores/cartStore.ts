@@ -103,7 +103,7 @@ export const useCartStore = create<CartStore>()(
         finally { set({ isLoading: false }); }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null }),
+      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null, discountedTotal: null }),
       getCheckoutUrl: () => get().checkoutUrl,
 
       applyDiscount: async (code: string) => {
