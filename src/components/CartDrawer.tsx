@@ -18,13 +18,14 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, discountCode, applyDiscount } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, discountCode, discountedTotal, applyDiscount } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const currency = items[0]?.price.currencyCode || 'BRL';
   const [couponInput, setCouponInput] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState("");
 
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
@@ -38,10 +39,17 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) return;
+    setCouponError("");
     setApplyingCoupon(true);
-    await applyDiscount(couponInput.trim().toUpperCase());
-    setCouponInput("");
-    setCouponOpen(false);
+    const result = await applyDiscount(couponInput.trim().toUpperCase());
+    if (result.success && result.applicable) {
+      setCouponInput("");
+      setCouponOpen(false);
+    } else if (result.success && !result.applicable) {
+      setCouponError("Cupom não encontrado ou inválido.");
+    } else {
+      setCouponError("Erro ao aplicar cupom. Tente novamente.");
+    }
     setApplyingCoupon(false);
   };
 
@@ -162,9 +170,9 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                         type="text"
                         placeholder="Código do cupom"
                         value={couponInput}
-                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(""); }}
                         onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-                        className="flex-1 h-10 px-4 rounded-xl border border-border bg-card text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all uppercase tracking-wider"
+                        className={`flex-1 h-10 px-4 rounded-xl border bg-card text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all uppercase tracking-wider ${couponError ? "border-destructive" : "border-border"}`}
                         disabled={applyingCoupon}
                       />
                       <button
@@ -175,6 +183,9 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                         {applyingCoupon ? <Loader2 className="h-4 w-4 animate-spin" /> : "Aplicar"}
                       </button>
                     </div>
+                    {couponError && (
+                      <p className="text-xs text-destructive mt-1.5">{couponError}</p>
+                    )}
                   </CollapsibleContent>
                 </Collapsible>
               )}
@@ -182,9 +193,20 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               <div className="flex justify-between items-baseline">
                 <span className="text-base font-bold">Subtotal</span>
                 <div className="text-right">
-                  <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  {discountCode && discountedTotal ? (
+                    <>
+                      <span className="text-sm text-muted-foreground line-through mr-2">
+                        R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                      <span className="text-xl font-bold">
+                        R$ {parseFloat(discountedTotal) % 1 === 0 ? parseFloat(discountedTotal).toLocaleString("pt-BR") : parseFloat(discountedTotal).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  )}
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    ou até 10x de R$ {(() => { const v = totalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
+                    ou até 10x de R$ {(() => { const finalPrice = discountCode && discountedTotal ? parseFloat(discountedTotal) : totalPrice; const v = finalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
                   </p>
                 </div>
               </div>

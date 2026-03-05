@@ -18,13 +18,14 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   discountCode: string | null;
+  discountedTotal: string | null;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
-  applyDiscount: (code: string) => Promise<boolean>;
+  applyDiscount: (code: string) => Promise<{ success: boolean; applicable?: boolean }>;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -36,7 +37,7 @@ export const useCartStore = create<CartStore>()(
       isLoading: false,
       isSyncing: false,
       discountCode: null,
-
+      discountedTotal: null,
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
         const existingItem = items.find(i => i.variantId === item.variantId);
@@ -102,21 +103,32 @@ export const useCartStore = create<CartStore>()(
         finally { set({ isLoading: false }); }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null }),
+      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, discountCode: null, discountedTotal: null }),
       getCheckoutUrl: () => get().checkoutUrl,
 
       applyDiscount: async (code: string) => {
         const { cartId } = get();
         if (!cartId) {
           // Store for later application when cart is created
-          set({ discountCode: code });
-          return true;
+          if (code) set({ discountCode: code });
+          return { success: true, applicable: true };
         }
         const result = await applyDiscountToCart(cartId, code);
         if (result.success) {
-          set({ discountCode: code });
+          if (!code) {
+            // Removing discount
+            set({ discountCode: null, discountedTotal: null });
+            return { success: true, applicable: true };
+          }
+          if (result.applicable) {
+            set({ discountCode: code, discountedTotal: result.totalAmount || null });
+          } else {
+            // Code not applicable — remove it from cart
+            await applyDiscountToCart(cartId, "");
+            return { success: true, applicable: false };
+          }
         }
-        return result.success;
+        return { success: result.success, applicable: result.applicable };
       },
 
       syncCart: async () => {
@@ -127,7 +139,15 @@ export const useCartStore = create<CartStore>()(
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
           if (!data) return;
           const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!cart || cart.totalQuantity === 0) { clearCart(); return; }
+          // Sync discount state from Shopify
+          const appliedCodes = cart.discountCodes || [];
+          const activeCode = appliedCodes.find((dc: { code: string; applicable: boolean }) => dc.applicable);
+          const totalAmount = cart.cost?.totalAmount?.amount || null;
+          set({ 
+            discountCode: activeCode?.code || null, 
+            discountedTotal: activeCode ? totalAmount : null 
+          });
         } catch (error) { console.error('Failed to sync cart:', error); }
         finally { set({ isSyncing: false }); }
       },
@@ -135,7 +155,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'narvo-cart',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl, discountCode: state.discountCode }),
+      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl, discountCode: state.discountCode, discountedTotal: state.discountedTotal }),
     }
   )
 );
