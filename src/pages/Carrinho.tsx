@@ -41,14 +41,13 @@ export default function Carrinho() {
       if (giftWrap && giftMessage) {
         try {
           const url = new URL(finalUrl);
-          url.searchParams.set("note", `🎁 Presente — Mensagem do cartão: "${giftMessage}"`);
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      } else if (giftWrap) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set("note", "🎁 Embalagem para presente");
-          finalUrl = url.toString();
+          const notes: string[] = [];
+          if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
+          if (extendedWarranty) notes.push("🛡️ Garantia estendida");
+          if (notes.length > 0) {
+            url.searchParams.set("note", notes.join(" | "));
+            finalUrl = url.toString();
+          }
         } catch { /* keep original */ }
       }
       window.open(finalUrl, "_blank");
