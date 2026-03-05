@@ -130,7 +130,7 @@ export default function Carrinho() {
 
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-14">
         {/* Items */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
           {items.map((item) => (
             <div key={item.variantId} className="flex gap-5 pb-6 border-b border-border last:border-0">
               <Link
