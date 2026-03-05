@@ -130,12 +130,12 @@ export default function Carrinho() {
 
       <div className="flex flex-col lg:flex-row gap-10 lg:gap-14">
         {/* Items */}
-        <div className="flex-1 bg-[#F0F0F0] rounded-2xl p-5 sm:p-6 space-y-6">
+        <div className="flex-1 space-y-3">
           {items.map((item) => (
-            <div key={item.variantId} className="flex gap-5 pb-6 border-b border-border last:border-0">
+            <div key={item.variantId} className="bg-[#F0F0F0] rounded-2xl p-4 sm:p-5 flex gap-4 sm:gap-5">
               <Link
                 to={`/produto/${item.product.node.handle}`}
-                className="w-24 h-24 sm:w-28 sm:h-28 bg-accent rounded-2xl overflow-hidden flex-shrink-0"
+                className="w-20 h-20 sm:w-24 sm:h-24 bg-accent rounded-xl overflow-hidden flex-shrink-0"
               >
                 {item.product.node.images?.edges?.[0]?.node && (
                   <img
@@ -148,27 +148,27 @@ export default function Carrinho() {
               <div className="flex-1 min-w-0">
                 <Link
                   to={`/produto/${item.product.node.handle}`}
-                  className="text-base sm:text-lg font-semibold hover:underline block truncate"
+                  className="text-sm sm:text-base font-semibold hover:underline block truncate"
                 >
                   {item.product.node.title}
                 </Link>
                 {item.variantTitle !== "Default Title" && (
-                  <p className="text-sm text-muted-foreground mt-0.5">{item.variantTitle}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.variantTitle}</p>
                 )}
-                <p className="text-lg font-bold mt-2">R$ {formatPrice(parseFloat(item.price.amount))}</p>
-                <div className="flex items-center gap-3 mt-3">
+                <p className="text-base font-bold mt-1">R$ {formatPrice(parseFloat(item.price.amount))}</p>
+                <div className="flex items-center gap-3 mt-2">
                   <button
                     onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                    className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
+                    className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-3 w-3" />
                   </button>
-                  <span className="text-sm font-semibold w-6 text-center">{item.quantity}</span>
+                  <span className="text-sm font-semibold w-5 text-center">{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                    className="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
+                    className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3 w-3" />
                   </button>
                   <button
                     onClick={() => removeItem(item.variantId)}
