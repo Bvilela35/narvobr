@@ -31,6 +31,7 @@ function AppContent() {
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/colecao" element={<Colecao />} />
           <Route path="/colecao/:handle" element={<ColecaoHandle />} />
           <Route path="/produto/essss" element={<ProdutoEssss />} />

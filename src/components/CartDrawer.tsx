@@ -43,19 +43,8 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   }, [discountCode]);
 
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      let finalUrl = checkoutUrl;
-      if (discountCode) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set('discount', discountCode);
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      }
-      window.open(finalUrl, '_blank');
-      onOpenChange(false);
-    }
+    onOpenChange(false);
+    navigate("/carrinho");
   };
 
   const handleApplyCoupon = async () => {
