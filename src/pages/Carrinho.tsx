@@ -175,29 +175,6 @@ export default function Carrinho() {
           <div className="lg:sticky lg:top-24 space-y-6">
             <h2 className="text-xl font-bold">Resumo do pedido</h2>
 
-            {/* Free shipping bar */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-muted-foreground" />
-                {hasFreeShipping ? (
-                  <span className="text-sm font-semibold text-[#b6e36d]">Frete grátis! 🎉</span>
-                ) : (
-                  <span className="text-sm text-muted-foreground">
-                    Faltam <span className="font-semibold text-foreground">R$ {formatPrice(freeShippingRemaining)}</span> para frete grátis
-                  </span>
-                )}
-              </div>
-              <div className="h-1.5 w-full bg-accent rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${shippingProgress}%`,
-                    backgroundColor: hasFreeShipping ? "#b6e36d" : "hsl(var(--foreground))",
-                  }}
-                />
-              </div>
-            </div>
-
             {/* Gift option */}
             <div className="border border-border rounded-2xl p-4 space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
