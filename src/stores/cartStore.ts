@@ -139,7 +139,15 @@ export const useCartStore = create<CartStore>()(
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
           if (!data) return;
           const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!cart || cart.totalQuantity === 0) { clearCart(); return; }
+          // Sync discount state from Shopify
+          const appliedCodes = cart.discountCodes || [];
+          const activeCode = appliedCodes.find((dc: { code: string; applicable: boolean }) => dc.applicable);
+          const totalAmount = cart.cost?.totalAmount?.amount || null;
+          set({ 
+            discountCode: activeCode?.code || null, 
+            discountedTotal: activeCode ? totalAmount : null 
+          });
         } catch (error) { console.error('Failed to sync cart:', error); }
         finally { set({ isSyncing: false }); }
       },
@@ -147,7 +155,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'narvo-cart',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl, discountCode: state.discountCode }),
+      partialize: (state) => ({ items: state.items, cartId: state.cartId, checkoutUrl: state.checkoutUrl, discountCode: state.discountCode, discountedTotal: state.discountedTotal }),
     }
   )
 );
