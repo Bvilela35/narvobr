@@ -14,20 +14,20 @@ const STORAGE_KEYS = {
 
 const COPY_VARIANTS = [
   {
-    title: "Acesso antecipado a drops e novidades.",
-    subtitle: "Cadastre-se e receba um benefício de boas-vindas.",
+    title: "Organize sua superfície.",
+    subtitle: "Entre na lista Narvo e obtenha o benefício para o seu primeiro setup.",
     cta: "Quero acesso",
     dismiss: "Agora não",
   },
   {
-    title: "Entre para a lista Narvo.",
-    subtitle: "Novidades, lançamentos e um presente para quem chega.",
+    title: "Menos distração. Mais foco.",
+    subtitle: "Cadastre-se. Receba acesso a lançamentos e seu código de primeira compra.",
     cta: "Cadastrar",
     dismiss: "Depois",
   },
   {
-    title: "Primeira vez aqui?",
-    subtitle: "Deixe seu e-mail e receba algo especial.",
+    title: "Setup Minimal. Peak Performance.",
+    subtitle: "Assine para receber o benefício de entrada e atualizações técnicas.",
     cta: "Receber",
     dismiss: "Agora não",
   },
