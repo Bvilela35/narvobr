@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 const FREE_SHIPPING_THRESHOLD = 399;
 const GIFT_THRESHOLD = 699;
 const GIFT_WRAP_PRICE = 9.9;
+const WARRANTY_PRICE = 39.9;
 
 export default function Carrinho() {
   const navigate = useNavigate();
