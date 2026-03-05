@@ -38,16 +38,14 @@ export default function Carrinho() {
           finalUrl = url.toString();
         } catch { /* keep original */ }
       }
-      if (giftWrap && giftMessage) {
+      const notes: string[] = [];
+      if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
+      if (extendedWarranty) notes.push("🛡️ Garantia estendida");
+      if (notes.length > 0) {
         try {
           const url = new URL(finalUrl);
-          const notes: string[] = [];
-          if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
-          if (extendedWarranty) notes.push("🛡️ Garantia estendida");
-          if (notes.length > 0) {
-            url.searchParams.set("note", notes.join(" | "));
-            finalUrl = url.toString();
-          }
+          url.searchParams.set("note", notes.join(" | "));
+          finalUrl = url.toString();
         } catch { /* keep original */ }
       }
       window.open(finalUrl, "_blank");
