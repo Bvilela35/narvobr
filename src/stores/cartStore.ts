@@ -78,7 +78,7 @@ export const useCartStore = create<CartStore>()(
 
       updateQuantity: async (variantId, quantity) => {
         if (quantity <= 0) { await get().removeItem(variantId); return; }
-        const { items, cartId, clearCart } = get();
+        const { items, cartId, clearCart, syncCart } = get();
         const item = items.find(i => i.variantId === variantId);
         if (!item?.lineId || !cartId) return;
         const previousItems = [...items];
@@ -89,6 +89,8 @@ export const useCartStore = create<CartStore>()(
           if (!result.success) {
             if (result.cartNotFound) clearCart();
             else set({ items: previousItems }); // Revert on failure
+          } else {
+            await syncCart(); // Refresh totals/discountedTotal from Shopify
           }
         } catch (error) {
           console.error('Failed to update:', error);
