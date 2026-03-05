@@ -210,6 +210,29 @@ export default function Carrinho() {
               )}
             </div>
 
+            {/* Extended warranty */}
+            <div className="border border-border rounded-2xl p-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <button
+                  onClick={() => setExtendedWarranty(!extendedWarranty)}
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors flex-shrink-0 ${
+                    extendedWarranty ? "bg-foreground border-foreground" : "border-border hover:border-foreground/50"
+                  }`}
+                >
+                  {extendedWarranty && <Check className="h-3 w-3 text-background" />}
+                </button>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">Garantia estendida</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    +12 meses de cobertura total · + R$ {formatPrice(WARRANTY_PRICE)}
+                  </p>
+                </div>
+              </label>
+            </div>
+
             {/* Price breakdown */}
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -240,12 +263,12 @@ export default function Carrinho() {
                 </div>
               )}
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Envio</span>
-                <span className={`font-semibold ${hasFreeShipping ? "text-[#b6e36d]" : ""}`}>
-                  {hasFreeShipping ? "Grátis" : "Calculado no checkout"}
-                </span>
-              </div>
+              {extendedWarranty && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Garantia estendida</span>
+                  <span className="font-semibold">R$ {formatPrice(WARRANTY_PRICE)}</span>
+                </div>
+              )}
 
               <div className="h-px bg-border" />
 
