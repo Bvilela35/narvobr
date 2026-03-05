@@ -18,6 +18,7 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
+  const navigate = useNavigate();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, discountCode, discountedTotal, applyDiscount } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
