@@ -1130,7 +1130,7 @@ export default function Produto() {
           }
           .pdp__section-nav--sticky {
             position: sticky;
-            top: 0;
+            top: 64px;
             box-shadow: 0 1px 12px rgba(0,0,0,0.06);
           }
 
