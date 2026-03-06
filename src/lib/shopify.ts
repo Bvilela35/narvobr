@@ -63,6 +63,7 @@ export interface ShopifyProduct {
       values: string[];
     }>;
     videoStories?: ShopifyVideo[];
+    bulletPoints?: string[];
   };
 }
 
