@@ -1084,16 +1084,7 @@ export default function Produto() {
               <MobileBulletOverlay bulletPoints={bulletPoints} />
 
               {/* Trust bar */}
-              <div className="pdp__trust-bar">
-                <div className="pdp__trust-item">
-                  <Package size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
-                </div>
-                <div className="pdp__trust-item">
-                  <ShieldCheck size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
-                </div>
-              </div>
+              <TrustBarRotator />
             </div>
 
             {/* Info */}
