@@ -1071,9 +1071,9 @@ export default function Produto() {
                     </button>
                   </div>
                 }
-                {/* Mobile bullet points overlay */}
-                <MobileBulletOverlay bulletPoints={bulletPoints} />
               </div>
+              {/* Mobile bullet points below gallery */}
+              <MobileBulletOverlay bulletPoints={bulletPoints} />
 
               {/* Trust bar */}
               <div className="pdp__trust-bar">
