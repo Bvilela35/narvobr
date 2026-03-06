@@ -139,7 +139,7 @@ export default function Produto() {
           }
         }
       },
-      { threshold: 0.15, rootMargin: "-80px 0px -50% 0px" }
+      { threshold: 0.05, rootMargin: "-45% 0px -45% 0px" }
     );
 
     SECTION_IDS.forEach((id) => {
