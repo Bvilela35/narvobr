@@ -369,10 +369,20 @@ export async function fetchProductByHandle(handle: string) {
     fotoDescricao = { type: 'video', sources: fotoRef.sources, previewImage: fotoRef.previewImage?.url };
   }
 
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, ...cleanProduct } = product;
+  // Parse spec metafields
+  const specMateriais = product.specMateriaisMeta?.value || undefined;
+  const specTamanho = product.specTamanhoMeta?.value || undefined;
+  const specOQueAcompanha = product.specOQueAcompanhaMeta?.value || undefined;
+  const specDetalhes = product.specDetalhesMeta?.value || undefined;
+  let specFoto: ShopifyProduct['node']['specFoto'] = null;
+  if (product.specFotoMeta?.reference?.image) {
+    specFoto = { url: product.specFotoMeta.reference.image.url, altText: product.specFotoMeta.reference.image.altText };
+  }
 
-  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao } } as ShopifyProduct;
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
