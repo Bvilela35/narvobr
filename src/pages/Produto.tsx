@@ -197,7 +197,7 @@ export default function Produto() {
 
   }
 
-  const { title, description, images, variants, options } = product.node;
+  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
   const hasStories = videoStories.length > 0;
@@ -1135,6 +1135,56 @@ export default function Produto() {
             max-width: 680px;
           }
 
+          /* Descrição Section Layout */
+          .pdp__descricao-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+          }
+
+          .pdp__descricao-title {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin: 0 0 24px;
+            line-height: 1.2;
+          }
+
+          .pdp__descricao-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--pdp-text-secondary);
+            margin: 0;
+            white-space: pre-line;
+          }
+
+          .pdp__descricao-media {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: var(--pdp-surface);
+          }
+
+          .pdp__descricao-media img,
+          .pdp__descricao-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+
+          @media (max-width: 768px) {
+            .pdp__descricao-grid {
+              grid-template-columns: 1fr;
+              gap: 32px;
+            }
+            .pdp__descricao-title {
+              font-size: 24px;
+            }
+          }
+
           @media (max-width: 1024px) {
             .pdp__section-nav { padding: 24px 0; background: #fff; }
             .pdp__section-nav-inner {
@@ -1487,8 +1537,38 @@ export default function Produto() {
       {/* Seção: Descrição */}
       <section id="secao-descricao" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Descrição</h2>
-          <p className="pdp__content-section-placeholder">{description || "Descrição do produto em breve."}</p>
+          <div className="pdp__descricao-grid">
+            <div>
+              <h2 className="pdp__descricao-title">
+                {tituloDescricao || "Descrição"}
+              </h2>
+              <p className="pdp__descricao-text">
+                {descricaoCompleta || description || "Descrição do produto em breve."}
+              </p>
+            </div>
+            <div className="pdp__descricao-media">
+              {fotoDescricao?.type === 'video' ? (
+                <video
+                  src={fotoDescricao.sources[0]?.url}
+                  poster={fotoDescricao.previewImage || undefined}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : fotoDescricao?.type === 'image' ? (
+                <img
+                  src={fotoDescricao.url}
+                  alt={fotoDescricao.altText || tituloDescricao || title}
+                  loading="lazy"
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--pdp-text-secondary)', fontSize: 14 }}>
+                  Mídia em breve
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 

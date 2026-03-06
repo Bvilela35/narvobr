@@ -64,6 +64,9 @@ export interface ShopifyProduct {
     }>;
     videoStories?: ShopifyVideo[];
     bulletPoints?: string[];
+    tituloDescricao?: string;
+    descricaoCompleta?: string;
+    fotoDescricao?: { type: 'image'; url: string; altText?: string | null } | { type: 'video'; sources: ShopifyVideoSource[]; previewImage?: string | null } | null;
   };
 }
 
@@ -214,6 +217,31 @@ const PRODUCT_BY_HANDLE_QUERY = `
       bulletPointsMeta: metafield(namespace: "custom", key: "bullet_points") {
         value
       }
+      tituloDescricaoMeta: metafield(namespace: "custom", key: "titulo_descricao") {
+        value
+      }
+      descricaoCompletaMeta: metafield(namespace: "custom", key: "descricao_completa") {
+        value
+      }
+      fotoDescricaoMeta: metafield(namespace: "custom", key: "foto_descricao") {
+        reference {
+          ... on MediaImage {
+            image {
+              url
+              altText
+            }
+          }
+          ... on Video {
+            sources {
+              url
+              mimeType
+            }
+            previewImage {
+              url
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -301,10 +329,23 @@ export async function fetchProductByHandle(handle: string) {
     }
   } catch { /* ignore parse errors */ }
 
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, ...cleanProduct } = product;
+  // Parse description metafields
+  const tituloDescricao = product.tituloDescricaoMeta?.value || undefined;
+  const descricaoCompleta = product.descricaoCompletaMeta?.value || undefined;
 
-  return { node: { ...cleanProduct, videoStories, bulletPoints } } as ShopifyProduct;
+  // Parse foto/video description metafield
+  let fotoDescricao: ShopifyProduct['node']['fotoDescricao'] = null;
+  const fotoRef = product.fotoDescricaoMeta?.reference;
+  if (fotoRef?.image) {
+    fotoDescricao = { type: 'image', url: fotoRef.image.url, altText: fotoRef.image.altText };
+  } else if (fotoRef?.sources) {
+    fotoDescricao = { type: 'video', sources: fotoRef.sources, previewImage: fotoRef.previewImage?.url };
+  }
+
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
