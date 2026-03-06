@@ -703,6 +703,139 @@ export default function Produto() {
 
             .pdp__container { padding: 24px 16px 40px; }
           }
+
+          /* Lightbox / Fullscreen */
+          .pdp__lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+          }
+          .pdp__lightbox--dragging { cursor: grabbing; }
+
+          .pdp__lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 210;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+          .pdp__lightbox-img-wrapper {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .pdp__lightbox-img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+          }
+
+          .pdp__lightbox-nav {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 999px;
+            padding: 0 18px;
+            height: 48px;
+          }
+
+          .pdp__lightbox-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            border-radius: 50%;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-btn:hover { background: rgba(255,255,255,0.15); }
+
+          .pdp__lightbox-indicator {
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+            color: rgba(255,255,255,0.6);
+            min-width: 36px;
+            text-align: center;
+            user-select: none;
+          }
+
+          .pdp__lightbox-zoom {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 8px;
+          }
+
+          .pdp__lightbox-zoom-btn {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 300;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-zoom-btn:hover { background: rgba(255,255,255,0.2); }
+
+          .pdp__gallery-zoom-hint {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+          }
+          .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
         `}</style>
 
         <div className="pdp__container">
