@@ -1152,11 +1152,12 @@ export default function Produto() {
             .pdp__section-nav-inner::-webkit-scrollbar { display: none; }
             .pdp__section-nav-btn {
               font-size: 14px;
-              padding: 14px 28px;
+              font-weight: 600;
+              padding: 16px 32px;
               background: #f8f8f8;
               flex-shrink: 0;
               white-space: nowrap;
-              min-width: 42%;
+              min-width: auto;
               text-align: center;
             }
             .pdp__section-nav-btn:hover {
