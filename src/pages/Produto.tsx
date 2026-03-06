@@ -707,32 +707,52 @@ export default function Produto() {
                   
                   {options.map((option) => {
                   const isColor = option.name.toLowerCase() === 'cor';
+                  // Current selected value for this option
+                  const currentVal = selectedVariant?.selectedOptions.find(
+                    (o) => o.name === option.name
+                  )?.value;
+                  // Deduplicate: show each unique option value only once
+                  const uniqueValues = option.values;
                   return (
                     <div key={option.name} id={`option-group-${option.name}`} style={{ marginBottom: 24 }}>
                         <p className="pdp__option-title">
                           {isColor ?
                         <>
-                              {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
+                               {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
                             </> :
                         option.name}
                         </p>
                         <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
-                          {variants.edges.map((v, i) => {
-                          const optVal = v.node.selectedOptions.find(
-                            (o) => o.name === option.name
-                          )?.value;
-                          const isSelected = i === selectedVariantIdx;
-                          const swatchColor = isColor ? optVal?.toLowerCase() === 'preto' ? '#1a1a1a' : optVal?.toLowerCase() === 'branco' ? '#f5f5f5' : optVal?.toLowerCase() === 'cinza' ? '#9e9e9e' : optVal?.toLowerCase() === 'prata' ? '#c0c0c0' : optVal?.toLowerCase() === 'natural' ? '#d4c5a9' : '#888' : null;
+                          {uniqueValues.map((val) => {
+                          const isSelected = currentVal === val;
+                          // Find if any variant with this value is available
+                          const isAvailable = variants.edges.some((v) => {
+                            const matchesThisOption = v.node.selectedOptions.some(
+                              (o) => o.name === option.name && o.value === val
+                            );
+                            return matchesThisOption && v.node.availableForSale;
+                          });
+                          const swatchColor = isColor ? val?.toLowerCase() === 'preto' ? '#1a1a1a' : val?.toLowerCase() === 'branco' ? '#f5f5f5' : val?.toLowerCase() === 'cinza' ? '#9e9e9e' : val?.toLowerCase() === 'prata' ? '#c0c0c0' : val?.toLowerCase() === 'natural' ? '#d4c5a9' : val?.toLowerCase() === 'caramelo' ? '#8B5E3C' : val?.toLowerCase() === 'marrom' ? '#5C3A1E' : val?.toLowerCase() === 'marrom escuro' ? '#3B2314' : val?.toLowerCase() === 'bege' ? '#D4C4A8' : val?.toLowerCase() === 'verde' ? '#0f3d2e' : '#888' : null;
+                          const inputId = `opt-${option.name}-${val}`;
                           return (
-                            <div className="pdp__option-item" key={v.node.id}>
+                            <div className="pdp__option-item" key={val}>
                                 <input
                                 type="radio"
                                 name={`option-${option.name}`}
-                                id={`opt-${v.node.id}`}
-                                value={i}
+                                id={inputId}
+                                value={val}
                                 checked={isSelected}
                                 onChange={() => {
-                                  setSelectedVariantIdx(i);
+                                  // Find the best matching variant when this option value changes
+                                  const currentOptions = selectedVariant?.selectedOptions || [];
+                                  const newIdx = variants.edges.findIndex((v) => {
+                                    return v.node.selectedOptions.every((so) => {
+                                      if (so.name === option.name) return so.value === val;
+                                      const kept = currentOptions.find((co) => co.name === so.name);
+                                      return kept ? kept.value === so.value : true;
+                                    });
+                                  });
+                                  if (newIdx >= 0) setSelectedVariantIdx(newIdx);
                                   // Auto-scroll to next option or buy button
                                   setTimeout(() => {
                                     const currentOptionEl = document.getElementById(`option-group-${option.name}`);
@@ -748,13 +768,13 @@ export default function Produto() {
                                   }, 100);
                                 }}
                                 className="pdp__option-input"
-                                disabled={!v.node.availableForSale} />
+                                disabled={!isAvailable} />
 
-                                <label htmlFor={`opt-${v.node.id}`} className="pdp__option-label">
+                                <label htmlFor={inputId} className="pdp__option-label">
                                   {isColor && swatchColor &&
                                 <span className="pdp__color-swatch" style={{ backgroundColor: swatchColor }} />
                                 }
-                                  <span className="pdp__option-name">{optVal}</span>
+                                  <span className="pdp__option-name">{val}</span>
                                 </label>
                               </div>);
 
