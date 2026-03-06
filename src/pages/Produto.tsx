@@ -848,10 +848,10 @@ export default function Produto() {
           .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
 
           .pdp__trust-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 16px;
           }
 
           .pdp__trust-item {
@@ -871,8 +871,8 @@ export default function Produto() {
           }
 
           @media (max-width: 768px) {
-            .pdp__trust-bar { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .pdp__trust-item { padding: 12px 14px; font-size: 13px; gap: 8px; }
+            .pdp__trust-bar { gap: 16px; }
+            .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
           }
 
           .pdp__stories-btn {
