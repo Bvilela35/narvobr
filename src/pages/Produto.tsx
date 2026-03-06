@@ -1304,16 +1304,7 @@ export default function Produto() {
               </div>
 
               {/* Trust bar - mobile only (below buybox) */}
-              <div className="pdp__trust-bar pdp__trust-bar--mobile">
-                <div className="pdp__trust-item">
-                  <Package size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
-                </div>
-                <div className="pdp__trust-item">
-                  <ShieldCheck size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
-                </div>
-              </div>
+              <TrustBarRotator mobile />
             </div>
           </div>
         </div>
