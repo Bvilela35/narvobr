@@ -71,6 +71,7 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
   );
 }
 
+export default function Produto() {
   const navigate = useNavigate();
   const location = useLocation();
   const { handle } = useParams<{handle: string;}>();
