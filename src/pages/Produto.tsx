@@ -338,6 +338,7 @@ export default function Produto() {
       metaDesc?.setAttribute("content", "");
       canonical?.setAttribute("href", window.location.origin);
       scriptTag?.remove();
+      document.querySelector('script[data-narvo-faq-jsonld]')?.remove();
     };
   }, [product]);
 
