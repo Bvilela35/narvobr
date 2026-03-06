@@ -1135,10 +1135,31 @@ export default function Produto() {
             max-width: 680px;
           }
 
-          @media (max-width: 768px) {
-            .pdp__section-nav { padding: 28px 16px; }
-            .pdp__section-nav-inner { gap: 4px; padding: 4px; flex-wrap: wrap; }
-            .pdp__section-nav-btn { font-size: 13px; padding: 9px 16px; }
+          @media (max-width: 1024px) {
+            .pdp__section-nav { padding: 24px 0; background: #fff; }
+            .pdp__section-nav-inner {
+              display: flex;
+              flex-wrap: nowrap;
+              overflow-x: auto;
+              gap: 8px;
+              padding: 0 16px;
+              background: transparent;
+              border-radius: 0;
+              -webkit-overflow-scrolling: touch;
+              scrollbar-width: none;
+              -ms-overflow-style: none;
+            }
+            .pdp__section-nav-inner::-webkit-scrollbar { display: none; }
+            .pdp__section-nav-btn {
+              font-size: 13px;
+              padding: 10px 20px;
+              background: #f8f8f8;
+              flex-shrink: 0;
+              white-space: nowrap;
+            }
+            .pdp__section-nav-btn:hover {
+              background: #eee;
+            }
             .pdp__content-section { padding: 48px 16px; }
             .pdp__content-section-title { font-size: 20px; }
           }
