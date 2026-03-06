@@ -39,7 +39,7 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setIdx(prev => (prev + 2) % len);
-    }, 10000);
+    }, 15000);
     return () => clearInterval(timer);
   }, [len]);
 
