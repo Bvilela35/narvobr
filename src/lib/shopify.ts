@@ -191,6 +191,25 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      videoStoriesMeta: metafield(namespace: "custom", key: "video_stories") {
+        references(first: 10) {
+          edges {
+            node {
+              ... on Video {
+                mediaContentType
+                alt
+                sources {
+                  url
+                  mimeType
+                }
+                previewImage {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
