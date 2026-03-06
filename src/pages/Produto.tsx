@@ -1368,6 +1368,9 @@ export default function Produto() {
           </div>
         </div>
       )}
+
+      {/* Video Stories */}
+      <VideoStories videos={videoStories} open={storiesOpen} onClose={() => setStoriesOpen(false)} />
     </>);
 
 }
