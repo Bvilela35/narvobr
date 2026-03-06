@@ -1680,11 +1680,53 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: Especificações */}
+      {/* Seção: Especificações — Apple-style */}
       <section id="secao-especificacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Especificações</h2>
-          <p className="pdp__content-section-placeholder">Especificações técnicas em breve.</p>
+          {(() => {
+            const specItems = [
+              { label: "Materiais", value: specMateriais },
+              { label: "Tamanho", value: specTamanho },
+              { label: "O que acompanha", value: specOQueAcompanha },
+              { label: "Detalhes", value: specDetalhes },
+            ].filter(item => !!item.value);
+
+            if (specItems.length === 0 && !specFoto) return (
+              <div>
+                <h2 className="pdp__specs-title">Especificações</h2>
+                <p className="pdp__content-section-placeholder">Especificações técnicas em breve.</p>
+              </div>
+            );
+
+            const hasImage = !!specFoto;
+
+            return (
+              <div className={`pdp__specs-layout${hasImage ? '' : ' pdp__specs-layout--full'}`}>
+                <div className="pdp__specs-sheet">
+                  <h2 className="pdp__specs-title">Especificações</h2>
+                  <div className="pdp__specs-list">
+                    {specItems.map((item, i) => (
+                      <div key={item.label} className="pdp__specs-item">
+                        <span className="pdp__specs-label">{item.label}</span>
+                        <span className="pdp__specs-value">{item.value}</span>
+                        {i < specItems.length - 1 && <div className="pdp__specs-divider" />}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {hasImage && (
+                  <div className="pdp__specs-image-col">
+                    <img
+                      src={specFoto!.url}
+                      alt={specFoto!.altText || `${title} — Especificações`}
+                      className="pdp__specs-image"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </section>
 
