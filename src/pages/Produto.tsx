@@ -1577,7 +1577,7 @@ export default function Produto() {
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
         <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
       </div>
-      <nav className="pdp__section-nav">
+      <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
           {[
             { id: "secao-descricao", label: "Descrição" },
@@ -1588,7 +1588,7 @@ export default function Produto() {
           ].map((item) => (
             <button
               key={item.id}
-              className="pdp__section-nav-btn"
+              className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
               onClick={() => {
                 const el = document.getElementById(item.id);
                 if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
