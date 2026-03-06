@@ -1089,10 +1089,10 @@ export default function Produto() {
           .pdp__section-nav-btn {
             font-family: var(--pdp-font);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             padding: 11px 24px;
             border: none;
-            border-radius: var(--pdp-radius-pill);
+            border-radius: 50px;
             background: transparent;
             color: #555;
             cursor: pointer;
