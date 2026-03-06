@@ -37,18 +37,9 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
     return <h1 className="pdp__title">{title}</h1>;
   }
 
-  // Mobile: always show all tags statically
+  // Mobile: hidden here (handled by MobileBulletOverlay)
   if (isMobile) {
-    return (
-      <>
-        <div className="pdp__bullets">
-          {bulletPoints.map((bp, i) => (
-            <span key={i} className="pdp__bullet-tag">{bp}</span>
-          ))}
-        </div>
-        <h1 className="pdp__title">{title}</h1>
-      </>
-    );
+    return <h1 className="pdp__title">{title}</h1>;
   }
 
   return (
@@ -70,29 +61,6 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
         </div>
       )}
 
-      {phase === 'expanded' && (
-        <div className="pdp__bullets">
-          {bulletPoints.map((bp, i) => (
-            <motion.span
-              key={i}
-              className="pdp__bullet-tag"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.06 }}
-            >
-              {bp}
-            </motion.span>
-          ))}
-          <button
-            className="pdp__bullet-close"
-            onClick={() => setPhase('collapsed')}
-            aria-label="Fechar diferenciais"
-          >
-            <X size={14} strokeWidth={2} />
-          </button>
-        </div>
-      )}
-
       <h1 className="pdp__title">
         {title}
         {phase === 'collapsed' && (
@@ -105,6 +73,37 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
           </button>
         )}
       </h1>
+
+      <AnimatePresence>
+        {phase === 'expanded' && (
+          <motion.div
+            className="pdp__bullets pdp__bullets--expanded"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            {bulletPoints.map((bp, i) => (
+              <motion.span
+                key={i}
+                className="pdp__bullet-tag"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+              >
+                {bp}
+              </motion.span>
+            ))}
+            <button
+              className="pdp__bullet-close"
+              onClick={() => setPhase('collapsed')}
+              aria-label="Fechar diferenciais"
+            >
+              <X size={14} strokeWidth={2} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
