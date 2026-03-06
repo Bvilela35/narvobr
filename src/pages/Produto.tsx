@@ -443,6 +443,61 @@ export default function Produto() {
             color: var(--pdp-text-secondary);
           }
 
+          /* Quantidade / Volume card style */
+          .pdp__qty-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .pdp__qty-item { position: relative; }
+
+          .pdp__qty-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+
+          .pdp__qty-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border: 2px solid var(--pdp-border);
+            border-radius: 16px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+          }
+          .pdp__qty-label:hover {
+            border-color: #BABDC2;
+          }
+          .pdp__qty-input:checked + .pdp__qty-label {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 1px #2563EB;
+          }
+          .pdp__qty-input:focus-visible + .pdp__qty-label {
+            outline: 2px solid var(--pdp-link);
+            outline-offset: 2px;
+          }
+          .pdp__qty-input:disabled + .pdp__qty-label {
+            opacity: 0.3;
+            cursor: not-allowed;
+          }
+
+          .pdp__qty-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--pdp-text);
+          }
+
+          .pdp__qty-price {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--pdp-text);
+          }
+
           .pdp__buybox {
             background: var(--pdp-surface);
             border-radius: var(--pdp-radius-buybox);
@@ -726,10 +781,72 @@ export default function Produto() {
                             </> :
                         option.name}
                         </p>
+                        {option.name.toLowerCase() === 'quantidade' ? (
+                          <div className="pdp__qty-list" role="radiogroup" aria-label={option.name}>
+                            {uniqueValues.map((val) => {
+                              const isSelected = currentVal === val;
+                              const isAvailable = variants.edges.some((v) => {
+                                const matchesThisOption = v.node.selectedOptions.some(
+                                  (o) => o.name === option.name && o.value === val
+                                );
+                                return matchesThisOption && v.node.availableForSale;
+                              });
+                              // Find variant price for this quantity value
+                              const matchingVariant = variants.edges.find((v) =>
+                                v.node.selectedOptions.some(
+                                  (o) => o.name === option.name && o.value === val
+                                )
+                              );
+                              const variantPrice = matchingVariant?.node.price.amount;
+                              const inputId = `opt-${option.name}-${val}`;
+                              return (
+                                <div className="pdp__qty-item" key={val}>
+                                  <input
+                                    type="radio"
+                                    name={`option-${option.name}`}
+                                    id={inputId}
+                                    value={val}
+                                    checked={isSelected}
+                                    onChange={() => {
+                                      const currentOptions = selectedVariant?.selectedOptions || [];
+                                      const newIdx = variants.edges.findIndex((v) => {
+                                        return v.node.selectedOptions.every((so) => {
+                                          if (so.name === option.name) return so.value === val;
+                                          const kept = currentOptions.find((co) => co.name === so.name);
+                                          return kept ? kept.value === so.value : true;
+                                        });
+                                      });
+                                      if (newIdx >= 0) setSelectedVariantIdx(newIdx);
+                                      setTimeout(() => {
+                                        const currentOptionEl = document.getElementById(`option-group-${option.name}`);
+                                        if (currentOptionEl) {
+                                          const nextSibling = currentOptionEl.nextElementSibling as HTMLElement;
+                                          if (nextSibling) {
+                                            nextSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                          } else {
+                                            const buybox = document.getElementById('pdp-buybox');
+                                            buybox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                          }
+                                        }
+                                      }, 100);
+                                    }}
+                                    className="pdp__qty-input"
+                                    disabled={!isAvailable}
+                                  />
+                                  <label htmlFor={inputId} className="pdp__qty-label">
+                                    <span className="pdp__qty-name">{val}</span>
+                                    {variantPrice && (
+                                      <span className="pdp__qty-price">{formatPrice(variantPrice)}</span>
+                                    )}
+                                  </label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
                         <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
                           {uniqueValues.map((val) => {
                           const isSelected = currentVal === val;
-                          // Find if any variant with this value is available
                           const isAvailable = variants.edges.some((v) => {
                             const matchesThisOption = v.node.selectedOptions.some(
                               (o) => o.name === option.name && o.value === val
@@ -747,7 +864,6 @@ export default function Produto() {
                                 value={val}
                                 checked={isSelected}
                                 onChange={() => {
-                                  // Find the best matching variant when this option value changes
                                   const currentOptions = selectedVariant?.selectedOptions || [];
                                   const newIdx = variants.edges.findIndex((v) => {
                                     return v.node.selectedOptions.every((so) => {
@@ -757,7 +873,6 @@ export default function Produto() {
                                     });
                                   });
                                   if (newIdx >= 0) setSelectedVariantIdx(newIdx);
-                                  // Auto-scroll to next option or buy button
                                   setTimeout(() => {
                                     const currentOptionEl = document.getElementById(`option-group-${option.name}`);
                                     if (currentOptionEl) {
@@ -784,6 +899,7 @@ export default function Produto() {
 
                         })}
                         </div>
+                        )}
                       </div>);
 
                 })}
