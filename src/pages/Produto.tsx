@@ -305,6 +305,34 @@ export default function Produto() {
     }
     scriptTag.textContent = JSON.stringify(jsonLd);
 
+    // FAQPage JSON-LD
+    const faqItems = product.node.faq || [];
+    const validFaqItems = faqItems.filter((item: { pergunta: string; resposta?: string }) => item.pergunta && item.resposta);
+    let faqScriptTag = document.querySelector('script[data-narvo-faq-jsonld]') as HTMLScriptElement | null;
+    if (validFaqItems.length > 0) {
+      const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: validFaqItems.map((item: { pergunta: string; resposta?: string }) => ({
+          "@type": "Question",
+          name: item.pergunta,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.resposta
+          }
+        }))
+      };
+      if (!faqScriptTag) {
+        faqScriptTag = document.createElement("script");
+        faqScriptTag.setAttribute("type", "application/ld+json");
+        faqScriptTag.setAttribute("data-narvo-faq-jsonld", "true");
+        document.head.appendChild(faqScriptTag);
+      }
+      faqScriptTag.textContent = JSON.stringify(faqJsonLd);
+    } else {
+      faqScriptTag?.remove();
+    }
+
     return () => {
       document.title = "Narvo";
       metaDesc?.setAttribute("content", "");
