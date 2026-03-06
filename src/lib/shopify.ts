@@ -5,6 +5,18 @@ const SHOPIFY_STORE_PERMANENT_DOMAIN = 'efxqrr-1y.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9645130db6cf2b0f59c6feeb3f76f3b9';
 
+export interface ShopifyVideoSource {
+  url: string;
+  mimeType: string;
+}
+
+export interface ShopifyVideo {
+  mediaContentType: string;
+  alt: string | null;
+  sources: ShopifyVideoSource[];
+  previewImage?: { url: string } | null;
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -50,6 +62,7 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    videoStories?: ShopifyVideo[];
   };
 }
 
@@ -178,6 +191,25 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      videoStoriesMeta: metafield(namespace: "custom", key: "video_stories") {
+        references(first: 10) {
+          edges {
+            node {
+              ... on Video {
+                mediaContentType
+                alt
+                sources {
+                  url
+                  mimeType
+                }
+                previewImage {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -250,7 +282,17 @@ export async function fetchProductByHandle(handle: string) {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   const product = data?.data?.product;
   if (!product) return null;
-  return { node: product } as ShopifyProduct;
+
+  // Parse video stories metafield
+  const videoEdges = product.videoStoriesMeta?.references?.edges || [];
+  const videoStories: ShopifyVideo[] = videoEdges
+    .map((e: { node: ShopifyVideo }) => e.node)
+    .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
+
+  // Clean up metafield key from product object
+  const { videoStoriesMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {

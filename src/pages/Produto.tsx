@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
+import { VideoStories } from "@/components/VideoStories";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
@@ -34,6 +35,7 @@ export default function Produto() {
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panPos, setPanPos] = useState({ x: 0, y: 0 });
   const isDragging = useRef(false);
@@ -146,6 +148,8 @@ export default function Produto() {
   }
 
   const { title, description, images, variants, options } = product.node;
+  const videoStories = product.node.videoStories || [];
+  const hasStories = videoStories.length > 0;
   const imgs = images.edges;
   const totalImages = imgs.length;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
@@ -842,6 +846,35 @@ export default function Produto() {
             pointer-events: none;
           }
           .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
+
+          .pdp__stories-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 5;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2.5px solid #fff;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            animation: stories-pulse 2s ease-in-out infinite;
+          }
+          .pdp__stories-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.6);
+          }
+          @keyframes stories-pulse {
+            0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 2px 16px rgba(15,61,46,0.5), 0 0 0 4px rgba(15,61,46,0.15); }
+          }
         `}</style>
 
         <div className="pdp__container">
@@ -876,6 +909,16 @@ export default function Produto() {
               <div className="pdp__gallery-zoom-hint">
                 <ZoomIn size={18} />
               </div>
+
+              {hasStories && (
+                <button
+                  className="pdp__stories-btn"
+                  onClick={(e) => { e.stopPropagation(); setStoriesOpen(true); }}
+                  aria-label="Ver vídeos"
+                >
+                  <Video size={20} />
+                </button>
+              )}
 
               {totalImages > 1 &&
               <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
@@ -1325,6 +1368,9 @@ export default function Produto() {
           </div>
         </div>
       )}
+
+      {/* Video Stories */}
+      <VideoStories videos={videoStories} open={storiesOpen} onClose={() => setStoriesOpen(false)} />
     </>);
 
 }
