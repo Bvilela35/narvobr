@@ -846,6 +846,35 @@ export default function Produto() {
             pointer-events: none;
           }
           .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
+
+          .pdp__stories-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 5;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2.5px solid #fff;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            animation: stories-pulse 2s ease-in-out infinite;
+          }
+          .pdp__stories-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.6);
+          }
+          @keyframes stories-pulse {
+            0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 2px 16px rgba(15,61,46,0.5), 0 0 0 4px rgba(15,61,46,0.15); }
+          }
         `}</style>
 
         <div className="pdp__container">
