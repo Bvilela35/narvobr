@@ -6,6 +6,7 @@ import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
+import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
