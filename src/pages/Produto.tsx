@@ -35,6 +35,7 @@ export default function Produto() {
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panPos, setPanPos] = useState({ x: 0, y: 0 });
   const isDragging = useRef(false);
