@@ -795,6 +795,7 @@ export default function Produto() {
             .pdp__mobile-bullets-overlay {
               display: flex;
               justify-content: center;
+              overflow: hidden;
               margin-top: 10px;
             }
 
