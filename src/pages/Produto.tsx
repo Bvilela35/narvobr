@@ -1204,6 +1204,48 @@ export default function Produto() {
             }}
             onMouseUp={() => { isDragging.current = false; }}
             onMouseLeave={() => { isDragging.current = false; }}
+            onTouchStart={(e) => {
+              if (e.touches.length === 2) {
+                e.preventDefault();
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                lastTouchDist.current = Math.hypot(dx, dy);
+                zoomRef.current = zoomLevel;
+              } else if (e.touches.length === 1 && zoomLevel > 1) {
+                isDragging.current = true;
+                lastTouchCenter.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                touchPanStart.current = { ...panPos };
+              }
+            }}
+            onTouchMove={(e) => {
+              if (e.touches.length === 2) {
+                e.preventDefault();
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const dist = Math.hypot(dx, dy);
+                if (lastTouchDist.current > 0) {
+                  const scale = dist / lastTouchDist.current;
+                  const newZoom = Math.min(Math.max(zoomRef.current * scale, 1), 5);
+                  setZoomLevel(newZoom);
+                  if (newZoom === 1) setPanPos({ x: 0, y: 0 });
+                }
+              } else if (e.touches.length === 1 && isDragging.current) {
+                setPanPos({
+                  x: touchPanStart.current.x + (e.touches[0].clientX - lastTouchCenter.current.x),
+                  y: touchPanStart.current.y + (e.touches[0].clientY - lastTouchCenter.current.y),
+                });
+              }
+            }}
+            onTouchEnd={(e) => {
+              if (e.touches.length < 2) {
+                lastTouchDist.current = 0;
+                zoomRef.current = zoomLevel;
+              }
+              if (e.touches.length === 0) {
+                isDragging.current = false;
+              }
+            }}
+            style={{ touchAction: 'none' }}
           >
             <img
               src={imgs[selectedImage].node.url}
