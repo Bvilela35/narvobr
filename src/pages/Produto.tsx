@@ -1088,21 +1088,22 @@ export default function Produto() {
 
           .pdp__section-nav-btn {
             font-family: var(--pdp-font);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            padding: 11px 24px;
+            padding: 12px 26px;
             border: none;
             border-radius: 50px;
             background: transparent;
             color: #555;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
             position: relative;
             letter-spacing: -0.01em;
           }
           .pdp__section-nav-btn:hover {
-            background: rgba(255,255,255,0.7);
+            background: #fff;
             color: #0f3d2e;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
           }
           .pdp__section-nav-btn:active {
             transform: scale(0.97);
