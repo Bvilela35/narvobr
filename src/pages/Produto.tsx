@@ -350,9 +350,11 @@ export default function Produto() {
             min-height: 28px;
           }
 
-          .pdp__bullets--list {
-            flex-direction: column;
-            gap: 6px;
+          .pdp__bullets--expanded {
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
           }
 
           .pdp__bullet-tag {
