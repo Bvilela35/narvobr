@@ -154,6 +154,16 @@ export default function Produto() {
     };
   }, [product]);
 
+  // Auto-scroll nav to center active button on mobile
+  useEffect(() => {
+    const navInner = sectionNavRef.current?.querySelector('.pdp__section-nav-inner') as HTMLElement | null;
+    if (!navInner) return;
+    const activeBtn = navInner.querySelector('.pdp__section-nav-btn--active') as HTMLElement | null;
+    if (!activeBtn) return;
+    const scrollLeft = activeBtn.offsetLeft - navInner.clientWidth / 2 + activeBtn.clientWidth / 2;
+    navInner.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+  }, [activeSection]);
+
   // Open cart drawer when navigated back with openCart state
   useEffect(() => {
     if (location.state?.openCart) {
