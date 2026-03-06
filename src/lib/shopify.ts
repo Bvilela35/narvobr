@@ -72,6 +72,7 @@ export interface ShopifyProduct {
     specOQueAcompanha?: string;
     specDetalhes?: string;
     specFoto?: { url: string; altText?: string | null } | null;
+    faq?: Array<{ pergunta: string; resposta?: string }>;
   };
 }
 
