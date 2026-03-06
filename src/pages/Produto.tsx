@@ -1135,6 +1135,56 @@ export default function Produto() {
             max-width: 680px;
           }
 
+          /* Descrição Section Layout */
+          .pdp__descricao-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+          }
+
+          .pdp__descricao-title {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin: 0 0 24px;
+            line-height: 1.2;
+          }
+
+          .pdp__descricao-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--pdp-text-secondary);
+            margin: 0;
+            white-space: pre-line;
+          }
+
+          .pdp__descricao-media {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: var(--pdp-surface);
+          }
+
+          .pdp__descricao-media img,
+          .pdp__descricao-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+
+          @media (max-width: 768px) {
+            .pdp__descricao-grid {
+              grid-template-columns: 1fr;
+              gap: 32px;
+            }
+            .pdp__descricao-title {
+              font-size: 24px;
+            }
+          }
+
           @media (max-width: 1024px) {
             .pdp__section-nav { padding: 24px 0; background: #fff; }
             .pdp__section-nav-inner {
