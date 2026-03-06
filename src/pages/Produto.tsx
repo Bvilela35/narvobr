@@ -794,13 +794,8 @@ export default function Produto() {
 
             .pdp__mobile-bullets-overlay {
               display: flex;
-              position: absolute;
-              bottom: 16px;
-              left: 0;
-              right: 0;
               justify-content: center;
-              z-index: 10;
-              pointer-events: none;
+              margin-top: 10px;
             }
 
             .pdp__mobile-bullets-pair {
@@ -810,9 +805,6 @@ export default function Produto() {
             }
 
             .pdp__mobile-bullets-overlay .pdp__bullet-tag {
-              background: rgba(255,255,255,0.88);
-              backdrop-filter: blur(8px);
-              border-color: rgba(255,255,255,0.5);
               font-size: 11px;
               padding: 3px 10px;
             }
