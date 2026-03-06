@@ -13,6 +13,30 @@ function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
 }
 
+// Parse Shopify rich text JSON into plain text
+function parseRichText(value: string): string {
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
+      return parsed.children
+        .map((node: any) => {
+          if (node.type === 'paragraph' && Array.isArray(node.children)) {
+            return node.children.map((child: any) => child.value || '').join('');
+          }
+          if (node.type === 'list' && Array.isArray(node.children)) {
+            return node.children
+              .map((li: any) => li.children?.map((p: any) => p.children?.map((t: any) => t.value || '').join('')).join(''))
+              .join('\n');
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n');
+    }
+  } catch { /* not JSON, return as-is */ }
+  return value;
+}
+
 function normalizeCep(v: string) {
   return v.replace(/\D/g, "").slice(0, 8);
 }
@@ -1786,7 +1810,7 @@ export default function Produto() {
                     {specItems.map((item, i) => (
                       <div key={item.label} className="pdp__specs-item">
                         <span className="pdp__specs-label">{item.label}</span>
-                        <span className="pdp__specs-value">{item.value}</span>
+                        <span className="pdp__specs-value">{parseRichText(item.value!)}</span>
                         {i < specItems.length - 1 && <div className="pdp__specs-divider" />}
                       </div>
                     ))}
