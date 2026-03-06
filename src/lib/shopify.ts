@@ -67,6 +67,11 @@ export interface ShopifyProduct {
     tituloDescricao?: string;
     descricaoCompleta?: string;
     fotoDescricao?: { type: 'image'; url: string; altText?: string | null } | { type: 'video'; sources: ShopifyVideoSource[]; previewImage?: string | null } | null;
+    specMateriais?: string;
+    specTamanho?: string;
+    specOQueAcompanha?: string;
+    specDetalhes?: string;
+    specFoto?: { url: string; altText?: string | null } | null;
   };
 }
 
