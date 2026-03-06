@@ -806,8 +806,8 @@ export default function Produto() {
             }
 
             .pdp__mobile-bullets-overlay .pdp__bullet-tag {
-              font-size: 11px;
-              padding: 3px 10px;
+              font-size: 13px;
+              padding: 4px 12px;
             }
           }
 
