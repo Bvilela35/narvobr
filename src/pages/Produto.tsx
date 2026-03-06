@@ -93,7 +93,7 @@ export default function Produto() {
     const image = images.edges[0]?.node?.url;
     const price = priceRange.minVariantPrice.amount;
     const currency = priceRange.minVariantPrice.currencyCode || "BRL";
-    const available = variants.edges.some(v => v.node.availableForSale);
+    const available = variants.edges.some((v) => v.node.availableForSale);
 
     const jsonLd = {
       "@context": "https://schema.org",
@@ -108,8 +108,8 @@ export default function Produto() {
         price,
         priceCurrency: currency,
         availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        url: `${window.location.origin}/produto/${productHandle}`,
-      },
+        url: `${window.location.origin}/produto/${productHandle}`
+      }
     };
 
     let scriptTag = document.querySelector('script[data-narvo-jsonld]') as HTMLScriptElement | null;
@@ -917,9 +917,9 @@ export default function Produto() {
                 className="pdp__gallery"
                 role="region"
                 aria-label="Galeria do produto"
-                onClick={() => { setLightboxOpen(true); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
-                style={{ cursor: 'zoom-in' }}
-              >
+                onClick={() => {setLightboxOpen(true);setZoomLevel(1);setPanPos({ x: 0, y: 0 });}}
+                style={{ cursor: 'zoom-in' }}>
+                
                 {imgs[selectedImage] ?
                 <AnimatePresence mode="wait">
                     <motion.img
@@ -939,15 +939,15 @@ export default function Produto() {
                   <ZoomIn size={18} />
                 </div>
 
-                {hasStories && (
-                  <button
-                    className="pdp__stories-btn"
-                    onClick={(e) => { e.stopPropagation(); setStoriesOpen(true); }}
-                    aria-label="Ver vídeos"
-                  >
+                {hasStories &&
+                <button
+                  className="pdp__stories-btn"
+                  onClick={(e) => {e.stopPropagation();setStoriesOpen(true);}}
+                  aria-label="Ver vídeos">
+                  
                     <Video size={20} />
                   </button>
-                )}
+                }
 
                 {totalImages > 1 &&
                 <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
@@ -968,11 +968,11 @@ export default function Produto() {
               <div className="pdp__trust-bar">
                 <div className="pdp__trust-item">
                   <Package size={22} strokeWidth={1.5} />
-                  <span>Frete Sedex para todo Brasil</span>
+                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
                 </div>
                 <div className="pdp__trust-item">
                   <ShieldCheck size={22} strokeWidth={1.5} />
-                  <span>Garantia 6 meses</span>
+                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
                 </div>
               </div>
             </div>
@@ -1019,70 +1019,70 @@ export default function Produto() {
                             </> :
                         option.name}
                         </p>
-                        {option.name.toLowerCase() === 'quantidade' ? (
-                          <div className="pdp__qty-list" role="radiogroup" aria-label={option.name}>
+                        {option.name.toLowerCase() === 'quantidade' ?
+                      <div className="pdp__qty-list" role="radiogroup" aria-label={option.name}>
                             {uniqueValues.map((val) => {
-                              const isSelected = currentVal === val;
-                              const isAvailable = variants.edges.some((v) => {
-                                const matchesThisOption = v.node.selectedOptions.some(
-                                  (o) => o.name === option.name && o.value === val
-                                );
-                                return matchesThisOption && v.node.availableForSale;
-                              });
-                              // Find variant price for this quantity value
-                              const matchingVariant = variants.edges.find((v) =>
-                                v.node.selectedOptions.some(
-                                  (o) => o.name === option.name && o.value === val
-                                )
-                              );
-                              const variantPrice = matchingVariant?.node.price.amount;
-                              const inputId = `opt-${option.name}-${val}`;
-                              return (
-                                <div className="pdp__qty-item" key={val}>
+                          const isSelected = currentVal === val;
+                          const isAvailable = variants.edges.some((v) => {
+                            const matchesThisOption = v.node.selectedOptions.some(
+                              (o) => o.name === option.name && o.value === val
+                            );
+                            return matchesThisOption && v.node.availableForSale;
+                          });
+                          // Find variant price for this quantity value
+                          const matchingVariant = variants.edges.find((v) =>
+                          v.node.selectedOptions.some(
+                            (o) => o.name === option.name && o.value === val
+                          )
+                          );
+                          const variantPrice = matchingVariant?.node.price.amount;
+                          const inputId = `opt-${option.name}-${val}`;
+                          return (
+                            <div className="pdp__qty-item" key={val}>
                                   <input
-                                    type="radio"
-                                    name={`option-${option.name}`}
-                                    id={inputId}
-                                    value={val}
-                                    checked={isSelected}
-                                    onChange={() => {
-                                      const currentOptions = selectedVariant?.selectedOptions || [];
-                                      const newIdx = variants.edges.findIndex((v) => {
-                                        return v.node.selectedOptions.every((so) => {
-                                          if (so.name === option.name) return so.value === val;
-                                          const kept = currentOptions.find((co) => co.name === so.name);
-                                          return kept ? kept.value === so.value : true;
-                                        });
-                                      });
-                                      if (newIdx >= 0) setSelectedVariantIdx(newIdx);
-                                      setTimeout(() => {
-                                        const currentOptionEl = document.getElementById(`option-group-${option.name}`);
-                                        if (currentOptionEl) {
-                                          const nextSibling = currentOptionEl.nextElementSibling as HTMLElement;
-                                          if (nextSibling) {
-                                            nextSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                          } else {
-                                            const buybox = document.getElementById('pdp-buybox');
-                                            buybox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                          }
-                                        }
-                                      }, 100);
-                                    }}
-                                    className="pdp__qty-input"
-                                    disabled={!isAvailable}
-                                  />
+                                type="radio"
+                                name={`option-${option.name}`}
+                                id={inputId}
+                                value={val}
+                                checked={isSelected}
+                                onChange={() => {
+                                  const currentOptions = selectedVariant?.selectedOptions || [];
+                                  const newIdx = variants.edges.findIndex((v) => {
+                                    return v.node.selectedOptions.every((so) => {
+                                      if (so.name === option.name) return so.value === val;
+                                      const kept = currentOptions.find((co) => co.name === so.name);
+                                      return kept ? kept.value === so.value : true;
+                                    });
+                                  });
+                                  if (newIdx >= 0) setSelectedVariantIdx(newIdx);
+                                  setTimeout(() => {
+                                    const currentOptionEl = document.getElementById(`option-group-${option.name}`);
+                                    if (currentOptionEl) {
+                                      const nextSibling = currentOptionEl.nextElementSibling as HTMLElement;
+                                      if (nextSibling) {
+                                        nextSibling.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      } else {
+                                        const buybox = document.getElementById('pdp-buybox');
+                                        buybox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                      }
+                                    }
+                                  }, 100);
+                                }}
+                                className="pdp__qty-input"
+                                disabled={!isAvailable} />
+                              
                                   <label htmlFor={inputId} className="pdp__qty-label">
                                     <span className="pdp__qty-name">{val}</span>
-                                    {variantPrice && (
-                                      <span className="pdp__qty-price">{formatPrice(variantPrice)}</span>
-                                    )}
+                                    {variantPrice &&
+                                <span className="pdp__qty-price">{formatPrice(variantPrice)}</span>
+                                }
                                   </label>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                        <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
+                                </div>);
+
+                        })}
+                          </div> :
+
+                      <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
                           {uniqueValues.map((val) => {
                           const isSelected = currentVal === val;
                           const isAvailable = variants.edges.some((v) => {
@@ -1137,7 +1137,7 @@ export default function Produto() {
 
                         })}
                         </div>
-                        )}
+                      }
                       </div>);
 
                 })}
@@ -1248,168 +1248,168 @@ export default function Produto() {
 
 
       {/* Fullscreen Lightbox */}
-      {lightboxOpen && imgs[selectedImage] && (
-        <div
-          className={`pdp__lightbox${isDragging.current ? ' pdp__lightbox--dragging' : ''}`}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setLightboxOpen(false);
-            }
-          }}
-          onWheel={(e) => {
-            e.preventDefault();
-            setZoomLevel((prev) => {
-              const next = prev + (e.deltaY > 0 ? -0.25 : 0.25);
-              const clamped = Math.min(Math.max(next, 1), 5);
-              if (clamped === 1) setPanPos({ x: 0, y: 0 });
-              return clamped;
-            });
-          }}
-        >
+      {lightboxOpen && imgs[selectedImage] &&
+      <div
+        className={`pdp__lightbox${isDragging.current ? ' pdp__lightbox--dragging' : ''}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setLightboxOpen(false);
+          }
+        }}
+        onWheel={(e) => {
+          e.preventDefault();
+          setZoomLevel((prev) => {
+            const next = prev + (e.deltaY > 0 ? -0.25 : 0.25);
+            const clamped = Math.min(Math.max(next, 1), 5);
+            if (clamped === 1) setPanPos({ x: 0, y: 0 });
+            return clamped;
+          });
+        }}>
+        
           <button
-            className="pdp__lightbox-close"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Fechar"
-          >
+          className="pdp__lightbox-close"
+          onClick={() => setLightboxOpen(false)}
+          aria-label="Fechar">
+          
             <X size={20} />
           </button>
 
           <div
-            className="pdp__lightbox-img-wrapper"
-            onMouseDown={(e) => {
-              if (zoomLevel <= 1) return;
-              isDragging.current = true;
-              dragStart.current = { x: e.clientX, y: e.clientY };
-              panStart.current = { ...panPos };
-            }}
-            onMouseMove={(e) => {
-              if (!isDragging.current) return;
+          className="pdp__lightbox-img-wrapper"
+          onMouseDown={(e) => {
+            if (zoomLevel <= 1) return;
+            isDragging.current = true;
+            dragStart.current = { x: e.clientX, y: e.clientY };
+            panStart.current = { ...panPos };
+          }}
+          onMouseMove={(e) => {
+            if (!isDragging.current) return;
+            setPanPos({
+              x: panStart.current.x + (e.clientX - dragStart.current.x),
+              y: panStart.current.y + (e.clientY - dragStart.current.y)
+            });
+          }}
+          onMouseUp={() => {isDragging.current = false;}}
+          onMouseLeave={() => {isDragging.current = false;}}
+          onTouchStart={(e) => {
+            if (e.touches.length === 2) {
+              e.preventDefault();
+              const dx = e.touches[0].clientX - e.touches[1].clientX;
+              const dy = e.touches[0].clientY - e.touches[1].clientY;
+              lastTouchDist.current = Math.hypot(dx, dy);
+              zoomRef.current = zoomLevel;
+              isSwiping.current = false;
+            } else if (e.touches.length === 1) {
+              if (zoomLevel > 1) {
+                isDragging.current = true;
+                lastTouchCenter.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                touchPanStart.current = { ...panPos };
+                isSwiping.current = false;
+              } else {
+                isSwiping.current = true;
+                swipeStartX.current = e.touches[0].clientX;
+              }
+            }
+          }}
+          onTouchMove={(e) => {
+            if (e.touches.length === 2) {
+              e.preventDefault();
+              const dx = e.touches[0].clientX - e.touches[1].clientX;
+              const dy = e.touches[0].clientY - e.touches[1].clientY;
+              const dist = Math.hypot(dx, dy);
+              if (lastTouchDist.current > 0) {
+                const scale = dist / lastTouchDist.current;
+                const newZoom = Math.min(Math.max(zoomRef.current * scale, 1), 5);
+                setZoomLevel(newZoom);
+                if (newZoom === 1) setPanPos({ x: 0, y: 0 });
+              }
+            } else if (e.touches.length === 1 && isDragging.current) {
               setPanPos({
-                x: panStart.current.x + (e.clientX - dragStart.current.x),
-                y: panStart.current.y + (e.clientY - dragStart.current.y),
+                x: touchPanStart.current.x + (e.touches[0].clientX - lastTouchCenter.current.x),
+                y: touchPanStart.current.y + (e.touches[0].clientY - lastTouchCenter.current.y)
               });
-            }}
-            onMouseUp={() => { isDragging.current = false; }}
-            onMouseLeave={() => { isDragging.current = false; }}
-            onTouchStart={(e) => {
-              if (e.touches.length === 2) {
-                e.preventDefault();
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                lastTouchDist.current = Math.hypot(dx, dy);
-                zoomRef.current = zoomLevel;
-                isSwiping.current = false;
-              } else if (e.touches.length === 1) {
-                if (zoomLevel > 1) {
-                  isDragging.current = true;
-                  lastTouchCenter.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                  touchPanStart.current = { ...panPos };
-                  isSwiping.current = false;
-                } else {
-                  isSwiping.current = true;
-                  swipeStartX.current = e.touches[0].clientX;
-                }
-              }
-            }}
-            onTouchMove={(e) => {
-              if (e.touches.length === 2) {
-                e.preventDefault();
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const dist = Math.hypot(dx, dy);
-                if (lastTouchDist.current > 0) {
-                  const scale = dist / lastTouchDist.current;
-                  const newZoom = Math.min(Math.max(zoomRef.current * scale, 1), 5);
-                  setZoomLevel(newZoom);
-                  if (newZoom === 1) setPanPos({ x: 0, y: 0 });
-                }
-              } else if (e.touches.length === 1 && isDragging.current) {
-                setPanPos({
-                  x: touchPanStart.current.x + (e.touches[0].clientX - lastTouchCenter.current.x),
-                  y: touchPanStart.current.y + (e.touches[0].clientY - lastTouchCenter.current.y),
-                });
-              }
-            }}
-            onTouchEnd={(e) => {
-              if (e.touches.length < 2) {
-                lastTouchDist.current = 0;
-                zoomRef.current = zoomLevel;
-              }
-              if (e.touches.length === 0) {
-                if (isSwiping.current && e.changedTouches.length === 1 && totalImages > 1) {
-                  const deltaX = e.changedTouches[0].clientX - swipeStartX.current;
-                  if (Math.abs(deltaX) > 50) {
-                    if (deltaX < 0) { nextImage(); } else { prevImage(); }
-                    setZoomLevel(1);
-                    setPanPos({ x: 0, y: 0 });
-                  }
-                }
-                isDragging.current = false;
-                isSwiping.current = false;
-              }
-            }}
-            style={{ touchAction: 'none' }}
-          >
-            <img
-              src={imgs[selectedImage].node.url}
-              alt={imgs[selectedImage].node.altText || title}
-              className="pdp__lightbox-img"
-              style={{
-                transform: `scale(${zoomLevel}) translate(${panPos.x / zoomLevel}px, ${panPos.y / zoomLevel}px)`,
-              }}
-              draggable={false}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (zoomLevel < 3) {
-                  setZoomLevel((prev) => prev + 1);
-                } else {
+            }
+          }}
+          onTouchEnd={(e) => {
+            if (e.touches.length < 2) {
+              lastTouchDist.current = 0;
+              zoomRef.current = zoomLevel;
+            }
+            if (e.touches.length === 0) {
+              if (isSwiping.current && e.changedTouches.length === 1 && totalImages > 1) {
+                const deltaX = e.changedTouches[0].clientX - swipeStartX.current;
+                if (Math.abs(deltaX) > 50) {
+                  if (deltaX < 0) {nextImage();} else {prevImage();}
                   setZoomLevel(1);
                   setPanPos({ x: 0, y: 0 });
                 }
-              }}
-            />
+              }
+              isDragging.current = false;
+              isSwiping.current = false;
+            }
+          }}
+          style={{ touchAction: 'none' }}>
+          
+            <img
+            src={imgs[selectedImage].node.url}
+            alt={imgs[selectedImage].node.altText || title}
+            className="pdp__lightbox-img"
+            style={{
+              transform: `scale(${zoomLevel}) translate(${panPos.x / zoomLevel}px, ${panPos.y / zoomLevel}px)`
+            }}
+            draggable={false}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (zoomLevel < 3) {
+                setZoomLevel((prev) => prev + 1);
+              } else {
+                setZoomLevel(1);
+                setPanPos({ x: 0, y: 0 });
+              }
+            }} />
+          
           </div>
 
-          {totalImages > 1 && (
-            <div className="pdp__lightbox-nav">
+          {totalImages > 1 &&
+        <div className="pdp__lightbox-nav">
               <button
-                className="pdp__lightbox-btn"
-                onClick={(e) => { e.stopPropagation(); prevImage(); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
-                aria-label="Imagem anterior"
-              >
+            className="pdp__lightbox-btn"
+            onClick={(e) => {e.stopPropagation();prevImage();setZoomLevel(1);setPanPos({ x: 0, y: 0 });}}
+            aria-label="Imagem anterior">
+            
                 <ChevronLeft size={18} />
               </button>
               <span className="pdp__lightbox-indicator">
                 {selectedImage + 1} / {totalImages}
               </span>
               <button
-                className="pdp__lightbox-btn"
-                onClick={(e) => { e.stopPropagation(); nextImage(); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
-                aria-label="Próxima imagem"
-              >
+            className="pdp__lightbox-btn"
+            onClick={(e) => {e.stopPropagation();nextImage();setZoomLevel(1);setPanPos({ x: 0, y: 0 });}}
+            aria-label="Próxima imagem">
+            
                 <ChevronRight size={18} />
               </button>
             </div>
-          )}
+        }
 
           <div className="pdp__lightbox-zoom">
             <button
-              className="pdp__lightbox-zoom-btn"
-              onClick={(e) => { e.stopPropagation(); setZoomLevel((z) => Math.max(z - 0.5, 1)); if (zoomLevel <= 1.5) setPanPos({ x: 0, y: 0 }); }}
-              aria-label="Diminuir zoom"
-            >
+            className="pdp__lightbox-zoom-btn"
+            onClick={(e) => {e.stopPropagation();setZoomLevel((z) => Math.max(z - 0.5, 1));if (zoomLevel <= 1.5) setPanPos({ x: 0, y: 0 });}}
+            aria-label="Diminuir zoom">
+            
               −
             </button>
             <button
-              className="pdp__lightbox-zoom-btn"
-              onClick={(e) => { e.stopPropagation(); setZoomLevel((z) => Math.min(z + 0.5, 5)); }}
-              aria-label="Aumentar zoom"
-            >
+            className="pdp__lightbox-zoom-btn"
+            onClick={(e) => {e.stopPropagation();setZoomLevel((z) => Math.min(z + 0.5, 5));}}
+            aria-label="Aumentar zoom">
+            
               +
             </button>
           </div>
         </div>
-      )}
+      }
 
       {/* Video Stories */}
       <VideoStories videos={videoStories} open={storiesOpen} onClose={() => setStoriesOpen(false)} />
