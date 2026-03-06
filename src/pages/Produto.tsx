@@ -7,6 +7,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
+import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
@@ -776,17 +777,45 @@ export default function Produto() {
             .pdp__title { font-size: 32px; }
           }
 
+          .pdp__mobile-bullets-overlay {
+            display: none;
+          }
+
           @media (max-width: 768px) {
             .pdp__container { padding: 24px 16px 40px; }
             .pdp__grid {
               grid-template-columns: 1fr;
               gap: 24px;
             }
-            .pdp__gallery { aspect-ratio: 1 / 1; }
+            .pdp__gallery { aspect-ratio: 1 / 1; position: relative; }
             .pdp__title { font-size: 28px; }
             .pdp__option-grid { grid-template-columns: repeat(2, 1fr); }
+            .pdp__bullets { display: none; }
 
-            .pdp__container { padding: 24px 16px 40px; }
+            .pdp__mobile-bullets-overlay {
+              display: flex;
+              position: absolute;
+              bottom: 16px;
+              left: 0;
+              right: 0;
+              justify-content: center;
+              z-index: 10;
+              pointer-events: none;
+            }
+
+            .pdp__mobile-bullets-pair {
+              display: flex;
+              gap: 6px;
+              justify-content: center;
+            }
+
+            .pdp__mobile-bullets-overlay .pdp__bullet-tag {
+              background: rgba(255,255,255,0.88);
+              backdrop-filter: blur(8px);
+              border-color: rgba(255,255,255,0.5);
+              font-size: 11px;
+              padding: 3px 10px;
+            }
           }
 
           /* Lightbox / Fullscreen */
@@ -1042,6 +1071,8 @@ export default function Produto() {
                     </button>
                   </div>
                 }
+                {/* Mobile bullet points overlay */}
+                <MobileBulletOverlay bulletPoints={bulletPoints} />
               </div>
 
               {/* Trust bar */}
