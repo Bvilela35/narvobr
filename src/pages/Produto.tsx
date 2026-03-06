@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -33,6 +33,12 @@ export default function Produto() {
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPos, setPanPos] = useState({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const panStart = useRef({ x: 0, y: 0 });
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
 
@@ -697,6 +703,139 @@ export default function Produto() {
 
             .pdp__container { padding: 24px 16px 40px; }
           }
+
+          /* Lightbox / Fullscreen */
+          .pdp__lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+          }
+          .pdp__lightbox--dragging { cursor: grabbing; }
+
+          .pdp__lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 210;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+          .pdp__lightbox-img-wrapper {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .pdp__lightbox-img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+          }
+
+          .pdp__lightbox-nav {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 999px;
+            padding: 0 18px;
+            height: 48px;
+          }
+
+          .pdp__lightbox-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            border-radius: 50%;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-btn:hover { background: rgba(255,255,255,0.15); }
+
+          .pdp__lightbox-indicator {
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+            color: rgba(255,255,255,0.6);
+            min-width: 36px;
+            text-align: center;
+            user-select: none;
+          }
+
+          .pdp__lightbox-zoom {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 8px;
+          }
+
+          .pdp__lightbox-zoom-btn {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 300;
+            transition: background 0.15s;
+          }
+          .pdp__lightbox-zoom-btn:hover { background: rgba(255,255,255,0.2); }
+
+          .pdp__gallery-zoom-hint {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+          }
+          .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
         `}</style>
 
         <div className="pdp__container">
@@ -706,7 +845,13 @@ export default function Produto() {
 
           <div className="pdp__grid">
             {/* Gallery */}
-            <div className="pdp__gallery" role="region" aria-label="Galeria do produto">
+            <div
+              className="pdp__gallery"
+              role="region"
+              aria-label="Galeria do produto"
+              onClick={() => { setLightboxOpen(true); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
+              style={{ cursor: 'zoom-in' }}
+            >
               {imgs[selectedImage] ?
               <AnimatePresence mode="wait">
                   <motion.img
@@ -720,12 +865,14 @@ export default function Produto() {
                   transition={{ duration: 0.25 }} />
 
                 </AnimatePresence> :
-
               <div className="pdp__gallery-placeholder">Sem imagem</div>
               }
+              <div className="pdp__gallery-zoom-hint">
+                <ZoomIn size={18} />
+              </div>
 
               {totalImages > 1 &&
-              <div className="pdp__gallery-nav">
+              <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
                   <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
                     <ChevronLeft size={18} strokeWidth={2} />
                   </button>
@@ -1007,6 +1154,113 @@ export default function Produto() {
           </div>
         </div>
       }
+
+
+      {/* Fullscreen Lightbox */}
+      {lightboxOpen && imgs[selectedImage] && (
+        <div
+          className={`pdp__lightbox${isDragging.current ? ' pdp__lightbox--dragging' : ''}`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setLightboxOpen(false);
+            }
+          }}
+          onWheel={(e) => {
+            e.preventDefault();
+            setZoomLevel((prev) => {
+              const next = prev + (e.deltaY > 0 ? -0.25 : 0.25);
+              const clamped = Math.min(Math.max(next, 1), 5);
+              if (clamped === 1) setPanPos({ x: 0, y: 0 });
+              return clamped;
+            });
+          }}
+        >
+          <button
+            className="pdp__lightbox-close"
+            onClick={() => setLightboxOpen(false)}
+            aria-label="Fechar"
+          >
+            <X size={20} />
+          </button>
+
+          <div
+            className="pdp__lightbox-img-wrapper"
+            onMouseDown={(e) => {
+              if (zoomLevel <= 1) return;
+              isDragging.current = true;
+              dragStart.current = { x: e.clientX, y: e.clientY };
+              panStart.current = { ...panPos };
+            }}
+            onMouseMove={(e) => {
+              if (!isDragging.current) return;
+              setPanPos({
+                x: panStart.current.x + (e.clientX - dragStart.current.x),
+                y: panStart.current.y + (e.clientY - dragStart.current.y),
+              });
+            }}
+            onMouseUp={() => { isDragging.current = false; }}
+            onMouseLeave={() => { isDragging.current = false; }}
+          >
+            <img
+              src={imgs[selectedImage].node.url}
+              alt={imgs[selectedImage].node.altText || title}
+              className="pdp__lightbox-img"
+              style={{
+                transform: `scale(${zoomLevel}) translate(${panPos.x / zoomLevel}px, ${panPos.y / zoomLevel}px)`,
+              }}
+              draggable={false}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (zoomLevel < 3) {
+                  setZoomLevel((prev) => prev + 1);
+                } else {
+                  setZoomLevel(1);
+                  setPanPos({ x: 0, y: 0 });
+                }
+              }}
+            />
+          </div>
+
+          {totalImages > 1 && (
+            <div className="pdp__lightbox-nav">
+              <button
+                className="pdp__lightbox-btn"
+                onClick={(e) => { e.stopPropagation(); prevImage(); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
+                aria-label="Imagem anterior"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <span className="pdp__lightbox-indicator">
+                {selectedImage + 1} / {totalImages}
+              </span>
+              <button
+                className="pdp__lightbox-btn"
+                onClick={(e) => { e.stopPropagation(); nextImage(); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
+                aria-label="Próxima imagem"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+
+          <div className="pdp__lightbox-zoom">
+            <button
+              className="pdp__lightbox-zoom-btn"
+              onClick={(e) => { e.stopPropagation(); setZoomLevel((z) => Math.max(z - 0.5, 1)); if (zoomLevel <= 1.5) setPanPos({ x: 0, y: 0 }); }}
+              aria-label="Diminuir zoom"
+            >
+              −
+            </button>
+            <button
+              className="pdp__lightbox-zoom-btn"
+              onClick={(e) => { e.stopPropagation(); setZoomLevel((z) => Math.min(z + 0.5, 5)); }}
+              aria-label="Aumentar zoom"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      )}
     </>);
 
 }
