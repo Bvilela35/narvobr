@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
+import { ReviewsSection } from "@/components/ReviewsSection";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
