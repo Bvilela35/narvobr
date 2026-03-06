@@ -383,10 +383,21 @@ export async function fetchProductByHandle(handle: string) {
     specFoto = { url: product.specFotoMeta.reference.image.url, altText: product.specFotoMeta.reference.image.altText };
   }
 
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, ...cleanProduct } = product;
+  // Parse FAQ metafield
+  let faq: Array<{ pergunta: string; resposta?: string }> = [];
+  try {
+    if (product.faqMeta?.value) {
+      const parsed = JSON.parse(product.faqMeta.value);
+      if (Array.isArray(parsed)) {
+        faq = parsed.filter((item: any) => item?.pergunta);
+      }
+    }
+  } catch { /* ignore parse errors */ }
 
-  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto } } as ShopifyProduct;
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
