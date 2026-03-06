@@ -364,7 +364,7 @@ export default function Produto() {
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.02em;
-            color: #b6e36e;
+            color: #0f3d2e;
             background: #f8f8f8;
             border: 1px solid #e5e5e5;
             border-radius: var(--pdp-radius-pill);
