@@ -270,6 +270,9 @@ const PRODUCT_BY_HANDLE_QUERY = `
           }
         }
       }
+      faqMeta: metafield(namespace: "custom", key: "faq") {
+        value
+      }
     }
   }
 `;
