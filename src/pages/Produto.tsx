@@ -935,6 +935,18 @@ export default function Produto() {
               }
             </div>
 
+            {/* Trust bar */}
+            <div className="pdp__trust-bar">
+              <div className="pdp__trust-item">
+                <Package size={22} strokeWidth={1.5} />
+                <span>Frete Sedex para todo Brasil</span>
+              </div>
+              <div className="pdp__trust-item">
+                <ShieldCheck size={22} strokeWidth={1.5} />
+                <span>Garantia 6 meses</span>
+              </div>
+            </div>
+
             {/* Info */}
             <div className="pdp__info">
               <h1 className="pdp__title">{title}</h1>
