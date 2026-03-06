@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 interface Props {
   bulletPoints: string[];
@@ -22,7 +22,7 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
         }
         return next;
       });
-    }, 5000);
+    }, 3000);
     return () => clearInterval(timer);
   }, [phase, bulletPoints.length]);
 
@@ -55,32 +55,39 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
       )}
 
       {phase === 'expanded' && (
-        <div className="pdp__bullets pdp__bullets--list">
+        <div className="pdp__bullets">
           {bulletPoints.map((bp, i) => (
             <motion.span
               key={i}
               className="pdp__bullet-tag"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.06 }}
             >
               {bp}
             </motion.span>
           ))}
+          <button
+            className="pdp__bullet-close"
+            onClick={() => setPhase('collapsed')}
+            aria-label="Fechar diferenciais"
+          >
+            <X size={14} strokeWidth={2} />
+          </button>
         </div>
       )}
 
       <h1 className="pdp__title">
+        {title}
         {phase === 'collapsed' && (
           <button
             className="pdp__bullet-expand"
             onClick={() => setPhase('expanded')}
             aria-label="Ver diferenciais"
           >
-            <Plus size={18} strokeWidth={2} />
+            <Plus size={16} strokeWidth={2} />
           </button>
         )}
-        {title}
       </h1>
     </>
   );

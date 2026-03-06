@@ -372,15 +372,15 @@ export default function Produto() {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             border: 1.5px solid #c8e6c9;
             background: #e8f5e9;
             color: #0f3d2e;
             cursor: pointer;
-            margin-right: 10px;
-            vertical-align: middle;
+            margin-left: 10px;
+            flex-shrink: 0;
             transition: background 0.2s, transform 0.2s;
             padding: 0;
           }
@@ -388,6 +388,27 @@ export default function Produto() {
           .pdp__bullet-expand:hover {
             background: #c8e6c9;
             transform: scale(1.1);
+          }
+
+          .pdp__bullet-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s, color 0.2s;
+            padding: 0;
+          }
+
+          .pdp__bullet-close:hover {
+            background: #f3f4f6;
+            color: #333;
           }
 
           .pdp__title {
@@ -398,6 +419,7 @@ export default function Produto() {
             letter-spacing: -0.02em;
             display: flex;
             align-items: center;
+          }
           }
 
           .pdp__price-row {
