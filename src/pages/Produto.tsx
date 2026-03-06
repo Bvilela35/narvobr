@@ -148,6 +148,8 @@ export default function Produto() {
   }
 
   const { title, description, images, variants, options } = product.node;
+  const videoStories = product.node.videoStories || [];
+  const hasStories = videoStories.length > 0;
   const imgs = images.edges;
   const totalImages = imgs.length;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
