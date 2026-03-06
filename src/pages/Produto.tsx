@@ -165,6 +165,29 @@ export default function Produto() {
     navInner.scrollTo({ left: scrollLeft, behavior: 'smooth' });
   }, [activeSection]);
 
+  // Parallax effect for description media
+  useEffect(() => {
+    const mediaEl = descricaoMediaRef.current;
+    if (!mediaEl) return;
+    const child = mediaEl.querySelector('img, video') as HTMLElement | null;
+    if (!child) return;
+
+    const onScroll = () => {
+      const rect = mediaEl.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      // progress: 0 when element enters bottom, 1 when it leaves top
+      const progress = 1 - (rect.bottom / (windowH + rect.height));
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      // Move image from 0 to -30% of its extra height
+      const translateY = clampedProgress * -30;
+      child.style.transform = `translateY(${translateY}%)`;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [product]);
+
   // Open cart drawer when navigated back with openCart state
   useEffect(() => {
     if (location.state?.openCart) {
