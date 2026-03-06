@@ -1207,51 +1207,60 @@ export default function Produto() {
 
           /* Descrição Section Layout */
           .pdp__descricao-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
+            gap: 64px;
           }
 
           .pdp__descricao-title {
-            font-size: 32px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             margin: 0 0 24px;
-            line-height: 1.2;
+            line-height: 1.1;
           }
 
           .pdp__descricao-text {
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.8;
             color: var(--pdp-text-secondary);
-            margin: 0;
+            margin: 0 auto;
             white-space: pre-line;
+            max-width: 640px;
           }
 
           .pdp__descricao-media {
             width: 100%;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            aspect-ratio: 4/3;
+            aspect-ratio: 16/9;
             background: var(--pdp-surface);
+            position: relative;
           }
 
           .pdp__descricao-media img,
           .pdp__descricao-media video {
             width: 100%;
-            height: 100%;
+            height: 130%;
             object-fit: cover;
             display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            will-change: transform;
           }
 
           @media (max-width: 768px) {
             .pdp__descricao-grid {
-              grid-template-columns: 1fr;
-              gap: 32px;
+              gap: 40px;
             }
             .pdp__descricao-title {
-              font-size: 24px;
+              font-size: 36px;
+            }
+            .pdp__descricao-media {
+              border-radius: 16px;
             }
           }
 
