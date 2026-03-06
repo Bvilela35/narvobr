@@ -1810,7 +1810,7 @@ export default function Produto() {
                     {specItems.map((item, i) => (
                       <div key={item.label} className="pdp__specs-item">
                         <span className="pdp__specs-label">{item.label}</span>
-                        <span className="pdp__specs-value">{item.value}</span>
+                        <span className="pdp__specs-value">{parseRichText(item.value!)}</span>
                         {i < specItems.length - 1 && <div className="pdp__specs-divider" />}
                       </div>
                     ))}
