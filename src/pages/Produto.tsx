@@ -870,8 +870,13 @@ export default function Produto() {
             flex-shrink: 0;
           }
 
+          .pdp__trust-bar--mobile {
+            display: none;
+          }
+
           @media (max-width: 768px) {
-            .pdp__trust-bar { gap: 16px; }
+            .pdp__trust-bar { display: none; }
+            .pdp__trust-bar--mobile { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
             .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
           }
 
@@ -1190,6 +1195,18 @@ export default function Produto() {
                       para saber quando seu pedido chega
                     </div>
                   }
+                </div>
+              </div>
+
+              {/* Trust bar - mobile only (below buybox) */}
+              <div className="pdp__trust-bar pdp__trust-bar--mobile">
+                <div className="pdp__trust-item">
+                  <Package size={22} strokeWidth={1.5} />
+                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
+                </div>
+                <div className="pdp__trust-item">
+                  <ShieldCheck size={22} strokeWidth={1.5} />
+                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
                 </div>
               </div>
             </div>
