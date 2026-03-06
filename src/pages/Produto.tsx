@@ -1537,8 +1537,38 @@ export default function Produto() {
       {/* Seção: Descrição */}
       <section id="secao-descricao" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Descrição</h2>
-          <p className="pdp__content-section-placeholder">{description || "Descrição do produto em breve."}</p>
+          <div className="pdp__descricao-grid">
+            <div>
+              <h2 className="pdp__descricao-title">
+                {tituloDescricao || "Descrição"}
+              </h2>
+              <p className="pdp__descricao-text">
+                {descricaoCompleta || description || "Descrição do produto em breve."}
+              </p>
+            </div>
+            <div className="pdp__descricao-media">
+              {fotoDescricao?.type === 'video' ? (
+                <video
+                  src={fotoDescricao.sources[0]?.url}
+                  poster={fotoDescricao.previewImage || undefined}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : fotoDescricao?.type === 'image' ? (
+                <img
+                  src={fotoDescricao.url}
+                  alt={fotoDescricao.altText || tituloDescricao || title}
+                  loading="lazy"
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--pdp-text-secondary)', fontSize: 14 }}>
+                  Mídia em breve
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
