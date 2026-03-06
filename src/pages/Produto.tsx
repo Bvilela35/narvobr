@@ -491,7 +491,7 @@ export default function Produto() {
           }
           .pdp__qty-input:checked + .pdp__qty-label {
             border-color: #0f3d2e;
-            box-shadow: 0 0 0 1px #0f3d2e;
+            box-shadow: none;
           }
           .pdp__qty-input:focus-visible + .pdp__qty-label {
             outline: 2px solid var(--pdp-link);
