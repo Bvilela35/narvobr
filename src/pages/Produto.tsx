@@ -873,7 +873,7 @@ export default function Produto() {
           }
           @keyframes stories-pulse {
             0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
-            50% { box-shadow: 0 2px 16px rgba(15,61,46,0.5), 0 0 0 4px rgba(15,61,46,0.15); }
+            50% { box-shadow: 0 2px 16px rgba(182,227,109,0.5), 0 0 0 4px rgba(182,227,109,0.25); }
           }
         `}</style>
 
