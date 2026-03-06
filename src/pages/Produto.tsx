@@ -872,7 +872,7 @@ export default function Produto() {
               </div>
 
               {totalImages > 1 &&
-              <div className="pdp__gallery-nav">
+              <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
                   <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
                     <ChevronLeft size={18} strokeWidth={2} />
                   </button>
