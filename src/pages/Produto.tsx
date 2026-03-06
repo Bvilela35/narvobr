@@ -856,7 +856,7 @@ export default function Produto() {
             height: 44px;
             border-radius: 50%;
             border: 2.5px solid #fff;
-            background: rgba(0,0,0,0.45);
+            background: #0f3d2e;
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
@@ -869,7 +869,7 @@ export default function Produto() {
           }
           .pdp__stories-btn:hover {
             transform: scale(1.1);
-            background: rgba(0,0,0,0.6);
+            background: #0a2e21;
           }
           @keyframes stories-pulse {
             0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
