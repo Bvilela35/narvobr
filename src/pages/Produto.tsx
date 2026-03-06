@@ -24,12 +24,12 @@ function formatCep(v: string) {
 }
 
 const TRUST_ITEMS = [
-  { icon: Truck, text: "Chega rápido. Em qualquer lugar do Brasil." },
-  { icon: ShieldCheck, text: "Garantia de 6 meses, porque confiança também se entrega no tempo." },
-  { icon: RefreshCw, text: "Troca ou devolução grátis, do jeito que deve ser." },
-  { icon: Star, text: "Qualidade premium em cada detalhe." },
-  { icon: Sparkles, text: "Design exclusivo, feito para se destacar." },
-  { icon: MapPin, text: "Produzido no Brasil, com excelência de ponta a ponta." },
+  { icon: Truck, text: "Chega rápido. Em todo Brasil." },
+  { icon: ShieldCheck, text: "Garantia de 6 meses." },
+  { icon: RefreshCw, text: "Troca ou devolução grátis." },
+  { icon: Star, text: "Qualidade premium." },
+  { icon: Sparkles, text: "Design exclusivo." },
+  { icon: MapPin, text: "Produzido no Brasil." },
 ];
 
 function TrustBarRotator({ mobile }: { mobile?: boolean }) {
@@ -1022,7 +1022,7 @@ export default function Produto() {
             font-size: 14px;
             font-weight: 500;
             color: var(--pdp-text);
-            white-space: nowrap;
+          
           }
           .pdp__trust-item svg {
             color: #0f3d2e;
