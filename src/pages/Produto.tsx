@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus, RefreshCw, Star, Sparkles, MapPin } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -21,6 +21,54 @@ function formatCep(v: string) {
   const digits = normalizeCep(v);
   if (digits.length > 5) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
   return digits;
+}
+
+const TRUST_ITEMS = [
+  { icon: Truck, text: "Chega rápido. Em qualquer lugar do Brasil." },
+  { icon: ShieldCheck, text: "Garantia de 6 meses, porque confiança também se entrega no tempo." },
+  { icon: RefreshCw, text: "Troca ou devolução grátis, do jeito que deve ser." },
+  { icon: Star, text: "Qualidade premium em cada detalhe." },
+  { icon: Sparkles, text: "Design exclusivo, feito para se destacar." },
+  { icon: MapPin, text: "Produzido no Brasil, com excelência de ponta a ponta." },
+];
+
+function TrustBarRotator({ mobile }: { mobile?: boolean }) {
+  const [idx, setIdx] = useState(0);
+  const len = TRUST_ITEMS.length;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIdx(prev => (prev + 2) % len);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [len]);
+
+  const first = TRUST_ITEMS[idx % len];
+  const second = TRUST_ITEMS[(idx + 1) % len];
+
+  return (
+    <div className={`pdp__trust-bar${mobile ? ' pdp__trust-bar--mobile' : ''}`}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={idx}
+          className="pdp__trust-pair"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <div className="pdp__trust-item">
+            <first.icon size={22} strokeWidth={1.5} />
+            <span className="text-muted-foreground text-sm">{first.text}</span>
+          </div>
+          <div className="pdp__trust-item">
+            <second.icon size={22} strokeWidth={1.5} />
+            <span className="text-muted-foreground text-sm">{second.text}</span>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
 }
 
 export default function Produto() {
@@ -954,6 +1002,14 @@ export default function Produto() {
             justify-content: center;
             gap: 32px;
             margin-top: 16px;
+            overflow: hidden;
+            min-height: 54px;
+          }
+
+          .pdp__trust-pair {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
           }
 
           .pdp__trust-item {
@@ -966,6 +1022,7 @@ export default function Produto() {
             font-size: 14px;
             font-weight: 500;
             color: var(--pdp-text);
+            white-space: nowrap;
           }
           .pdp__trust-item svg {
             color: #0f3d2e;
@@ -978,8 +1035,9 @@ export default function Produto() {
 
           @media (max-width: 768px) {
             .pdp__trust-bar { display: none; }
-            .pdp__trust-bar--mobile { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
+            .pdp__trust-bar--mobile { display: flex; overflow: hidden; min-height: 46px; gap: 16px; justify-content: center; margin-top: 16px; }
             .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
+            .pdp__trust-pair { gap: 16px; }
           }
 
           .pdp__stories-btn {
@@ -1074,16 +1132,7 @@ export default function Produto() {
               <MobileBulletOverlay bulletPoints={bulletPoints} />
 
               {/* Trust bar */}
-              <div className="pdp__trust-bar">
-                <div className="pdp__trust-item">
-                  <Package size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
-                </div>
-                <div className="pdp__trust-item">
-                  <ShieldCheck size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
-                </div>
-              </div>
+              <TrustBarRotator />
             </div>
 
             {/* Info */}
@@ -1303,16 +1352,7 @@ export default function Produto() {
               </div>
 
               {/* Trust bar - mobile only (below buybox) */}
-              <div className="pdp__trust-bar pdp__trust-bar--mobile">
-                <div className="pdp__trust-item">
-                  <Package size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Frete Sedex para todo Brasil</span>
-                </div>
-                <div className="pdp__trust-item">
-                  <ShieldCheck size={22} strokeWidth={1.5} />
-                  <span className="text-muted-foreground text-sm">Garantia 6 meses</span>
-                </div>
-              </div>
+              <TrustBarRotator mobile />
             </div>
           </div>
         </div>
