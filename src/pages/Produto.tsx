@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
+import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
@@ -345,6 +346,12 @@ export default function Produto() {
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 12px;
+            min-height: 28px;
+          }
+
+          .pdp__bullets--list {
+            flex-direction: column;
+            gap: 6px;
           }
 
           .pdp__bullet-tag {
@@ -361,12 +368,36 @@ export default function Produto() {
             white-space: nowrap;
           }
 
+          .pdp__bullet-expand {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1.5px solid #c8e6c9;
+            background: #e8f5e9;
+            color: #0f3d2e;
+            cursor: pointer;
+            margin-right: 10px;
+            vertical-align: middle;
+            transition: background 0.2s, transform 0.2s;
+            padding: 0;
+          }
+
+          .pdp__bullet-expand:hover {
+            background: #c8e6c9;
+            transform: scale(1.1);
+          }
+
           .pdp__title {
             font-size: 40px;
             font-weight: 600;
             line-height: 1.15;
             margin: 0 0 24px;
             letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
           }
 
           .pdp__price-row {
@@ -1006,14 +1037,7 @@ export default function Produto() {
 
             {/* Info */}
             <div className="pdp__info">
-              {bulletPoints.length > 0 && (
-                <div className="pdp__bullets">
-                  {bulletPoints.map((bp, i) => (
-                    <span key={i} className="pdp__bullet-tag">{bp}</span>
-                  ))}
-                </div>
-              )}
-              <h1 className="pdp__title">{title}</h1>
+              <BulletPointsRotator bulletPoints={bulletPoints} title={title} />
 
               <div className="pdp__price-row">
                 <span className="pdp__price">{formatPrice(price)}</span>
