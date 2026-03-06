@@ -378,8 +378,8 @@ export default function Produto() {
             width: 26px;
             height: 26px;
             border-radius: 50%;
-            border: 1.5px solid #c8e6c9;
-            background: #e8f5e9;
+            border: 1.5px solid #e5e5e5;
+            background: #f8f8f8;
             color: #0f3d2e;
             cursor: pointer;
             margin-left: 10px;
