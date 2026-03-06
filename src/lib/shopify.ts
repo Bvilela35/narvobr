@@ -292,10 +292,18 @@ export async function fetchProductByHandle(handle: string) {
     .map((e: { node: ShopifyVideo }) => e.node)
     .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
 
-  // Clean up metafield key from product object
-  const { videoStoriesMeta, ...cleanProduct } = product;
+  // Parse bullet points metafield (JSON list of strings)
+  let bulletPoints: string[] = [];
+  try {
+    if (product.bulletPointsMeta?.value) {
+      bulletPoints = JSON.parse(product.bulletPointsMeta.value);
+    }
+  } catch { /* ignore parse errors */ }
 
-  return { node: { ...cleanProduct, videoStories } } as ShopifyProduct;
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
