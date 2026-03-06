@@ -148,6 +148,7 @@ export default function Produto() {
   }
 
   const { title, description, images, variants, options } = product.node;
+  const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
   const hasStories = videoStories.length > 0;
   const imgs = images.edges;
