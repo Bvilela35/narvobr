@@ -2034,8 +2034,7 @@ export default function Produto() {
       {/* Seção: Avaliações */}
       <section id="secao-avaliacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Avaliações</h2>
-          <p className="pdp__content-section-placeholder">Avaliações dos clientes em breve.</p>
+          <ReviewsSection handle={handle} />
         </div>
       </section>
 
