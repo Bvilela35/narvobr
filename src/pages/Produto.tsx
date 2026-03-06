@@ -1073,15 +1073,16 @@ export default function Produto() {
           .pdp__section-nav {
             display: flex;
             justify-content: center;
-            padding: 32px 24px;
-            border-top: 1px solid var(--pdp-border);
+            padding: 40px 24px;
             background: var(--pdp-bg);
           }
 
           .pdp__section-nav-inner {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            display: inline-flex;
+            gap: 6px;
+            padding: 5px;
+            background: #f2f2f2;
+            border-radius: var(--pdp-radius-pill);
             justify-content: center;
           }
 
@@ -1089,16 +1090,22 @@ export default function Produto() {
             font-family: var(--pdp-font);
             font-size: 14px;
             font-weight: 500;
-            padding: 10px 22px;
+            padding: 11px 24px;
             border: none;
             border-radius: var(--pdp-radius-pill);
-            background: #f8f8f8;
-            color: #0f3d2e;
+            background: transparent;
+            color: #555;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+            position: relative;
+            letter-spacing: -0.01em;
           }
           .pdp__section-nav-btn:hover {
-            background: #e8e8e8;
+            background: rgba(255,255,255,0.7);
+            color: #0f3d2e;
+          }
+          .pdp__section-nav-btn:active {
+            transform: scale(0.97);
           }
 
           /* Content Sections */
@@ -1127,8 +1134,9 @@ export default function Produto() {
           }
 
           @media (max-width: 768px) {
-            .pdp__section-nav { padding: 24px 16px; }
-            .pdp__section-nav-btn { font-size: 13px; padding: 9px 18px; }
+            .pdp__section-nav { padding: 28px 16px; }
+            .pdp__section-nav-inner { gap: 4px; padding: 4px; flex-wrap: wrap; }
+            .pdp__section-nav-btn { font-size: 13px; padding: 9px 16px; }
             .pdp__content-section { padding: 48px 16px; }
             .pdp__content-section-title { font-size: 20px; }
           }
