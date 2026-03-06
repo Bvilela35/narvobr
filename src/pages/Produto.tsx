@@ -856,7 +856,7 @@ export default function Produto() {
             height: 44px;
             border-radius: 50%;
             border: 2.5px solid #fff;
-            background: rgba(0,0,0,0.45);
+            background: #0f3d2e;
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
