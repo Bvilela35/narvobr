@@ -1654,7 +1654,7 @@ export default function Produto() {
                 {descricaoCompleta || description || "Descrição do produto em breve."}
               </p>
             </div>
-            <div className="pdp__descricao-media">
+            <div ref={descricaoMediaRef} className="pdp__descricao-media">
               {fotoDescricao?.type === 'video' ? (
                 <video
                   src={fotoDescricao.sources[0]?.url}
