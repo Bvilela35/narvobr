@@ -247,6 +247,28 @@ const PRODUCT_BY_HANDLE_QUERY = `
           }
         }
       }
+      specMateriaisMeta: metafield(namespace: "custom", key: "materiais") {
+        value
+      }
+      specTamanhoMeta: metafield(namespace: "custom", key: "tamanho") {
+        value
+      }
+      specOQueAcompanhaMeta: metafield(namespace: "custom", key: "o_que_acompanha") {
+        value
+      }
+      specDetalhesMeta: metafield(namespace: "custom", key: "detalhes") {
+        value
+      }
+      specFotoMeta: metafield(namespace: "custom", key: "foto_ficha_tecnica") {
+        reference {
+          ... on MediaImage {
+            image {
+              url
+              altText
+            }
+          }
+        }
+      }
     }
   }
 `;
