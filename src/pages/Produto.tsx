@@ -720,6 +720,10 @@ export default function Produto() {
                         <>
                                {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
                             </> :
+                        option.name.toLowerCase() === 'quantidade' ?
+                        <>
+                               Volume. <span className="pdp__option-title-hint">Qual é o melhor <span className="pdp__option-title-accent">para você</span>?</span>
+                            </> :
                         option.name}
                         </p>
                         <div className="pdp__option-grid" role="radiogroup" aria-label={option.name}>
