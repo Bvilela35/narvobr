@@ -1276,6 +1276,64 @@ export default function Produto() {
             will-change: transform;
           }
 
+          /* Specs Section — Apple-style */
+          .pdp__specs-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: start;
+          }
+          .pdp__specs-layout--full {
+            grid-template-columns: 1fr;
+            max-width: 640px;
+          }
+          .pdp__specs-title {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            color: var(--pdp-text-main, #1d1d1f);
+            margin-bottom: 48px;
+          }
+          .pdp__specs-list {
+            display: flex;
+            flex-direction: column;
+          }
+          .pdp__specs-item {
+            padding: 24px 0;
+          }
+          .pdp__specs-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--pdp-text-secondary, #86868b);
+            margin-bottom: 8px;
+          }
+          .pdp__specs-value {
+            display: block;
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--pdp-text-main, #1d1d1f);
+          }
+          .pdp__specs-divider {
+            margin-top: 24px;
+            height: 1px;
+            background: #e5e5e5;
+          }
+          .pdp__specs-image-col {
+            position: sticky;
+            top: 120px;
+          }
+          .pdp__specs-image {
+            width: 100%;
+            border-radius: 24px;
+            object-fit: cover;
+            display: block;
+          }
+
           @media (max-width: 768px) {
             .pdp__descricao-grid {
               gap: 40px;
@@ -1285,6 +1343,26 @@ export default function Produto() {
             }
             .pdp__descricao-media {
               border-radius: 16px;
+            }
+            .pdp__specs-layout {
+              grid-template-columns: 1fr;
+              gap: 40px;
+            }
+            .pdp__specs-title {
+              font-size: 28px;
+              margin-bottom: 32px;
+            }
+            .pdp__specs-item {
+              padding: 20px 0;
+            }
+            .pdp__specs-value {
+              font-size: 15px;
+            }
+            .pdp__specs-image {
+              border-radius: 16px;
+            }
+            .pdp__specs-image-col {
+              position: static;
             }
           }
 
