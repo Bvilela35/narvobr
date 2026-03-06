@@ -1122,7 +1122,9 @@ export default function Produto() {
             display: flex;
             justify-content: center;
             padding: 16px 24px;
-            background: transparent;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 40;
           }
           .pdp__section-nav--sticky {
