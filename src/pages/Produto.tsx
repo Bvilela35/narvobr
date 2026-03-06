@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video } from "lucide-react";
+import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -847,6 +847,30 @@ export default function Produto() {
           }
           .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
 
+          .pdp__trust-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+          }
+
+          .pdp__trust-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--pdp-surface);
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pdp-text);
+          }
+
+          @media (max-width: 768px) {
+            .pdp__trust-bar { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .pdp__trust-item { padding: 12px 14px; font-size: 13px; gap: 8px; }
+          }
+
           .pdp__stories-btn {
             position: absolute;
             bottom: 20px;
@@ -933,6 +957,18 @@ export default function Produto() {
                   </button>
                 </div>
               }
+            </div>
+
+            {/* Trust bar */}
+            <div className="pdp__trust-bar">
+              <div className="pdp__trust-item">
+                <Package size={22} strokeWidth={1.5} />
+                <span>Frete Sedex para todo Brasil</span>
+              </div>
+              <div className="pdp__trust-item">
+                <ShieldCheck size={22} strokeWidth={1.5} />
+                <span>Garantia 6 meses</span>
+              </div>
             </div>
 
             {/* Info */}
