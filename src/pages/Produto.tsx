@@ -43,6 +43,8 @@ export default function Produto() {
   const lastTouchCenter = useRef({ x: 0, y: 0 });
   const touchPanStart = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(1);
+  const swipeStartX = useRef(0);
+  const isSwiping = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
 
@@ -1211,10 +1213,17 @@ export default function Produto() {
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 lastTouchDist.current = Math.hypot(dx, dy);
                 zoomRef.current = zoomLevel;
-              } else if (e.touches.length === 1 && zoomLevel > 1) {
-                isDragging.current = true;
-                lastTouchCenter.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                touchPanStart.current = { ...panPos };
+                isSwiping.current = false;
+              } else if (e.touches.length === 1) {
+                if (zoomLevel > 1) {
+                  isDragging.current = true;
+                  lastTouchCenter.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                  touchPanStart.current = { ...panPos };
+                  isSwiping.current = false;
+                } else {
+                  isSwiping.current = true;
+                  swipeStartX.current = e.touches[0].clientX;
+                }
               }
             }}
             onTouchMove={(e) => {
@@ -1242,7 +1251,16 @@ export default function Produto() {
                 zoomRef.current = zoomLevel;
               }
               if (e.touches.length === 0) {
+                if (isSwiping.current && e.changedTouches.length === 1 && totalImages > 1) {
+                  const deltaX = e.changedTouches[0].clientX - swipeStartX.current;
+                  if (Math.abs(deltaX) > 50) {
+                    if (deltaX < 0) { nextImage(); } else { prevImage(); }
+                    setZoomLevel(1);
+                    setPanPos({ x: 0, y: 0 });
+                  }
+                }
                 isDragging.current = false;
+                isSwiping.current = false;
               }
             }}
             style={{ touchAction: 'none' }}
