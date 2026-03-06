@@ -84,6 +84,8 @@ export default function Produto() {
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
+  const [activeSection, setActiveSection] = useState("secao-descricao");
+  const sectionNavRef = useRef<HTMLElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -105,6 +107,52 @@ export default function Produto() {
     setSelectedVariantIdx(0);
     setCep("");
   }, [handle]);
+
+  // IntersectionObserver for active section tracking
+  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-detalhes", "secao-faq", "secao-avaliacoes"];
+  const [isNavSticky, setIsNavSticky] = useState(false);
+
+  useEffect(() => {
+    const navEl = sectionNavRef.current;
+    if (!navEl) return;
+
+    // Sticky detection via sentinel
+    const stickyObserver = new IntersectionObserver(
+      ([entry]) => setIsNavSticky(!entry.isIntersecting),
+      { threshold: 0, rootMargin: "0px" }
+    );
+
+    // Create a sentinel element right before the nav
+    const sentinel = document.createElement("div");
+    sentinel.style.height = "1px";
+    sentinel.style.pointerEvents = "none";
+    sentinel.setAttribute("data-nav-sentinel", "true");
+    navEl.parentElement?.insertBefore(sentinel, navEl);
+    stickyObserver.observe(sentinel);
+
+    // Section tracking
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: "-80px 0px -50% 0px" }
+    );
+
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) sectionObserver.observe(el);
+    });
+
+    return () => {
+      stickyObserver.disconnect();
+      sectionObserver.disconnect();
+      sentinel.remove();
+    };
+  }, [product]);
 
   // Open cart drawer when navigated back with openCart state
   useEffect(() => {
@@ -1073,9 +1121,17 @@ export default function Produto() {
           .pdp__section-nav {
             display: flex;
             justify-content: center;
-            padding: 40px 24px;
-            background: var(--pdp-bg);
-            border-top: 1px solid var(--pdp-border);
+            padding: 16px 24px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 40;
+            transition: box-shadow 0.3s ease;
+          }
+          .pdp__section-nav--sticky {
+            position: sticky;
+            top: 64px;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.06);
           }
 
           .pdp__section-nav-inner {
@@ -1109,11 +1165,17 @@ export default function Produto() {
           .pdp__section-nav-btn:active {
             transform: scale(0.97);
           }
+          .pdp__section-nav-btn--active {
+            background: #fff;
+            color: #0f3d2e;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+          }
 
           /* Content Sections */
           .pdp__content-section {
             padding: 64px 24px;
             border-top: 1px solid var(--pdp-border);
+            scroll-margin-top: 70px;
           }
 
           .pdp__content-section-inner {
@@ -1186,7 +1248,7 @@ export default function Produto() {
           }
 
           @media (max-width: 1024px) {
-            .pdp__section-nav { padding: 24px 0; background: #fff; }
+            .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
             .pdp__section-nav-inner {
               display: flex;
               flex-wrap: nowrap;
@@ -1213,6 +1275,11 @@ export default function Produto() {
             }
             .pdp__section-nav-btn:hover {
               background: #eee;
+            }
+            .pdp__section-nav-btn--active {
+              background: #0f3d2e;
+              color: #fff;
+              box-shadow: none;
             }
             .pdp__content-section { padding: 48px 16px; }
             .pdp__content-section-title { font-size: 20px; }
@@ -1511,7 +1578,7 @@ export default function Produto() {
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
         <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
       </div>
-      <nav className="pdp__section-nav">
+      <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
           {[
             { id: "secao-descricao", label: "Descrição" },
@@ -1522,7 +1589,7 @@ export default function Produto() {
           ].map((item) => (
             <button
               key={item.id}
-              className="pdp__section-nav-btn"
+              className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
               onClick={() => {
                 const el = document.getElementById(item.id);
                 if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
