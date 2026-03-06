@@ -64,6 +64,9 @@ export interface ShopifyProduct {
     }>;
     videoStories?: ShopifyVideo[];
     bulletPoints?: string[];
+    tituloDescricao?: string;
+    descricaoCompleta?: string;
+    fotoDescricao?: { type: 'image'; url: string; altText?: string | null } | { type: 'video'; sources: ShopifyVideoSource[]; previewImage?: string | null } | null;
   };
 }
 
