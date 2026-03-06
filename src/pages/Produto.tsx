@@ -303,7 +303,7 @@ export default function Produto() {
 
   }
 
-  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto } = product.node;
+  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
   const hasStories = videoStories.length > 0;
