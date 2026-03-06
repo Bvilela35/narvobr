@@ -636,8 +636,8 @@ export default function Produto() {
           }
 
           .pdp__qty-price {
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 400;
             color: var(--pdp-text);
           }
 
