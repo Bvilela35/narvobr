@@ -870,8 +870,13 @@ export default function Produto() {
             flex-shrink: 0;
           }
 
+          .pdp__trust-bar--mobile {
+            display: none;
+          }
+
           @media (max-width: 768px) {
-            .pdp__trust-bar { gap: 16px; }
+            .pdp__trust-bar { display: none; }
+            .pdp__trust-bar--mobile { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
             .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
           }
 
