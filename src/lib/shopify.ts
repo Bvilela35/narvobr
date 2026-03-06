@@ -214,6 +214,31 @@ const PRODUCT_BY_HANDLE_QUERY = `
       bulletPointsMeta: metafield(namespace: "custom", key: "bullet_points") {
         value
       }
+      tituloDescricaoMeta: metafield(namespace: "custom", key: "titulo_descricao") {
+        value
+      }
+      descricaoCompletaMeta: metafield(namespace: "custom", key: "descricao_completa") {
+        value
+      }
+      fotoDescricaoMeta: metafield(namespace: "custom", key: "foto_descricao") {
+        reference {
+          ... on MediaImage {
+            image {
+              url
+              altText
+            }
+          }
+          ... on Video {
+            sources {
+              url
+              mimeType
+            }
+            previewImage {
+              url
+            }
+          }
+        }
+      }
     }
   }
 `;
