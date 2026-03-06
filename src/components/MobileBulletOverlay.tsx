@@ -1,26 +1,39 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
+
+const TABLET_BREAKPOINT = 1024;
+
+function useIsTabletOrMobile() {
+  const [is, setIs] = useState(false);
+  useEffect(() => {
+    const check = () => setIs(window.innerWidth <= TABLET_BREAKPOINT);
+    check();
+    const mql = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT}px)`);
+    mql.addEventListener("change", check);
+    return () => mql.removeEventListener("change", check);
+  }, []);
+  return is;
+}
 
 interface Props {
   bulletPoints: string[];
 }
 
 export function MobileBulletOverlay({ bulletPoints }: Props) {
-  const isMobile = useIsMobile();
+  const isSmallScreen = useIsTabletOrMobile();
   const [idx, setIdx] = useState(0);
   const isFirstRound = useRef(true);
 
   const len = bulletPoints.length;
 
   useEffect(() => {
-    if (!isMobile || len === 0) return;
+    if (!isSmallScreen || len === 0) return;
     isFirstRound.current = true;
     setIdx(0);
-  }, [bulletPoints, isMobile, len]);
+  }, [bulletPoints, isSmallScreen, len]);
 
   useEffect(() => {
-    if (!isMobile || len <= 2) return;
+    if (!isSmallScreen || len <= 2) return;
 
     const delay = isFirstRound.current && idx === 0 ? 3000 : 8000;
 
@@ -33,9 +46,9 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [idx, isMobile, len]);
+  }, [idx, isSmallScreen, len]);
 
-  if (!isMobile || len === 0) return null;
+  if (!isSmallScreen || len === 0) return null;
 
   if (len <= 2) {
     return (

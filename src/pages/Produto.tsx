@@ -792,6 +792,9 @@ export default function Produto() {
             .pdp__gallery { aspect-ratio: 1 / 1; position: relative; }
             .pdp__title { font-size: 28px; }
             .pdp__option-grid { grid-template-columns: repeat(2, 1fr); }
+          }
+
+          @media (max-width: 1024px) {
             .pdp__bullets { display: none; }
 
             .pdp__mobile-bullets-overlay {

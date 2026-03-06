@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+
+const TABLET_BREAKPOINT = 1024;
+
+function useIsTabletOrMobile() {
+  const [is, setIs] = useState(false);
+  useEffect(() => {
+    const check = () => setIs(window.innerWidth <= TABLET_BREAKPOINT);
+    check();
+    const mql = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT}px)`);
+    mql.addEventListener("change", check);
+    return () => mql.removeEventListener("change", check);
+  }, []);
+  return is;
+}
 
 interface Props {
   bulletPoints: string[];
@@ -9,12 +22,12 @@ interface Props {
 }
 
 export function BulletPointsRotator({ bulletPoints, title }: Props) {
-  const isMobile = useIsMobile();
+  const isSmallScreen = useIsTabletOrMobile();
   const [phase, setPhase] = useState<'rotating' | 'collapsed' | 'expanded'>('rotating');
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
-    if (isMobile || phase !== 'rotating' || bulletPoints.length === 0) return;
+    if (isSmallScreen || phase !== 'rotating' || bulletPoints.length === 0) return;
     const timer = setInterval(() => {
       setCurrentIdx(prev => {
         const next = prev + 1;
@@ -26,7 +39,7 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
       });
     }, 3000);
     return () => clearInterval(timer);
-  }, [phase, bulletPoints.length, isMobile]);
+  }, [phase, bulletPoints.length, isSmallScreen]);
 
   useEffect(() => {
     setPhase('rotating');
@@ -37,8 +50,8 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
     return <h1 className="pdp__title">{title}</h1>;
   }
 
-  // Mobile: hidden here (handled by MobileBulletOverlay)
-  if (isMobile) {
+  // Tablet/mobile: title only (bullets handled by MobileBulletOverlay)
+  if (isSmallScreen) {
     return <h1 className="pdp__title">{title}</h1>;
   }
 
