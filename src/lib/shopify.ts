@@ -5,6 +5,18 @@ const SHOPIFY_STORE_PERMANENT_DOMAIN = 'efxqrr-1y.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9645130db6cf2b0f59c6feeb3f76f3b9';
 
+export interface ShopifyVideoSource {
+  url: string;
+  mimeType: string;
+}
+
+export interface ShopifyVideo {
+  mediaContentType: string;
+  alt: string | null;
+  sources: ShopifyVideoSource[];
+  previewImage?: { url: string } | null;
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -50,6 +62,7 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    videoStories?: ShopifyVideo[];
   };
 }
 
