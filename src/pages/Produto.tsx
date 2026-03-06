@@ -605,7 +605,8 @@ export default function Produto() {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 24px;
+            padding: 24px 24px;
+            min-height: 72px;
             border: 2px solid var(--pdp-border);
             border-radius: 16px;
             background: #fff;
@@ -635,8 +636,8 @@ export default function Produto() {
           }
 
           .pdp__qty-price {
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 400;
             color: var(--pdp-text);
           }
 
