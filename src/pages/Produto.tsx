@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
+import { ReviewsSection } from "@/components/ReviewsSection";
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
@@ -2033,8 +2034,7 @@ export default function Produto() {
       {/* Seção: Avaliações */}
       <section id="secao-avaliacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Avaliações</h2>
-          <p className="pdp__content-section-placeholder">Avaliações dos clientes em breve.</p>
+          <ReviewsSection handle={handle} />
         </div>
       </section>
 
