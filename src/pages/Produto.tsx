@@ -1069,6 +1069,69 @@ export default function Produto() {
             0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
             50% { box-shadow: 0 2px 16px rgba(182,227,109,0.5), 0 0 0 4px rgba(182,227,109,0.25); }
           }
+          /* Section Navigation Menu */
+          .pdp__section-nav {
+            display: flex;
+            justify-content: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--pdp-border);
+            background: var(--pdp-bg);
+          }
+
+          .pdp__section-nav-inner {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          .pdp__section-nav-btn {
+            font-family: var(--pdp-font);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 22px;
+            border: none;
+            border-radius: var(--pdp-radius-pill);
+            background: #f8f8f8;
+            color: #0f3d2e;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+          }
+          .pdp__section-nav-btn:hover {
+            background: #e8e8e8;
+          }
+
+          /* Content Sections */
+          .pdp__content-section {
+            padding: 64px 24px;
+            border-top: 1px solid var(--pdp-border);
+          }
+
+          .pdp__content-section-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+          }
+
+          .pdp__content-section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 20px;
+            letter-spacing: -0.01em;
+          }
+
+          .pdp__content-section-placeholder {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--pdp-text-secondary);
+            max-width: 680px;
+          }
+
+          @media (max-width: 768px) {
+            .pdp__section-nav { padding: 24px 16px; }
+            .pdp__section-nav-btn { font-size: 13px; padding: 9px 18px; }
+            .pdp__content-section { padding: 48px 16px; }
+            .pdp__content-section-title { font-size: 20px; }
+          }
         `}</style>
 
         <div className="pdp__container">
@@ -1356,6 +1419,70 @@ export default function Produto() {
               <TrustBarRotator mobile />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Section Navigation Menu */}
+      <nav className="pdp__section-nav">
+        <div className="pdp__section-nav-inner">
+          {[
+            { id: "secao-descricao", label: "Descrição" },
+            { id: "secao-especificacoes", label: "Especificações" },
+            { id: "secao-detalhes", label: "Detalhes" },
+            { id: "secao-faq", label: "FAQ" },
+            { id: "secao-avaliacoes", label: "Avaliações" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              className="pdp__section-nav-btn"
+              onClick={() => {
+                const el = document.getElementById(item.id);
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Seção: Descrição */}
+      <section id="secao-descricao" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Descrição</h2>
+          <p className="pdp__content-section-placeholder">{description || "Descrição do produto em breve."}</p>
+        </div>
+      </section>
+
+      {/* Seção: Especificações */}
+      <section id="secao-especificacoes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Especificações</h2>
+          <p className="pdp__content-section-placeholder">Especificações técnicas em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: Detalhes */}
+      <section id="secao-detalhes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Detalhes</h2>
+          <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: FAQ */}
+      <section id="secao-faq" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">FAQ</h2>
+          <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: Avaliações */}
+      <section id="secao-avaliacoes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Avaliações</h2>
+          <p className="pdp__content-section-placeholder">Avaliações dos clientes em breve.</p>
         </div>
       </section>
 
