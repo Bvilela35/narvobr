@@ -148,6 +148,7 @@ export default function Produto() {
   }
 
   const { title, description, images, variants, options } = product.node;
+  const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
   const hasStories = videoStories.length > 0;
   const imgs = images.edges;
@@ -338,6 +339,27 @@ export default function Produto() {
           }
 
           .pdp__info { display: flex; flex-direction: column; }
+
+          .pdp__bullets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+          }
+
+          .pdp__bullet-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: #0f3d2e;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: var(--pdp-radius-pill);
+            white-space: nowrap;
+          }
 
           .pdp__title {
             font-size: 40px;
@@ -984,6 +1006,13 @@ export default function Produto() {
 
             {/* Info */}
             <div className="pdp__info">
+              {bulletPoints.length > 0 && (
+                <div className="pdp__bullets">
+                  {bulletPoints.map((bp, i) => (
+                    <span key={i} className="pdp__bullet-tag">{bp}</span>
+                  ))}
+                </div>
+              )}
               <h1 className="pdp__title">{title}</h1>
 
               <div className="pdp__price-row">
