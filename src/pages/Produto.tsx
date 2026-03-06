@@ -907,67 +907,69 @@ export default function Produto() {
           </Link>
 
           <div className="pdp__grid">
-            {/* Gallery */}
-            <div
-              className="pdp__gallery"
-              role="region"
-              aria-label="Galeria do produto"
-              onClick={() => { setLightboxOpen(true); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
-              style={{ cursor: 'zoom-in' }}
-            >
-              {imgs[selectedImage] ?
-              <AnimatePresence mode="wait">
-                  <motion.img
-                  key={selectedImage}
-                  src={imgs[selectedImage].node.url}
-                  alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
-                  className="pdp__gallery-img"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }} />
+            {/* Left column: Gallery + Trust bar */}
+            <div>
+              <div
+                className="pdp__gallery"
+                role="region"
+                aria-label="Galeria do produto"
+                onClick={() => { setLightboxOpen(true); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
+                style={{ cursor: 'zoom-in' }}
+              >
+                {imgs[selectedImage] ?
+                <AnimatePresence mode="wait">
+                    <motion.img
+                    key={selectedImage}
+                    src={imgs[selectedImage].node.url}
+                    alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
+                    className="pdp__gallery-img"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }} />
 
-                </AnimatePresence> :
-              <div className="pdp__gallery-placeholder">Sem imagem</div>
-              }
-              <div className="pdp__gallery-zoom-hint">
-                <ZoomIn size={18} />
-              </div>
-
-              {hasStories && (
-                <button
-                  className="pdp__stories-btn"
-                  onClick={(e) => { e.stopPropagation(); setStoriesOpen(true); }}
-                  aria-label="Ver vídeos"
-                >
-                  <Video size={20} />
-                </button>
-              )}
-
-              {totalImages > 1 &&
-              <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
-                  <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
-                    <ChevronLeft size={18} strokeWidth={2} />
-                  </button>
-                  <span className="pdp__gallery-indicator" aria-live="polite">
-                    {selectedImage + 1} / {totalImages}
-                  </span>
-                  <button className="pdp__gallery-btn" onClick={nextImage} aria-label="Próxima imagem">
-                    <ChevronRight size={18} strokeWidth={2} />
-                  </button>
+                  </AnimatePresence> :
+                <div className="pdp__gallery-placeholder">Sem imagem</div>
+                }
+                <div className="pdp__gallery-zoom-hint">
+                  <ZoomIn size={18} />
                 </div>
-              }
-            </div>
 
-            {/* Trust bar */}
-            <div className="pdp__trust-bar">
-              <div className="pdp__trust-item">
-                <Package size={22} strokeWidth={1.5} />
-                <span>Frete Sedex para todo Brasil</span>
+                {hasStories && (
+                  <button
+                    className="pdp__stories-btn"
+                    onClick={(e) => { e.stopPropagation(); setStoriesOpen(true); }}
+                    aria-label="Ver vídeos"
+                  >
+                    <Video size={20} />
+                  </button>
+                )}
+
+                {totalImages > 1 &&
+                <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
+                    <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
+                      <ChevronLeft size={18} strokeWidth={2} />
+                    </button>
+                    <span className="pdp__gallery-indicator" aria-live="polite">
+                      {selectedImage + 1} / {totalImages}
+                    </span>
+                    <button className="pdp__gallery-btn" onClick={nextImage} aria-label="Próxima imagem">
+                      <ChevronRight size={18} strokeWidth={2} />
+                    </button>
+                  </div>
+                }
               </div>
-              <div className="pdp__trust-item">
-                <ShieldCheck size={22} strokeWidth={1.5} />
-                <span>Garantia 6 meses</span>
+
+              {/* Trust bar */}
+              <div className="pdp__trust-bar">
+                <div className="pdp__trust-item">
+                  <Package size={22} strokeWidth={1.5} />
+                  <span>Frete Sedex para todo Brasil</span>
+                </div>
+                <div className="pdp__trust-item">
+                  <ShieldCheck size={22} strokeWidth={1.5} />
+                  <span>Garantia 6 meses</span>
+                </div>
               </div>
             </div>
 
