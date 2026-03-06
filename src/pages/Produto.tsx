@@ -1080,9 +1080,9 @@ export default function Produto() {
           .pdp__section-nav-inner {
             display: inline-flex;
             gap: 6px;
-            padding: 5px;
-            background: #f2f2f2;
-            border-radius: var(--pdp-radius-pill);
+            padding: 6px;
+            background: #f0f0f0;
+            border-radius: 50px;
             justify-content: center;
           }
 
