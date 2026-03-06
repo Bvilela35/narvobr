@@ -346,6 +346,12 @@ export default function Produto() {
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 12px;
+            min-height: 28px;
+          }
+
+          .pdp__bullets--list {
+            flex-direction: column;
+            gap: 6px;
           }
 
           .pdp__bullet-tag {
@@ -362,12 +368,36 @@ export default function Produto() {
             white-space: nowrap;
           }
 
+          .pdp__bullet-expand {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1.5px solid #c8e6c9;
+            background: #e8f5e9;
+            color: #0f3d2e;
+            cursor: pointer;
+            margin-right: 10px;
+            vertical-align: middle;
+            transition: background 0.2s, transform 0.2s;
+            padding: 0;
+          }
+
+          .pdp__bullet-expand:hover {
+            background: #c8e6c9;
+            transform: scale(1.1);
+          }
+
           .pdp__title {
             font-size: 40px;
             font-weight: 600;
             line-height: 1.15;
             margin: 0 0 24px;
             letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
           }
 
           .pdp__price-row {
