@@ -1418,7 +1418,93 @@ export default function Produto() {
             }
           }
 
-          @media (max-width: 1024px) {
+          /* FAQ Section — Premium editorial */
+          .pdp__faq-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 80px;
+            align-items: start;
+          }
+          .pdp__faq-header {
+            position: sticky;
+            top: 120px;
+          }
+          .pdp__faq-title {
+            font-size: 44px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+            color: var(--pdp-text-primary, #1d1d1f);
+          }
+          .pdp__faq-list {
+            width: 100%;
+          }
+          .pdp__faq-item {
+            /* no extra styling needed */
+          }
+          .pdp__faq-question {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 24px 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--pdp-text-primary, #1d1d1f);
+            transition: color 0.2s;
+          }
+          .pdp__faq-question:hover {
+            color: var(--pdp-text-secondary, #6e6e73);
+          }
+          .pdp__faq-chevron {
+            flex-shrink: 0;
+            color: var(--pdp-text-secondary, #86868b);
+            transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+          }
+          .pdp__faq-chevron--open {
+            transform: rotate(180deg);
+          }
+          .pdp__faq-answer-wrapper {
+            overflow: hidden;
+          }
+          .pdp__faq-answer {
+            padding: 0 0 24px 0;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--pdp-text-secondary, #6e6e73);
+            max-width: 560px;
+          }
+          .pdp__faq-divider {
+            height: 1px;
+            background: #e5e5e5;
+          }
+          @media (max-width: 768px) {
+            .pdp__faq-layout {
+              grid-template-columns: 1fr;
+              gap: 32px;
+            }
+            .pdp__faq-header {
+              position: static;
+            }
+            .pdp__faq-title {
+              font-size: 32px;
+            }
+            .pdp__faq-question {
+              font-size: 16px;
+              padding: 20px 0;
+            }
+            .pdp__faq-answer {
+              font-size: 15px;
+            }
+          }
+
+
             .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
             .pdp__section-nav-inner {
               display: flex;
