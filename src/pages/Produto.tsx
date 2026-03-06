@@ -23,7 +23,54 @@ function formatCep(v: string) {
   return digits;
 }
 
-export default function Produto() {
+const TRUST_ITEMS = [
+  { icon: Truck, text: "Chega rápido. Em qualquer lugar do Brasil." },
+  { icon: ShieldCheck, text: "Garantia de 6 meses, porque confiança também se entrega no tempo." },
+  { icon: RefreshCw, text: "Troca ou devolução grátis, do jeito que deve ser." },
+  { icon: Star, text: "Qualidade premium em cada detalhe." },
+  { icon: Sparkles, text: "Design exclusivo, feito para se destacar." },
+  { icon: MapPin, text: "Produzido no Brasil, com excelência de ponta a ponta." },
+];
+
+function TrustBarRotator({ mobile }: { mobile?: boolean }) {
+  const [idx, setIdx] = useState(0);
+  const len = TRUST_ITEMS.length;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIdx(prev => (prev + 2) % len);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [len]);
+
+  const first = TRUST_ITEMS[idx % len];
+  const second = TRUST_ITEMS[(idx + 1) % len];
+
+  return (
+    <div className={`pdp__trust-bar${mobile ? ' pdp__trust-bar--mobile' : ''}`}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={idx}
+          className="pdp__trust-pair"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <div className="pdp__trust-item">
+            <first.icon size={22} strokeWidth={1.5} />
+            <span className="text-muted-foreground text-sm">{first.text}</span>
+          </div>
+          <div className="pdp__trust-item">
+            <second.icon size={22} strokeWidth={1.5} />
+            <span className="text-muted-foreground text-sm">{second.text}</span>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
   const navigate = useNavigate();
   const location = useLocation();
   const { handle } = useParams<{handle: string;}>();
