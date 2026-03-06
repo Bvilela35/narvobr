@@ -43,6 +43,8 @@ export default function Produto() {
   const lastTouchCenter = useRef({ x: 0, y: 0 });
   const touchPanStart = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(1);
+  const swipeStartX = useRef(0);
+  const isSwiping = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
 
