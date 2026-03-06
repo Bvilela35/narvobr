@@ -1433,6 +1433,9 @@ export default function Produto() {
       </section>
 
       {/* Section Navigation Menu */}
+      <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
+        <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
+      </div>
       <nav className="pdp__section-nav">
         <div className="pdp__section-nav-inner">
           {[
