@@ -848,10 +848,10 @@ export default function Produto() {
           .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
 
           .pdp__trust-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 16px;
           }
 
           .pdp__trust-item {
