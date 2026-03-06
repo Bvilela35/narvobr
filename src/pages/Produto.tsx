@@ -84,6 +84,8 @@ export default function Produto() {
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
+  const [activeSection, setActiveSection] = useState("secao-descricao");
+  const sectionNavRef = useRef<HTMLElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
