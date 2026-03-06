@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   bulletPoints: string[];
@@ -8,11 +9,12 @@ interface Props {
 }
 
 export function BulletPointsRotator({ bulletPoints, title }: Props) {
+  const isMobile = useIsMobile();
   const [phase, setPhase] = useState<'rotating' | 'collapsed' | 'expanded'>('rotating');
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
-    if (phase !== 'rotating' || bulletPoints.length === 0) return;
+    if (isMobile || phase !== 'rotating' || bulletPoints.length === 0) return;
     const timer = setInterval(() => {
       setCurrentIdx(prev => {
         const next = prev + 1;
@@ -24,7 +26,7 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
       });
     }, 3000);
     return () => clearInterval(timer);
-  }, [phase, bulletPoints.length]);
+  }, [phase, bulletPoints.length, isMobile]);
 
   useEffect(() => {
     setPhase('rotating');
@@ -33,6 +35,20 @@ export function BulletPointsRotator({ bulletPoints, title }: Props) {
 
   if (bulletPoints.length === 0) {
     return <h1 className="pdp__title">{title}</h1>;
+  }
+
+  // Mobile: always show all tags statically
+  if (isMobile) {
+    return (
+      <>
+        <div className="pdp__bullets">
+          {bulletPoints.map((bp, i) => (
+            <span key={i} className="pdp__bullet-tag">{bp}</span>
+          ))}
+        </div>
+        <h1 className="pdp__title">{title}</h1>
+      </>
+    );
   }
 
   return (
