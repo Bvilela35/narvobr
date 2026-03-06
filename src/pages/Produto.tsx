@@ -95,29 +95,50 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
   );
 }
 
-function FaqItem({ item, isLast }: { item: { pergunta: string; resposta?: string }; isLast: boolean }) {
+function FaqItem({ item, isLast, index }: { item: { pergunta: string; resposta?: string }; isLast: boolean; index: number }) {
   const [open, setOpen] = useState(false);
+  const questionId = `faq-question-${index}`;
+  const answerId = `faq-answer-${index}`;
   return (
-    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`}>
-      <button className="pdp__faq-question" onClick={() => setOpen(!open)} aria-expanded={open}>
-        <span>{item.pergunta}</span>
-        <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && item.resposta && (
-          <motion.div
-            className="pdp__faq-answer-wrapper"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-          >
-            <p className="pdp__faq-answer">{item.resposta}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+      <h3 style={{ margin: 0, fontSize: 'inherit', fontWeight: 'inherit' }}>
+        <button
+          className="pdp__faq-question"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-controls={answerId}
+          id={questionId}
+        >
+          <span itemProp="name">{item.pergunta}</span>
+          <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </h3>
+      {item.resposta && (
+        <div
+          id={answerId}
+          role="region"
+          aria-labelledby={questionId}
+          itemScope
+          itemProp="acceptedAnswer"
+          itemType="https://schema.org/Answer"
+        >
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                className="pdp__faq-answer-wrapper"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                <p className="pdp__faq-answer" itemProp="text">{item.resposta}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
       {!isLast && <div className="pdp__faq-divider" />}
     </div>
   );
@@ -305,11 +326,40 @@ export default function Produto() {
     }
     scriptTag.textContent = JSON.stringify(jsonLd);
 
+    // FAQPage JSON-LD
+    const faqItems = product.node.faq || [];
+    const validFaqItems = faqItems.filter((item: { pergunta: string; resposta?: string }) => item.pergunta && item.resposta);
+    let faqScriptTag = document.querySelector('script[data-narvo-faq-jsonld]') as HTMLScriptElement | null;
+    if (validFaqItems.length > 0) {
+      const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: validFaqItems.map((item: { pergunta: string; resposta?: string }) => ({
+          "@type": "Question",
+          name: item.pergunta,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.resposta
+          }
+        }))
+      };
+      if (!faqScriptTag) {
+        faqScriptTag = document.createElement("script");
+        faqScriptTag.setAttribute("type", "application/ld+json");
+        faqScriptTag.setAttribute("data-narvo-faq-jsonld", "true");
+        document.head.appendChild(faqScriptTag);
+      }
+      faqScriptTag.textContent = JSON.stringify(faqJsonLd);
+    } else {
+      faqScriptTag?.remove();
+    }
+
     return () => {
       document.title = "Narvo";
       metaDesc?.setAttribute("content", "");
       canonical?.setAttribute("href", window.location.origin);
       scriptTag?.remove();
+      document.querySelector('script[data-narvo-faq-jsonld]')?.remove();
     };
   }, [product]);
 
@@ -1956,7 +2006,7 @@ export default function Produto() {
 
       {/* Seção: FAQ — Premium editorial accordion */}
       {faq && faq.length > 0 && (
-        <section id="secao-faq" className="pdp__content-section">
+        <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
               <div className="pdp__faq-header">
@@ -1964,7 +2014,7 @@ export default function Produto() {
               </div>
               <div className="pdp__faq-list">
                 {faq.map((item, i) => (
-                  <FaqItem key={i} item={item} isLast={i === faq.length - 1} />
+                  <FaqItem key={i} item={item} index={i} isLast={i === faq.length - 1} />
                 ))}
               </div>
             </div>
