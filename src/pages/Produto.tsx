@@ -1175,6 +1175,7 @@ export default function Produto() {
           .pdp__content-section {
             padding: 64px 24px;
             border-top: 1px solid var(--pdp-border);
+            scroll-margin-top: 70px;
           }
 
           .pdp__content-section-inner {
