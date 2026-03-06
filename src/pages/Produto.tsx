@@ -870,7 +870,6 @@ export default function Produto() {
               <div className="pdp__gallery-zoom-hint">
                 <ZoomIn size={18} />
               </div>
-              }
 
               {totalImages > 1 &&
               <div className="pdp__gallery-nav">
