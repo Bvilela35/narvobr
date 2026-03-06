@@ -443,6 +443,61 @@ export default function Produto() {
             color: var(--pdp-text-secondary);
           }
 
+          /* Quantidade / Volume card style */
+          .pdp__qty-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .pdp__qty-item { position: relative; }
+
+          .pdp__qty-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+
+          .pdp__qty-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border: 2px solid var(--pdp-border);
+            border-radius: 16px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+          }
+          .pdp__qty-label:hover {
+            border-color: #BABDC2;
+          }
+          .pdp__qty-input:checked + .pdp__qty-label {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 1px #2563EB;
+          }
+          .pdp__qty-input:focus-visible + .pdp__qty-label {
+            outline: 2px solid var(--pdp-link);
+            outline-offset: 2px;
+          }
+          .pdp__qty-input:disabled + .pdp__qty-label {
+            opacity: 0.3;
+            cursor: not-allowed;
+          }
+
+          .pdp__qty-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--pdp-text);
+          }
+
+          .pdp__qty-price {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--pdp-text);
+          }
+
           .pdp__buybox {
             background: var(--pdp-surface);
             border-radius: var(--pdp-radius-buybox);
