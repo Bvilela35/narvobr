@@ -2006,7 +2006,7 @@ export default function Produto() {
 
       {/* Seção: FAQ — Premium editorial accordion */}
       {faq && faq.length > 0 && (
-        <section id="secao-faq" className="pdp__content-section">
+        <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
               <div className="pdp__faq-header">
@@ -2014,7 +2014,7 @@ export default function Produto() {
               </div>
               <div className="pdp__faq-list">
                 {faq.map((item, i) => (
-                  <FaqItem key={i} item={item} isLast={i === faq.length - 1} />
+                  <FaqItem key={i} item={item} index={i} isLast={i === faq.length - 1} />
                 ))}
               </div>
             </div>
