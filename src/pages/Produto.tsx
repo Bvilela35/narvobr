@@ -340,6 +340,27 @@ export default function Produto() {
 
           .pdp__info { display: flex; flex-direction: column; }
 
+          .pdp__bullets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+          }
+
+          .pdp__bullet-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: #0f3d2e;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: var(--pdp-radius-pill);
+            white-space: nowrap;
+          }
+
           .pdp__title {
             font-size: 40px;
             font-weight: 600;
