@@ -985,6 +985,13 @@ export default function Produto() {
 
             {/* Info */}
             <div className="pdp__info">
+              {bulletPoints.length > 0 && (
+                <div className="pdp__bullets">
+                  {bulletPoints.map((bp, i) => (
+                    <span key={i} className="pdp__bullet-tag">{bp}</span>
+                  ))}
+                </div>
+              )}
               <h1 className="pdp__title">{title}</h1>
 
               <div className="pdp__price-row">
