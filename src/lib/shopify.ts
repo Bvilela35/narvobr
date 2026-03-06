@@ -210,6 +210,9 @@ const PRODUCT_BY_HANDLE_QUERY = `
           }
         }
       }
+      bulletPointsMeta: metafield(namespace: "custom", key: "bullet_points") {
+        value
+      }
     }
   }
 `;
