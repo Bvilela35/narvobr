@@ -282,7 +282,17 @@ export async function fetchProductByHandle(handle: string) {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   const product = data?.data?.product;
   if (!product) return null;
-  return { node: product } as ShopifyProduct;
+
+  // Parse video stories metafield
+  const videoEdges = product.videoStoriesMeta?.references?.edges || [];
+  const videoStories: ShopifyVideo[] = videoEdges
+    .map((e: { node: ShopifyVideo }) => e.node)
+    .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
+
+  // Clean up metafield key from product object
+  const { videoStoriesMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
