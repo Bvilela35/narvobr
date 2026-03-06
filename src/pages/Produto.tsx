@@ -1075,6 +1075,7 @@ export default function Produto() {
             justify-content: center;
             padding: 40px 24px;
             background: var(--pdp-bg);
+            border-top: 1px solid var(--pdp-border);
           }
 
           .pdp__section-nav-inner {
