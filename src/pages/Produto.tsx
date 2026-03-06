@@ -1145,6 +1145,7 @@ export default function Produto() {
               padding: 0 16px;
               background: transparent;
               border-radius: 0;
+              justify-content: flex-start;
               -webkit-overflow-scrolling: touch;
               scrollbar-width: none;
               -ms-overflow-style: none;
