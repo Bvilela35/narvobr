@@ -845,7 +845,13 @@ export default function Produto() {
 
           <div className="pdp__grid">
             {/* Gallery */}
-            <div className="pdp__gallery" role="region" aria-label="Galeria do produto">
+            <div
+              className="pdp__gallery"
+              role="region"
+              aria-label="Galeria do produto"
+              onClick={() => { setLightboxOpen(true); setZoomLevel(1); setPanPos({ x: 0, y: 0 }); }}
+              style={{ cursor: 'zoom-in' }}
+            >
               {imgs[selectedImage] ?
               <AnimatePresence mode="wait">
                   <motion.img
@@ -859,8 +865,11 @@ export default function Produto() {
                   transition={{ duration: 0.25 }} />
 
                 </AnimatePresence> :
-
               <div className="pdp__gallery-placeholder">Sem imagem</div>
+              }
+              <div className="pdp__gallery-zoom-hint">
+                <ZoomIn size={18} />
+              </div>
               }
 
               {totalImages > 1 &&
