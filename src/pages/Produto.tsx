@@ -871,8 +871,8 @@ export default function Produto() {
           }
 
           @media (max-width: 768px) {
-            .pdp__trust-bar { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .pdp__trust-item { padding: 12px 14px; font-size: 13px; gap: 8px; }
+            .pdp__trust-bar { gap: 16px; }
+            .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
           }
 
           .pdp__stories-btn {
