@@ -95,29 +95,50 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
   );
 }
 
-function FaqItem({ item, isLast }: { item: { pergunta: string; resposta?: string }; isLast: boolean }) {
+function FaqItem({ item, isLast, index }: { item: { pergunta: string; resposta?: string }; isLast: boolean; index: number }) {
   const [open, setOpen] = useState(false);
+  const questionId = `faq-question-${index}`;
+  const answerId = `faq-answer-${index}`;
   return (
-    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`}>
-      <button className="pdp__faq-question" onClick={() => setOpen(!open)} aria-expanded={open}>
-        <span>{item.pergunta}</span>
-        <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && item.resposta && (
-          <motion.div
-            className="pdp__faq-answer-wrapper"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-          >
-            <p className="pdp__faq-answer">{item.resposta}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+      <h3 style={{ margin: 0, fontSize: 'inherit', fontWeight: 'inherit' }}>
+        <button
+          className="pdp__faq-question"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-controls={answerId}
+          id={questionId}
+        >
+          <span itemProp="name">{item.pergunta}</span>
+          <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </h3>
+      {item.resposta && (
+        <div
+          id={answerId}
+          role="region"
+          aria-labelledby={questionId}
+          itemScope
+          itemProp="acceptedAnswer"
+          itemType="https://schema.org/Answer"
+        >
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                className="pdp__faq-answer-wrapper"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                <p className="pdp__faq-answer" itemProp="text">{item.resposta}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
       {!isLast && <div className="pdp__faq-divider" />}
     </div>
   );
