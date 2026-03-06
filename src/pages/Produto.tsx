@@ -910,6 +910,16 @@ export default function Produto() {
                 <ZoomIn size={18} />
               </div>
 
+              {hasStories && (
+                <button
+                  className="pdp__stories-btn"
+                  onClick={(e) => { e.stopPropagation(); setStoriesOpen(true); }}
+                  aria-label="Ver vídeos"
+                >
+                  <Video size={20} />
+                </button>
+              )}
+
               {totalImages > 1 &&
               <div className="pdp__gallery-nav" onClick={(e) => e.stopPropagation()}>
                   <button className="pdp__gallery-btn" onClick={prevImage} aria-label="Imagem anterior">
