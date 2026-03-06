@@ -859,11 +859,15 @@ export default function Produto() {
             align-items: center;
             gap: 12px;
             padding: 16px 20px;
-            background: var(--pdp-surface);
+            background: none;
             border-radius: 16px;
             font-size: 14px;
             font-weight: 500;
             color: var(--pdp-text);
+          }
+          .pdp__trust-item svg {
+            color: #0f3d2e;
+            flex-shrink: 0;
           }
 
           @media (max-width: 768px) {
