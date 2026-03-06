@@ -1359,6 +1359,70 @@ export default function Produto() {
         </div>
       </section>
 
+      {/* Section Navigation Menu */}
+      <nav className="pdp__section-nav">
+        <div className="pdp__section-nav-inner">
+          {[
+            { id: "secao-descricao", label: "Descrição" },
+            { id: "secao-especificacoes", label: "Especificações" },
+            { id: "secao-detalhes", label: "Detalhes" },
+            { id: "secao-faq", label: "FAQ" },
+            { id: "secao-avaliacoes", label: "Avaliações" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              className="pdp__section-nav-btn"
+              onClick={() => {
+                const el = document.getElementById(item.id);
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Seção: Descrição */}
+      <section id="secao-descricao" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Descrição</h2>
+          <p className="pdp__content-section-placeholder">{description || "Descrição do produto em breve."}</p>
+        </div>
+      </section>
+
+      {/* Seção: Especificações */}
+      <section id="secao-especificacoes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Especificações</h2>
+          <p className="pdp__content-section-placeholder">Especificações técnicas em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: Detalhes */}
+      <section id="secao-detalhes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Detalhes</h2>
+          <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: FAQ */}
+      <section id="secao-faq" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">FAQ</h2>
+          <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
+        </div>
+      </section>
+
+      {/* Seção: Avaliações */}
+      <section id="secao-avaliacoes" className="pdp__content-section">
+        <div className="pdp__content-section-inner">
+          <h2 className="pdp__content-section-title">Avaliações</h2>
+          <p className="pdp__content-section-placeholder">Avaliações dos clientes em breve.</p>
+        </div>
+      </section>
+
       {/* Related products */}
       {related.length > 0 &&
       <section style={{ padding: "80px 24px", borderTop: "1px solid #E5E7EB" }}>
