@@ -1201,7 +1201,7 @@ export default function Produto() {
           }
 
           @media (max-width: 1024px) {
-            .pdp__section-nav { padding: 24px 0; background: #fff; }
+            .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
             .pdp__section-nav-inner {
               display: flex;
               flex-wrap: nowrap;
@@ -1228,6 +1228,11 @@ export default function Produto() {
             }
             .pdp__section-nav-btn:hover {
               background: #eee;
+            }
+            .pdp__section-nav-btn--active {
+              background: #0f3d2e;
+              color: #fff;
+              box-shadow: none;
             }
             .pdp__content-section { padding: 48px 16px; }
             .pdp__content-section-title { font-size: 20px; }
