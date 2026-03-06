@@ -67,6 +67,11 @@ export interface ShopifyProduct {
     tituloDescricao?: string;
     descricaoCompleta?: string;
     fotoDescricao?: { type: 'image'; url: string; altText?: string | null } | { type: 'video'; sources: ShopifyVideoSource[]; previewImage?: string | null } | null;
+    specMateriais?: string;
+    specTamanho?: string;
+    specOQueAcompanha?: string;
+    specDetalhes?: string;
+    specFoto?: { url: string; altText?: string | null } | null;
   };
 }
 
@@ -242,6 +247,28 @@ const PRODUCT_BY_HANDLE_QUERY = `
           }
         }
       }
+      specMateriaisMeta: metafield(namespace: "custom", key: "materiais") {
+        value
+      }
+      specTamanhoMeta: metafield(namespace: "custom", key: "tamanho") {
+        value
+      }
+      specOQueAcompanhaMeta: metafield(namespace: "custom", key: "o_que_acompanha") {
+        value
+      }
+      specDetalhesMeta: metafield(namespace: "custom", key: "detalhes") {
+        value
+      }
+      specFotoMeta: metafield(namespace: "custom", key: "foto_ficha_tecnica") {
+        reference {
+          ... on MediaImage {
+            image {
+              url
+              altText
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -342,10 +369,20 @@ export async function fetchProductByHandle(handle: string) {
     fotoDescricao = { type: 'video', sources: fotoRef.sources, previewImage: fotoRef.previewImage?.url };
   }
 
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, ...cleanProduct } = product;
+  // Parse spec metafields
+  const specMateriais = product.specMateriaisMeta?.value || undefined;
+  const specTamanho = product.specTamanhoMeta?.value || undefined;
+  const specOQueAcompanha = product.specOQueAcompanhaMeta?.value || undefined;
+  const specDetalhes = product.specDetalhesMeta?.value || undefined;
+  let specFoto: ShopifyProduct['node']['specFoto'] = null;
+  if (product.specFotoMeta?.reference?.image) {
+    specFoto = { url: product.specFotoMeta.reference.image.url, altText: product.specFotoMeta.reference.image.altText };
+  }
 
-  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao } } as ShopifyProduct;
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
