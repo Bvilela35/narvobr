@@ -39,6 +39,10 @@ export default function Produto() {
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const panStart = useRef({ x: 0, y: 0 });
+  const lastTouchDist = useRef(0);
+  const lastTouchCenter = useRef({ x: 0, y: 0 });
+  const touchPanStart = useRef({ x: 0, y: 0 });
+  const zoomRef = useRef(1);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
 
