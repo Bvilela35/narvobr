@@ -1022,7 +1022,7 @@ export default function Produto() {
             font-size: 14px;
             font-weight: 500;
             color: var(--pdp-text);
-            white-space: nowrap;
+          
           }
           .pdp__trust-item svg {
             color: #0f3d2e;
