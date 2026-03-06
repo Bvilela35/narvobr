@@ -954,6 +954,14 @@ export default function Produto() {
             justify-content: center;
             gap: 32px;
             margin-top: 16px;
+            overflow: hidden;
+            min-height: 54px;
+          }
+
+          .pdp__trust-pair {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
           }
 
           .pdp__trust-item {
@@ -966,6 +974,7 @@ export default function Produto() {
             font-size: 14px;
             font-weight: 500;
             color: var(--pdp-text);
+            white-space: nowrap;
           }
           .pdp__trust-item svg {
             color: #0f3d2e;
@@ -978,8 +987,9 @@ export default function Produto() {
 
           @media (max-width: 768px) {
             .pdp__trust-bar { display: none; }
-            .pdp__trust-bar--mobile { display: flex; gap: 16px; justify-content: center; margin-top: 16px; }
+            .pdp__trust-bar--mobile { display: flex; overflow: hidden; min-height: 46px; gap: 16px; justify-content: center; margin-top: 16px; }
             .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
+            .pdp__trust-pair { gap: 16px; }
           }
 
           .pdp__stories-btn {
