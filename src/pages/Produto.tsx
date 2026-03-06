@@ -86,6 +86,7 @@ export default function Produto() {
   const [added, setAdded] = useState(false);
   const [activeSection, setActiveSection] = useState("secao-descricao");
   const sectionNavRef = useRef<HTMLElement>(null);
+  const descricaoMediaRef = useRef<HTMLDivElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -163,6 +164,29 @@ export default function Produto() {
     const scrollLeft = activeBtn.offsetLeft - navInner.clientWidth / 2 + activeBtn.clientWidth / 2;
     navInner.scrollTo({ left: scrollLeft, behavior: 'smooth' });
   }, [activeSection]);
+
+  // Parallax effect for description media
+  useEffect(() => {
+    const mediaEl = descricaoMediaRef.current;
+    if (!mediaEl) return;
+    const child = mediaEl.querySelector('img, video') as HTMLElement | null;
+    if (!child) return;
+
+    const onScroll = () => {
+      const rect = mediaEl.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      // progress: 0 when element enters bottom, 1 when it leaves top
+      const progress = 1 - (rect.bottom / (windowH + rect.height));
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      // Move image from 0 to -30% of its extra height
+      const translateY = clampedProgress * -30;
+      child.style.transform = `translateY(${translateY}%)`;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [product]);
 
   // Open cart drawer when navigated back with openCart state
   useEffect(() => {
@@ -1207,51 +1231,60 @@ export default function Produto() {
 
           /* Descrição Section Layout */
           .pdp__descricao-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
+            gap: 64px;
           }
 
           .pdp__descricao-title {
-            font-size: 32px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             margin: 0 0 24px;
-            line-height: 1.2;
+            line-height: 1.1;
           }
 
           .pdp__descricao-text {
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.8;
             color: var(--pdp-text-secondary);
-            margin: 0;
+            margin: 0 auto;
             white-space: pre-line;
+            max-width: 640px;
           }
 
           .pdp__descricao-media {
             width: 100%;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            aspect-ratio: 4/3;
+            aspect-ratio: 16/9;
             background: var(--pdp-surface);
+            position: relative;
           }
 
           .pdp__descricao-media img,
           .pdp__descricao-media video {
             width: 100%;
-            height: 100%;
+            height: 130%;
             object-fit: cover;
             display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            will-change: transform;
           }
 
           @media (max-width: 768px) {
             .pdp__descricao-grid {
-              grid-template-columns: 1fr;
-              gap: 32px;
+              gap: 40px;
             }
             .pdp__descricao-title {
-              font-size: 24px;
+              font-size: 36px;
+            }
+            .pdp__descricao-media {
+              border-radius: 16px;
             }
           }
 
@@ -1621,7 +1654,7 @@ export default function Produto() {
                 {descricaoCompleta || description || "Descrição do produto em breve."}
               </p>
             </div>
-            <div className="pdp__descricao-media">
+            <div ref={descricaoMediaRef} className="pdp__descricao-media">
               {fotoDescricao?.type === 'video' ? (
                 <video
                   src={fotoDescricao.sources[0]?.url}
