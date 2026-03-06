@@ -1840,13 +1840,62 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: FAQ */}
-      <section id="secao-faq" className="pdp__content-section">
-        <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">FAQ</h2>
-          <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
-        </div>
-      </section>
+      {/* Seção: FAQ — Premium editorial accordion */}
+      {faq && faq.length > 0 && (
+        <section id="secao-faq" className="pdp__content-section">
+          <div className="pdp__content-section-inner">
+            <div className="pdp__faq-layout">
+              <div className="pdp__faq-header">
+                <h2 className="pdp__faq-title">Perguntas<br />frequentes.</h2>
+              </div>
+              <div className="pdp__faq-list">
+                {faq.map((item, i) => {
+                  const [open, setOpen] = useState(false);
+                  return (
+                    <div key={i} className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`}>
+                      <button
+                        className="pdp__faq-question"
+                        onClick={() => setOpen(!open)}
+                        aria-expanded={open}
+                      >
+                        <span>{item.pergunta}</span>
+                        <svg
+                          className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`}
+                          width="20" height="20" viewBox="0 0 20 20" fill="none"
+                        >
+                          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {open && item.resposta && (
+                          <motion.div
+                            className="pdp__faq-answer-wrapper"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                          >
+                            <p className="pdp__faq-answer">{item.resposta}</p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {i < faq.length - 1 && <div className="pdp__faq-divider" />}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+      {(!faq || faq.length === 0) && (
+        <section id="secao-faq" className="pdp__content-section">
+          <div className="pdp__content-section-inner">
+            <h2 className="pdp__content-section-title">FAQ</h2>
+            <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
+          </div>
+        </section>
+      )}
 
       {/* Seção: Avaliações */}
       <section id="secao-avaliacoes" className="pdp__content-section">
