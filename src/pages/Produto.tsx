@@ -108,6 +108,52 @@ export default function Produto() {
     setCep("");
   }, [handle]);
 
+  // IntersectionObserver for active section tracking
+  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-detalhes", "secao-faq", "secao-avaliacoes"];
+  const [isNavSticky, setIsNavSticky] = useState(false);
+
+  useEffect(() => {
+    const navEl = sectionNavRef.current;
+    if (!navEl) return;
+
+    // Sticky detection via sentinel
+    const stickyObserver = new IntersectionObserver(
+      ([entry]) => setIsNavSticky(!entry.isIntersecting),
+      { threshold: 0, rootMargin: "0px" }
+    );
+
+    // Create a sentinel element right before the nav
+    const sentinel = document.createElement("div");
+    sentinel.style.height = "1px";
+    sentinel.style.pointerEvents = "none";
+    sentinel.setAttribute("data-nav-sentinel", "true");
+    navEl.parentElement?.insertBefore(sentinel, navEl);
+    stickyObserver.observe(sentinel);
+
+    // Section tracking
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: "-80px 0px -50% 0px" }
+    );
+
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) sectionObserver.observe(el);
+    });
+
+    return () => {
+      stickyObserver.disconnect();
+      sectionObserver.disconnect();
+      sentinel.remove();
+    };
+  }, [product]);
+
   // Open cart drawer when navigated back with openCart state
   useEffect(() => {
     if (location.state?.openCart) {
