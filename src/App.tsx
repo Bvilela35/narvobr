@@ -39,6 +39,7 @@ function AppContent() {
           
           <Route path="/produto/:handle/adicionado" element={<ProdutoAdicionado />} />
           <Route path="/produto/:handle" element={<Produto />} />
+          <Route path="/journal" element={<Journal />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/suporte" element={<Suporte />} />
           <Route path="/trocas" element={<Trocas />} />
