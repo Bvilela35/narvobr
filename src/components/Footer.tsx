@@ -43,7 +43,10 @@ export function Footer() {
                 href="https://www.sanchz.store"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block border border-foreground px-5 py-2.5 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
+                className="inline-block rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all duration-300"
+                style={{ backgroundColor: "#0f3d2e", border: "2px solid #b6e36d" }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#b6e36d"; e.currentTarget.style.color = "#0f3d2e"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#0f3d2e"; e.currentTarget.style.color = "white"; }}
               >
                 Conheça a Sanchz
               </a>
