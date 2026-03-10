@@ -99,7 +99,8 @@ export function Footer() {
           </p>
           <div className="flex gap-6 text-xs opacity-40">
             <Link to="/privacidade" className="hover:opacity-70 transition-opacity">Privacidade</Link>
-            <Link to="/trocas" className="hover:opacity-70 transition-opacity">Termos</Link>
+            <Link to="/termos-de-servico" className="hover:opacity-70 transition-opacity">Termos de Serviço</Link>
+            <Link to="/trocas" className="hover:opacity-70 transition-opacity">Trocas</Link>
           </div>
         </div>
       </div>
