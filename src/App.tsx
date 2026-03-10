@@ -46,6 +46,7 @@ function AppContent() {
           <Route path="/trocas" element={<Trocas />} />
           <Route path="/envio" element={<Envio />} />
           <Route path="/privacidade" element={<Privacidade />} />
+          <Route path="/termos-de-servico" element={<TermosDeServico />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
