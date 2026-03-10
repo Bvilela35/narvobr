@@ -105,8 +105,8 @@ export function Footer() {
       </div>
 
       {/* Sub-footer bar */}
-      <div className="border-t border-border" style={{ backgroundColor: "#0f3d2e" }}>
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-80 leading-relaxed text-white">
+      <div className="border-t border-border bg-white">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-80 leading-relaxed text-foreground">
           {/* Left — CNPJ */}
           <p className="text-center md:text-left">
             © 2026, BBS COMPONENTES DE AUTOMACAO, CONTROLE E TRANSPORTADORES LTDA | CNPJ: 23.887.867/0001-06 | Rua Jose Rodrigues Pereira, 32 Filadelfia Betim, MG | CEP: 32670-098
