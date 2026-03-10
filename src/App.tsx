@@ -20,6 +20,7 @@ const Suporte = lazy(() => import("./pages/Suporte"));
 const Trocas = lazy(() => import("./pages/Trocas"));
 const Envio = lazy(() => import("./pages/Envio"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
+const TermosDeServico = lazy(() => import("./pages/TermosDeServico"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
