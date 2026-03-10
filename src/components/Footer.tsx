@@ -92,17 +92,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <p className="text-xs opacity-30">
-            © {new Date().getFullYear()} Narvo — Engenharia do Silêncio
-          </p>
-          <div className="flex gap-6 text-xs opacity-40">
-            <Link to="/privacidade" className="hover:opacity-70 transition-opacity">Privacidade</Link>
-            <Link to="/termos-de-servico" className="hover:opacity-70 transition-opacity">Termos de Serviço</Link>
-            <Link to="/trocas" className="hover:opacity-70 transition-opacity">Trocas</Link>
-          </div>
-        </div>
       </div>
 
       {/* Sub-footer bar */}
