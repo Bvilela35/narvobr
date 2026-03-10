@@ -14,6 +14,7 @@ const Produto = lazy(() => import("./pages/Produto"));
 const ProdutoEssss = lazy(() => import("./pages/ProdutoEssss"));
 const ProdutoAdicionado = lazy(() => import("./pages/ProdutoAdicionado"));
 
+const Journal = lazy(() => import("./pages/Journal"));
 const Sobre = lazy(() => import("./pages/Sobre"));
 const Suporte = lazy(() => import("./pages/Suporte"));
 const Trocas = lazy(() => import("./pages/Trocas"));
