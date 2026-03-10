@@ -100,6 +100,42 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Sub-footer bar */}
+      <div className="bg-muted/50 border-t border-border">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-40 leading-relaxed">
+          {/* Left — CNPJ */}
+          <p className="text-center md:text-left">
+            © 2026, BBS COMPONENTES DE AUTOMACAO, CONTROLE E TRANSPORTADORES LTDA | CNPJ: 23.887.867/0001-06 | Rua Jose Rodrigues Pereira, 32 Filadelfia Betim, MG | CEP: 32670-098
+          </p>
+
+          {/* Center — Payment icons */}
+          <div className="flex items-center gap-2 shrink-0">
+            {["Visa", "Master", "Elo", "Pix", "Boleto"].map((brand) => (
+              <span
+                key={brand}
+                className="border border-border rounded px-2 py-1 text-[10px] font-medium bg-background"
+              >
+                {brand}
+              </span>
+            ))}
+          </div>
+
+          {/* Right — Google Loja Segura */}
+          <a
+            href="https://transparencyreport.google.com/safe-browsing/search?url=www.narvo.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 hover:opacity-80 transition-opacity"
+          >
+            <img
+              src="/images/google-loja-segura.svg"
+              alt="Google Loja Segura"
+              className="h-8"
+            />
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }
