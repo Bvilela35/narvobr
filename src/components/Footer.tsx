@@ -105,7 +105,7 @@ export function Footer() {
       </div>
 
       {/* Sub-footer bar */}
-      <div className="border-t border-border backdrop-blur-md" style={{ backgroundColor: "rgba(15, 61, 46, 0.5)" }}>
+      <div className="border-t border-border" style={{ backgroundColor: "#0f3d2e" }}>
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-80 leading-relaxed text-white">
           {/* Left — CNPJ */}
           <p className="text-center md:text-left">
