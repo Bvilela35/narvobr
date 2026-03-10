@@ -14,6 +14,7 @@ const Produto = lazy(() => import("./pages/Produto"));
 const ProdutoEssss = lazy(() => import("./pages/ProdutoEssss"));
 const ProdutoAdicionado = lazy(() => import("./pages/ProdutoAdicionado"));
 
+const Journal = lazy(() => import("./pages/Journal"));
 const Sobre = lazy(() => import("./pages/Sobre"));
 const Suporte = lazy(() => import("./pages/Suporte"));
 const Trocas = lazy(() => import("./pages/Trocas"));
@@ -38,6 +39,7 @@ function AppContent() {
           
           <Route path="/produto/:handle/adicionado" element={<ProdutoAdicionado />} />
           <Route path="/produto/:handle" element={<Produto />} />
+          <Route path="/journal" element={<Journal />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/suporte" element={<Suporte />} />
           <Route path="/trocas" element={<Trocas />} />
