@@ -44,9 +44,9 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all duration-300"
-                style={{ backgroundColor: "#0f3d2e", border: "2px solid #b6e36d" }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#b6e36d"; e.currentTarget.style.color = "#0f3d2e"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#0f3d2e"; e.currentTarget.style.color = "white"; }}
+                style={{ backgroundColor: "#0f3d2e", border: "2px solid #0f3d2e" }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#b6e36d"; e.currentTarget.style.color = "#0f3d2e"; e.currentTarget.style.borderColor = "#b6e36d"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#0f3d2e"; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "#0f3d2e"; }}
               >
                 Conheça a Sanchz
               </a>
