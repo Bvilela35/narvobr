@@ -63,7 +63,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-lg md:text-xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
                   >
                     {link.label}
                   </Link>
@@ -82,7 +82,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-lg md:text-xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
                   >
                     {link.label}
                   </Link>
