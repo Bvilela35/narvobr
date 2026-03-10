@@ -37,7 +37,7 @@ export function Footer() {
             </div>
             <div>
               <p className="text-xl md:text-2xl font-light leading-snug mb-5">
-                Uma empresa do grupo BBS.
+                Uma empresa Sanchz.
               </p>
               <a
                 href="https://www.sanchz.store"
