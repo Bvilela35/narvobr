@@ -37,15 +37,15 @@ export function Footer() {
             </div>
             <div>
               <p className="text-xl md:text-2xl font-light leading-snug mb-5">
-                Seja o primeiro a saber<br />sobre novidades.
+                Uma empresa do grupo BBS.
               </p>
               <a
-                href="https://instagram.com/narvobr"
+                href="https://www.sanchz.store"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block border border-foreground px-5 py-2.5 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
               >
-                Siga no Instagram
+                Conheça a Sanchz
               </a>
             </div>
           </div>
