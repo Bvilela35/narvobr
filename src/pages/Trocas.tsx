@@ -1,17 +1,62 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { storefrontApiRequest } from "@/lib/shopify";
+
+const SHOP_REFUND_QUERY = `
+  query GetRefundPolicy {
+    shop {
+      refundPolicy {
+        title
+        body
+      }
+    }
+  }
+`;
 
 export default function Trocas() {
+  const [policy, setPolicy] = useState<{ title: string; body: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPolicy() {
+      try {
+        const data = await storefrontApiRequest(SHOP_REFUND_QUERY);
+        const p = data?.data?.shop?.refundPolicy;
+        if (p) setPolicy(p);
+      } catch (err) {
+        console.error("Failed to fetch refund policy:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPolicy();
+  }, []);
+
   return (
     <section className="py-16 md:py-24 px-6 md:px-10">
       <div className="max-w-[700px] mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <h1 className="text-3xl font-light mb-8">Trocas e Devoluções</h1>
-          <div className="prose-sm space-y-4 text-sm opacity-60 leading-relaxed">
-            <p>Aceitamos trocas e devoluções em até 30 dias corridos após o recebimento do produto, desde que esteja em sua embalagem original e sem sinais de uso.</p>
-            <p>Para solicitar uma troca ou devolução, entre em contato pelo nosso formulário de suporte informando o número do pedido e o motivo.</p>
-            <p>Após a aprovação, enviaremos as instruções de envio. O reembolso será processado em até 10 dias úteis após o recebimento do produto devolvido.</p>
-            <p className="opacity-60 italic">Transparente. Sem ruído.</p>
-          </div>
+          {loading ? (
+            <div className="space-y-4">
+              <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+              <div className="h-4 w-full bg-muted animate-pulse rounded" />
+              <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+              <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+            </div>
+          ) : policy ? (
+            <>
+              <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">Trocas e Devoluções</h1>
+              <div
+                className="prose prose-sm prose-neutral dark:prose-invert max-w-none opacity-70 leading-relaxed [&_a]:underline [&_a]:hover:opacity-100"
+                dangerouslySetInnerHTML={{ __html: policy.body }}
+              />
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">Trocas e Devoluções</h1>
+              <p className="text-sm opacity-60">Política de trocas e devoluções não encontrada. Certifique-se de que ela foi cadastrada nas configurações da loja.</p>
+            </>
+          )}
         </motion.div>
       </div>
     </section>
