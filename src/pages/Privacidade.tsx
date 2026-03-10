@@ -45,7 +45,7 @@ export default function Privacidade() {
             </div>
           ) : policy ? (
             <>
-              <h1 className="text-3xl font-light mb-8">{policy.title}</h1>
+              <h1 className="text-3xl font-light mb-8">Política de Privacidade</h1>
               <div
                 className="prose prose-sm prose-neutral dark:prose-invert max-w-none opacity-70 leading-relaxed [&_a]:underline [&_a]:hover:opacity-100"
                 dangerouslySetInnerHTML={{ __html: policy.body }}
