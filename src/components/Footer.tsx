@@ -112,17 +112,6 @@ export function Footer() {
             © 2026, BBS COMPONENTES DE AUTOMACAO, CONTROLE E TRANSPORTADORES LTDA | CNPJ: 23.887.867/0001-06 | Rua Jose Rodrigues Pereira, 32 Filadelfia Betim, MG | CEP: 32670-098
           </p>
 
-          {/* Center — Payment icons */}
-          <div className="flex items-center gap-2 shrink-0">
-            {["Visa", "Master", "Elo", "Pix", "Boleto"].map((brand) => (
-              <span
-                key={brand}
-                className="border border-border rounded px-2 py-1 text-[10px] font-medium bg-background"
-              >
-                {brand}
-              </span>
-            ))}
-          </div>
 
           {/* Right — Google Loja Segura */}
           <a
