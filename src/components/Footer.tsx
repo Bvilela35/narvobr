@@ -12,6 +12,7 @@ const footerLinks = [
     links: [
       { label: "A marca", href: "/sobre" },
       { label: "Sistema", href: "/sobre" },
+      { label: "Journal", href: "/journal" },
     ],
   },
   {
