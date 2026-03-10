@@ -9,9 +9,9 @@ const columnOne = [
 ];
 
 const columnTwo = [
+  { label: "Política de Privacidade", href: "/privacidade" },
+  { label: "Termos de Serviço", href: "/termos-de-servico" },
   { label: "Trocas e Devoluções", href: "/trocas" },
-  { label: "Envio", href: "/envio" },
-  { label: "Privacidade", href: "/privacidade" },
 ];
 
 export function Footer() {
