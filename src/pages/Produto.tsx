@@ -1945,7 +1945,7 @@ export default function Produto() {
               <div className="pdp__contact-box">
                 <p className="pdp__contact-title">Quer saber mais sobre a peça?</p>
                 <a
-                  href={`https://wa.me/5511999999999?text=${encodeURIComponent(`Olá! Gostaria de saber mais sobre: ${title}`)}`}
+                  href={`https://wa.me/5531993940473?text=${encodeURIComponent(`Olá! Gostaria de saber mais sobre: ${title}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="pdp__contact-btn"
