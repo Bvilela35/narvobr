@@ -29,6 +29,7 @@ export function WhatsAppBanner() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Fale com um de nossos especialistas e tire as suas dúvidas sobre acabamentos, medidas especiais, sugestões de peças e muito mais.
               </p>
+              <p className="text-sm font-medium mt-1">(31) 99394-0473</p>
             </div>
           </div>
           <Button
@@ -37,7 +38,7 @@ export function WhatsAppBanner() {
             className="h-11 px-6 rounded-lg text-sm font-medium flex-shrink-0 w-full md:w-auto"
           >
             <a
-              href="https://wa.me/5500000000000"
+              href="https://wa.me/5531993940473"
               target="_blank"
               rel="noopener noreferrer"
             >
