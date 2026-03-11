@@ -921,6 +921,70 @@ export default function Produto() {
             padding: 0;
           }
 
+          /* Contact & Share box */
+          .pdp__contact-box {
+            margin-top: 24px;
+            background: var(--pdp-surface);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+          }
+
+          .pdp__contact-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pdp-text);
+            margin: 0 0 16px;
+          }
+
+          .pdp__contact-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 44px;
+            border: 1.5px solid var(--pdp-border);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--pdp-text);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            text-decoration: none;
+          }
+          .pdp__contact-btn:hover {
+            border-color: var(--pdp-border-active);
+            background: #fafafa;
+          }
+
+          .pdp__share-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+          }
+
+          .pdp__share-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--pdp-text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+          }
+          .pdp__share-link:hover {
+            color: var(--pdp-text);
+          }
+
           /* CEP Modal */
           .pdp__cep-overlay {
             position: fixed;
