@@ -38,7 +38,7 @@ export function WhatsAppBanner() {
             className="h-11 px-6 rounded-lg text-sm font-medium flex-shrink-0 w-full md:w-auto"
           >
             <a
-              href="https://wa.me/5500000000000"
+              href="https://wa.me/5531993940473"
               target="_blank"
               rel="noopener noreferrer"
             >
