@@ -22,6 +22,7 @@ const Envio = lazy(() => import("./pages/Envio"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
 const TermosDeServico = lazy(() => import("./pages/TermosDeServico"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
+const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ function AppContent() {
           <Route path="/envio" element={<Envio />} />
           <Route path="/privacidade" element={<Privacidade />} />
           <Route path="/termos-de-servico" element={<TermosDeServico />} />
+          <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
