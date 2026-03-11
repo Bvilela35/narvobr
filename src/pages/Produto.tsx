@@ -146,6 +146,7 @@ function FaqItem({ item, isLast, index }: { item: { pergunta: string; resposta?:
 }
 
 export default function Produto() {
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { handle } = useParams<{handle: string;}>();
