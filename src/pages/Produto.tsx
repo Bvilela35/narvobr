@@ -986,6 +986,15 @@ export default function Produto() {
           .pdp__share-link:hover {
             color: var(--pdp-text);
           }
+          .pdp__share-link--copied {
+            color: #16a34a;
+            animation: pulse-copied 0.3s ease-out;
+          }
+          @keyframes pulse-copied {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+          }
 
           /* CEP Modal */
           .pdp__cep-overlay {
