@@ -924,7 +924,8 @@ export default function Produto() {
           /* Contact & Share box */
           .pdp__contact-box {
             margin-top: 24px;
-            background: var(--pdp-surface);
+            background: transparent;
+            border: 1px solid var(--pdp-border);
             border-radius: 16px;
             padding: 24px;
             text-align: center;
