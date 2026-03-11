@@ -1873,6 +1873,45 @@ export default function Produto() {
                     </div>
                   }
                 </div>
+
+                {/* Contact & Share box */}
+                <div className="pdp__contact-box">
+                  <p className="pdp__contact-title">Quer saber mais sobre a peça?</p>
+                  <a
+                    href={`https://wa.me/5511999999999?text=${encodeURIComponent(`Olá! Gostaria de saber mais sobre: ${title}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pdp__contact-btn"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    Falar com a loja
+                  </a>
+                  <div className="pdp__share-row">
+                    <button
+                      className="pdp__share-link"
+                      onClick={() => {
+                        const url = `${window.location.origin}/produto/${handle}`;
+                        if (navigator.share) {
+                          navigator.share({ title, url });
+                        } else {
+                          window.open(`https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`, '_blank');
+                        }
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                      Compartilhar
+                    </button>
+                    <button
+                      className="pdp__share-link"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/produto/${handle}`);
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Copiar Link
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Trust bar - mobile only (below buybox) */}
