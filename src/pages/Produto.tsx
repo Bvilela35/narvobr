@@ -19,22 +19,22 @@ function parseRichText(value: string): string {
   try {
     const parsed = JSON.parse(value);
     if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
-      return parsed.children
-        .map((node: any) => {
-          if (node.type === 'paragraph' && Array.isArray(node.children)) {
-            return node.children.map((child: any) => child.value || '').join('');
-          }
-          if (node.type === 'list' && Array.isArray(node.children)) {
-            return node.children
-              .map((li: any) => li.children?.map((p: any) => p.children?.map((t: any) => t.value || '').join('')).join(''))
-              .join('\n');
-          }
-          return '';
-        })
-        .filter(Boolean)
-        .join('\n');
+      return parsed.children.
+      map((node: any) => {
+        if (node.type === 'paragraph' && Array.isArray(node.children)) {
+          return node.children.map((child: any) => child.value || '').join('');
+        }
+        if (node.type === 'list' && Array.isArray(node.children)) {
+          return node.children.
+          map((li: any) => li.children?.map((p: any) => p.children?.map((t: any) => t.value || '').join('')).join('')).
+          join('\n');
+        }
+        return '';
+      }).
+      filter(Boolean).
+      join('\n');
     }
-  } catch { /* not JSON, return as-is */ }
+  } catch {/* not JSON, return as-is */}
   return value;
 }
 
@@ -49,21 +49,21 @@ function formatCep(v: string) {
 }
 
 const TRUST_ITEMS = [
-  { icon: Truck, text: "Chega rápido. Em todo Brasil." },
-  { icon: ShieldCheck, text: "Garantia de 6 meses." },
-  { icon: RefreshCw, text: "Troca ou devolução grátis." },
-  { icon: Star, text: "Qualidade premium." },
-  { icon: Sparkles, text: "Design exclusivo." },
-  { icon: MapPin, text: "Produzido no Brasil." },
-];
+{ icon: Truck, text: "Chega rápido. Em todo Brasil." },
+{ icon: ShieldCheck, text: "Garantia de 6 meses." },
+{ icon: RefreshCw, text: "Troca ou devolução grátis." },
+{ icon: Star, text: "Qualidade premium." },
+{ icon: Sparkles, text: "Design exclusivo." },
+{ icon: MapPin, text: "Produzido no Brasil." }];
 
-function TrustBarRotator({ mobile }: { mobile?: boolean }) {
+
+function TrustBarRotator({ mobile }: {mobile?: boolean;}) {
   const [idx, setIdx] = useState(0);
   const len = TRUST_ITEMS.length;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIdx(prev => (prev + 2) % len);
+      setIdx((prev) => (prev + 2) % len);
     }, 15000);
     return () => clearInterval(timer);
   }, [len]);
@@ -80,8 +80,8 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}>
+          
           <div className="pdp__trust-item">
             <first.icon size={22} strokeWidth={1.5} />
             <span className="text-muted-foreground text-sm">{first.text}</span>
@@ -92,11 +92,11 @@ function TrustBarRotator({ mobile }: { mobile?: boolean }) {
           </div>
         </motion.div>
       </AnimatePresence>
-    </div>
-  );
+    </div>);
+
 }
 
-function FaqItem({ item, isLast, index }: { item: { pergunta: string; resposta?: string }; isLast: boolean; index: number }) {
+function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: string;};isLast: boolean;index: number;}) {
   const [open, setOpen] = useState(false);
   const questionId = `faq-question-${index}`;
   const answerId = `faq-answer-${index}`;
@@ -108,41 +108,41 @@ function FaqItem({ item, isLast, index }: { item: { pergunta: string; resposta?:
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls={answerId}
-          id={questionId}
-        >
+          id={questionId}>
+          
           <span itemProp="name">{item.pergunta}</span>
           <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </h3>
-      {item.resposta && (
-        <div
-          id={answerId}
-          role="region"
-          aria-labelledby={questionId}
-          itemScope
-          itemProp="acceptedAnswer"
-          itemType="https://schema.org/Answer"
-        >
+      {item.resposta &&
+      <div
+        id={answerId}
+        role="region"
+        aria-labelledby={questionId}
+        itemScope
+        itemProp="acceptedAnswer"
+        itemType="https://schema.org/Answer">
+        
           <AnimatePresence initial={false}>
-            {open && (
-              <motion.div
-                className="pdp__faq-answer-wrapper"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-              >
+            {open &&
+          <motion.div
+            className="pdp__faq-answer-wrapper"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}>
+            
                 <p className="pdp__faq-answer" itemProp="text">{item.resposta}</p>
               </motion.div>
-            )}
+          }
           </AnimatePresence>
         </div>
-      )}
+      }
       {!isLast && <div className="pdp__faq-divider" />}
-    </div>
-  );
+    </div>);
+
 }
 
 export default function Produto() {
@@ -251,7 +251,7 @@ export default function Produto() {
       const rect = mediaEl.getBoundingClientRect();
       const windowH = window.innerHeight;
       // progress: 0 when element enters bottom, 1 when it leaves top
-      const progress = 1 - (rect.bottom / (windowH + rect.height));
+      const progress = 1 - rect.bottom / (windowH + rect.height);
       const clampedProgress = Math.max(0, Math.min(1, progress));
       // Move image from 0 to -30% of its extra height
       const translateY = clampedProgress * -30;
@@ -330,13 +330,13 @@ export default function Produto() {
 
     // FAQPage JSON-LD
     const faqItems = product.node.faq || [];
-    const validFaqItems = faqItems.filter((item: { pergunta: string; resposta?: string }) => item.pergunta && item.resposta);
+    const validFaqItems = faqItems.filter((item: {pergunta: string;resposta?: string;}) => item.pergunta && item.resposta);
     let faqScriptTag = document.querySelector('script[data-narvo-faq-jsonld]') as HTMLScriptElement | null;
     if (validFaqItems.length > 0) {
       const faqJsonLd = {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: validFaqItems.map((item: { pergunta: string; resposta?: string }) => ({
+        mainEntity: validFaqItems.map((item: {pergunta: string;resposta?: string;}) => ({
           "@type": "Question",
           name: item.pergunta,
           acceptedAnswer: {
@@ -1953,14 +1953,14 @@ export default function Produto() {
 
               {/* Contact & Share box - separate card */}
               <div className="pdp__contact-box">
-                <p className="pdp__contact-title">Quer saber mais sobre a peça?</p>
+                <p className="pdp__contact-title">Ficou com alguma dúvida?</p>
                 <a
                   href={`https://wa.me/5531993940473?text=${encodeURIComponent(`Olá! Gostaria de saber mais sobre: ${title}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="pdp__contact-btn"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                  className="pdp__contact-btn">
+                  
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>
                   Falar com a loja
                 </a>
                 <div className="pdp__share-row">
@@ -1974,9 +1974,9 @@ export default function Produto() {
                       } else {
                         window.open(`https://api.whatsapp.com/send/?text=${encodeURIComponent(text)}`, '_blank');
                       }
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    }}>
+                    
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
                     Compartilhar
                   </button>
                   <button
@@ -1985,9 +1985,9 @@ export default function Produto() {
                       navigator.clipboard.writeText(`${window.location.origin}/produto/${handle}`);
                       setCopied(true);
                       setTimeout(() => setCopied(false), 1500);
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    }}>
+                    
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                     {copied ? 'Link Copiado!' : 'Copiar Link'}
                   </button>
                 </div>
@@ -2007,23 +2007,23 @@ export default function Produto() {
       <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
           {[
-            { id: "secao-descricao", label: "Descrição" },
-            { id: "secao-especificacoes", label: "Especificações" },
-            { id: "secao-detalhes", label: "Detalhes" },
-            { id: "secao-faq", label: "FAQ" },
-            { id: "secao-avaliacoes", label: "Avaliações" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
-              onClick={() => {
-                const el = document.getElementById(item.id);
-                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-            >
+          { id: "secao-descricao", label: "Descrição" },
+          { id: "secao-especificacoes", label: "Especificações" },
+          { id: "secao-detalhes", label: "Detalhes" },
+          { id: "secao-faq", label: "FAQ" },
+          { id: "secao-avaliacoes", label: "Avaliações" }].
+          map((item) =>
+          <button
+            key={item.id}
+            className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
+            onClick={() => {
+              const el = document.getElementById(item.id);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}>
+            
               {item.label}
             </button>
-          ))}
+          )}
         </div>
       </nav>
 
@@ -2040,26 +2040,26 @@ export default function Produto() {
               </p>
             </div>
             <div ref={descricaoMediaRef} className="pdp__descricao-media">
-              {fotoDescricao?.type === 'video' ? (
-                <video
-                  src={fotoDescricao.sources[0]?.url}
-                  poster={fotoDescricao.previewImage || undefined}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              ) : fotoDescricao?.type === 'image' ? (
-                <img
-                  src={fotoDescricao.url}
-                  alt={fotoDescricao.altText || tituloDescricao || title}
-                  loading="lazy"
-                />
-              ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--pdp-text-secondary)', fontSize: 14 }}>
+              {fotoDescricao?.type === 'video' ?
+              <video
+                src={fotoDescricao.sources[0]?.url}
+                poster={fotoDescricao.previewImage || undefined}
+                autoPlay
+                muted
+                loop
+                playsInline /> :
+
+              fotoDescricao?.type === 'image' ?
+              <img
+                src={fotoDescricao.url}
+                alt={fotoDescricao.altText || tituloDescricao || title}
+                loading="lazy" /> :
+
+
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--pdp-text-secondary)', fontSize: 14 }}>
                   Mídia em breve
                 </div>
-              )}
+              }
             </div>
           </div>
         </div>
@@ -2070,18 +2070,18 @@ export default function Produto() {
         <div className="pdp__content-section-inner">
           {(() => {
             const specItems = [
-              { label: "Materiais", value: specMateriais },
-              { label: "Tamanho", value: specTamanho },
-              { label: "O que acompanha", value: specOQueAcompanha },
-              { label: "Detalhes", value: specDetalhes },
-            ].filter(item => !!item.value);
+            { label: "Materiais", value: specMateriais },
+            { label: "Tamanho", value: specTamanho },
+            { label: "O que acompanha", value: specOQueAcompanha },
+            { label: "Detalhes", value: specDetalhes }].
+            filter((item) => !!item.value);
 
             if (specItems.length === 0 && !specFoto) return (
               <div>
                 <h2 className="pdp__specs-title">Especificações</h2>
                 <p className="pdp__content-section-placeholder">Especificações técnicas em breve.</p>
-              </div>
-            );
+              </div>);
+
 
             const hasImage = !!specFoto;
 
@@ -2090,27 +2090,27 @@ export default function Produto() {
                 <div className="pdp__specs-sheet">
                   <h2 className="pdp__specs-title">Especificações</h2>
                   <div className="pdp__specs-list">
-                    {specItems.map((item, i) => (
-                      <div key={item.label} className="pdp__specs-item">
+                    {specItems.map((item, i) =>
+                    <div key={item.label} className="pdp__specs-item">
                         <span className="pdp__specs-label">{item.label}</span>
                         <span className="pdp__specs-value">{parseRichText(item.value!)}</span>
                         {i < specItems.length - 1 && <div className="pdp__specs-divider" />}
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
-                {hasImage && (
-                  <div className="pdp__specs-image-col">
+                {hasImage &&
+                <div className="pdp__specs-image-col">
                     <img
-                      src={specFoto!.url}
-                      alt={specFoto!.altText || `${title} — Especificações`}
-                      className="pdp__specs-image"
-                      loading="lazy"
-                    />
+                    src={specFoto!.url}
+                    alt={specFoto!.altText || `${title} — Especificações`}
+                    className="pdp__specs-image"
+                    loading="lazy" />
+                  
                   </div>
-                )}
-              </div>
-            );
+                }
+              </div>);
+
           })()}
         </div>
       </section>
@@ -2124,30 +2124,30 @@ export default function Produto() {
       </section>
 
       {/* Seção: FAQ — Premium editorial accordion */}
-      {faq && faq.length > 0 && (
-        <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
+      {faq && faq.length > 0 &&
+      <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
               <div className="pdp__faq-header">
                 <h2 className="pdp__faq-title">Perguntas<br />frequentes.</h2>
               </div>
               <div className="pdp__faq-list">
-                {faq.map((item, i) => (
-                  <FaqItem key={i} item={item} index={i} isLast={i === faq.length - 1} />
-                ))}
+                {faq.map((item, i) =>
+              <FaqItem key={i} item={item} index={i} isLast={i === faq.length - 1} />
+              )}
               </div>
             </div>
           </div>
         </section>
-      )}
-      {(!faq || faq.length === 0) && (
-        <section id="secao-faq" className="pdp__content-section">
+      }
+      {(!faq || faq.length === 0) &&
+      <section id="secao-faq" className="pdp__content-section">
           <div className="pdp__content-section-inner">
             <h2 className="pdp__content-section-title">FAQ</h2>
             <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
           </div>
         </section>
-      )}
+      }
 
       {/* Seção: Avaliações */}
       <section id="secao-avaliacoes" className="pdp__content-section">
