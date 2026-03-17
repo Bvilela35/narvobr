@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { useCartSync } from "./hooks/useCartSync";
+import { RoutePrefetcher } from "./components/RoutePrefetcher";
 const Index = lazy(() => import("./pages/Index"));
 const Colecao = lazy(() => import("./pages/Colecao"));
 const ColecaoHandle = lazy(() => import("./pages/ColecaoHandle"));
@@ -63,6 +64,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <RoutePrefetcher />
         <AppContent />
       </BrowserRouter>
     </TooltipProvider>
