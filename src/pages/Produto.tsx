@@ -1867,7 +1867,17 @@ export default function Produto() {
                                       return kept ? kept.value === so.value : true;
                                     });
                                   });
-                                  if (newIdx >= 0) setSelectedVariantIdx(newIdx);
+                                  if (newIdx >= 0) {
+                                    setSelectedVariantIdx(newIdx);
+                                    // Switch gallery to variant image if color option
+                                    if (isColor) {
+                                      const variantImgUrl = variants.edges[newIdx]?.node.image?.url;
+                                      if (variantImgUrl) {
+                                        const matchIdx = imgs.findIndex((img) => img.node.url === variantImgUrl);
+                                        if (matchIdx >= 0) setSelectedImage(matchIdx);
+                                      }
+                                    }
+                                  }
                                   setTimeout(() => {
                                     const currentOptionEl = document.getElementById(`option-group-${option.name}`);
                                     if (currentOptionEl) {
