@@ -526,7 +526,10 @@ export default function Produto() {
 
   const price = selectedVariant?.price.amount || "0";
   const compareAtPrice = product.node.priceRange?.minVariantPrice?.amount;
-  const installmentValue = (parseFloat(price) / 10).toFixed(2).replace(".", ",");
+  const inst = parseFloat(price) / 10;
+  const installmentValue = inst % 1 === 0
+    ? inst.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+    : inst.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Get optimized image URL for mobile (800px) and desktop (1200px)
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
