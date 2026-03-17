@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus, RefreshCw, Star, Sparkles, MapPin } from "lucide-react";
@@ -8,10 +8,24 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
-import { ReviewsSection } from "@/components/ReviewsSection";
+import "./Produto.css";
+
+// Lazy load below-fold components
+const ReviewsSection = lazy(() => import("@/components/ReviewsSection").then(m => ({ default: m.ReviewsSection })));
 
 function formatPrice(amount: string) {
   return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
+}
+
+// Shopify CDN image optimizer — request appropriately sized images
+function optimizeShopifyImage(url: string | undefined, width = 800): string {
+  if (!url) return '';
+  if (url.includes('cdn.shopify.com')) {
+    // Shopify Storefront API supports ?width=X query param
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}width=${width}`;
+  }
+  return url;
 }
 
 // Parse Shopify rich text JSON into plain text
@@ -145,6 +159,47 @@ function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: st
 
 }
 
+// Skeleton loader that matches the PDP layout exactly to prevent CLS
+function PdpSkeleton() {
+  return (
+    <div className="pdp__skeleton">
+      <div className="pdp__skeleton-container">
+        {/* Back button placeholder */}
+        <div className="pdp__skeleton-line" style={{ width: 28, height: 28, marginBottom: 32, borderRadius: '50%' }} />
+        <div className="pdp__skeleton-grid">
+          {/* Gallery skeleton */}
+          <div className="pdp__skeleton-gallery" />
+          {/* Info column skeleton */}
+          <div className="pdp__skeleton-info">
+            {/* Bullet tags */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div className="pdp__skeleton-line" style={{ width: 80, height: 28 }} />
+              <div className="pdp__skeleton-line" style={{ width: 100, height: 28 }} />
+              <div className="pdp__skeleton-line" style={{ width: 70, height: 28 }} />
+            </div>
+            {/* Title */}
+            <div className="pdp__skeleton-line" style={{ width: '80%', height: 46 }} />
+            {/* Price */}
+            <div className="pdp__skeleton-line" style={{ width: 120, height: 24 }} />
+            {/* Installment */}
+            <div className="pdp__skeleton-line" style={{ width: 200, height: 20 }} />
+            {/* Description */}
+            <div className="pdp__skeleton-line" style={{ width: '100%', height: 44, marginTop: 12 }} />
+            {/* Options */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 24 }}>
+              <div className="pdp__skeleton-line" style={{ height: 80 }} />
+              <div className="pdp__skeleton-line" style={{ height: 80 }} />
+              <div className="pdp__skeleton-line" style={{ height: 80 }} />
+            </div>
+            {/* Buybox */}
+            <div className="pdp__skeleton-line" style={{ width: '100%', height: 200, borderRadius: 24, marginTop: 32 }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Produto() {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
@@ -175,6 +230,8 @@ export default function Produto() {
   const zoomRef = useRef(1);
   const swipeStartX = useRef(0);
   const isSwiping = useRef(false);
+  // Track if this is user-initiated image change (for animation)
+  const userChangedImage = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
 
@@ -182,7 +239,31 @@ export default function Produto() {
     setSelectedImage(0);
     setSelectedVariantIdx(0);
     setCep("");
+    userChangedImage.current = false;
   }, [handle]);
+
+  // Preload LCP image as soon as product data arrives
+  useEffect(() => {
+    if (!product) return;
+    const firstImgUrl = product.node.images.edges[0]?.node.url;
+    if (!firstImgUrl) return;
+    const optimizedUrl = optimizeShopifyImage(firstImgUrl, 800);
+    
+    // Inject preload link for LCP
+    const existing = document.querySelector('link[data-pdp-preload]');
+    if (existing) existing.remove();
+    
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'preload');
+    link.setAttribute('as', 'image');
+    link.setAttribute('href', optimizedUrl);
+    link.setAttribute('data-pdp-preload', 'true');
+    // @ts-ignore — fetchpriority is valid HTML but not in TS types
+    link.fetchPriority = 'high';
+    document.head.appendChild(link);
+    
+    return () => { link.remove(); };
+  }, [product]);
 
   // IntersectionObserver for active section tracking
   const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-detalhes", "secao-faq", "secao-avaliacoes"];
@@ -192,13 +273,11 @@ export default function Produto() {
     const navEl = sectionNavRef.current;
     if (!navEl) return;
 
-    // Sticky detection via sentinel
     const stickyObserver = new IntersectionObserver(
       ([entry]) => setIsNavSticky(!entry.isIntersecting),
       { threshold: 0, rootMargin: "0px" }
     );
 
-    // Create a sentinel element right before the nav
     const sentinel = document.createElement("div");
     sentinel.style.height = "1px";
     sentinel.style.pointerEvents = "none";
@@ -206,7 +285,6 @@ export default function Produto() {
     navEl.parentElement?.insertBefore(sentinel, navEl);
     stickyObserver.observe(sentinel);
 
-    // Section tracking
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -250,10 +328,8 @@ export default function Produto() {
     const onScroll = () => {
       const rect = mediaEl.getBoundingClientRect();
       const windowH = window.innerHeight;
-      // progress: 0 when element enters bottom, 1 when it leaves top
       const progress = 1 - rect.bottom / (windowH + rect.height);
       const clampedProgress = Math.max(0, Math.min(1, progress));
-      // Move image from 0 to -30% of its extra height
       const translateY = clampedProgress * -30;
       child.style.transform = `translateY(${translateY}%)`;
     };
@@ -367,12 +443,9 @@ export default function Produto() {
 
   const related = allProducts.filter((p) => p.node.handle !== handle).slice(0, 4);
 
+  // Show skeleton loader instead of spinner — matches final layout to prevent CLS
   if (loadingProduct) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin opacity-30" />
-      </div>);
-
+    return <PdpSkeleton />;
   }
 
   if (!product) {
@@ -380,7 +453,6 @@ export default function Produto() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <p className="text-sm opacity-40">Produto não encontrado.</p>
       </div>);
-
   }
 
   const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
@@ -426,10 +498,14 @@ export default function Produto() {
     setShowCepModal(false);
   }
 
-  const prevImage = () =>
-  setSelectedImage((p) => p === 0 ? totalImages - 1 : p - 1);
-  const nextImage = () =>
-  setSelectedImage((p) => p === totalImages - 1 ? 0 : p + 1);
+  const prevImage = () => {
+    userChangedImage.current = true;
+    setSelectedImage((p) => p === 0 ? totalImages - 1 : p - 1);
+  };
+  const nextImage = () => {
+    userChangedImage.current = true;
+    setSelectedImage((p) => p === totalImages - 1 ? 0 : p + 1);
+  };
 
   const handleAdd = async () => {
     if (!canBuy || !selectedVariant) return;
@@ -449,1226 +525,13 @@ export default function Produto() {
   const compareAtPrice = product.node.priceRange?.minVariantPrice?.amount;
   const installmentValue = (parseFloat(price) / 10).toFixed(2).replace(".", ",");
 
+  // Get optimized image URL for mobile (800px) and desktop (1200px)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const galleryImageWidth = isMobile ? 800 : 1200;
+
   return (
     <>
       <section className="pdp">
-        <style>{`
-          .pdp {
-            --pdp-bg: #FFFFFF;
-            --pdp-surface: #F3F4F6;
-            --pdp-border: #E5E7EB;
-            --pdp-border-active: #111827;
-            --pdp-text: #111827;
-            --pdp-text-secondary: #6B7280;
-            --pdp-link: #1A73E8;
-            --pdp-btn-disabled-bg: #E5E7EB;
-            --pdp-btn-disabled-text: #9CA3AF;
-            --pdp-btn-bg: #0f3d2e;
-            --pdp-btn-text: #FFFFFF;
-            --pdp-radius-gallery: 28px;
-            --pdp-radius-buybox: 24px;
-            --pdp-radius-color: 14px;
-            --pdp-radius-pill: 999px;
-            --pdp-font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-          }
-
-          .pdp {
-            font-family: var(--pdp-font);
-            color: var(--pdp-text);
-            background: var(--pdp-bg);
-            min-height: 80vh;
-          }
-
-          .pdp__container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 32px 24px 80px;
-          }
-
-          .pdp__back {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            color: var(--pdp-text-secondary);
-            text-decoration: none;
-            margin-bottom: 32px;
-            transition: color 0.15s;
-          }
-          .pdp__back:hover { color: var(--pdp-text); }
-
-          .pdp__grid {
-            display: grid;
-            grid-template-columns: 1fr 440px;
-            gap: 48px;
-            align-items: start;
-          }
-
-          .pdp__gallery {
-            background: var(--pdp-surface);
-            border-radius: var(--pdp-radius-gallery);
-            padding: 0;
-            position: relative;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-          }
-
-          .pdp__gallery-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-
-          .pdp__gallery-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            opacity: 0.2;
-            font-size: 13px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-          }
-
-          .pdp__gallery-nav {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #fff;
-            border-radius: var(--pdp-radius-pill);
-            padding: 0 14px;
-            height: 44px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-          }
-
-          .pdp__gallery-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            color: var(--pdp-text);
-            border-radius: 50%;
-            transition: background 0.15s;
-          }
-          .pdp__gallery-btn:hover { background: var(--pdp-surface); }
-          .pdp__gallery-btn:focus-visible {
-            outline: 2px solid var(--pdp-btn-bg);
-            outline-offset: 2px;
-          }
-
-          .pdp__gallery-indicator {
-            font-size: 14px;
-            font-variant-numeric: tabular-nums;
-            color: var(--pdp-text-secondary);
-            min-width: 36px;
-            text-align: center;
-            user-select: none;
-          }
-
-          .pdp__info { display: flex; flex-direction: column; }
-
-          .pdp__bullets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-            min-height: 28px;
-          }
-
-          .pdp__bullets--expanded {
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-            overflow: hidden;
-          }
-
-          .pdp__bullet-tag {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            color: #0f3d2e;
-            background: #f8f8f8;
-            border: 1px solid #e5e5e5;
-            border-radius: var(--pdp-radius-pill);
-            white-space: nowrap;
-          }
-
-          .pdp__bullet-expand {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1.5px solid #e5e5e5;
-            background: #f8f8f8;
-            color: #0f3d2e;
-            cursor: pointer;
-            margin-left: 10px;
-            flex-shrink: 0;
-            transition: background 0.2s, transform 0.2s;
-            padding: 0;
-          }
-
-          .pdp__bullet-expand:hover {
-            background: #c8e6c9;
-            transform: scale(1.1);
-          }
-
-          .pdp__bullet-close {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 1px solid #ccc;
-            background: transparent;
-            color: #888;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background 0.2s, color 0.2s;
-            padding: 0;
-          }
-
-          .pdp__bullet-close:hover {
-            background: #f3f4f6;
-            color: #333;
-          }
-
-          .pdp__title {
-            font-size: 40px;
-            font-weight: 600;
-            line-height: 1.15;
-            margin: 0 0 24px;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-          }
-          }
-
-          .pdp__price-row {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-            margin-bottom: 4px;
-          }
-
-          .pdp__price {
-            font-size: 18px;
-            font-weight: 600;
-          }
-
-          .pdp__price-old {
-            font-size: 18px;
-            font-weight: 400;
-            color: var(--pdp-text-secondary);
-            text-decoration: line-through;
-          }
-
-          .pdp__installment {
-            font-size: 13px;
-            color: var(--pdp-text-secondary);
-            margin-bottom: 0;
-          }
-
-          .pdp__divider {
-            height: 1px;
-            background: var(--pdp-border);
-            border: none;
-            margin: 24px 0;
-          }
-
-          .pdp__description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--pdp-text-secondary);
-            margin: 0;
-            max-width: 420px;
-          }
-
-          .pdp__option-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin: 0 0 16px;
-          }
-          .pdp__option-title-hint {
-            font-weight: 300;
-            color: #888;
-          }
-          .pdp__option-title-accent {
-            color: #0f3d2e;
-          }
-
-          .pdp__color-swatch {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 1.5px solid #e0e0e0;
-            flex-shrink: 0;
-          }
-
-          .pdp__option-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-          }
-
-          .pdp__option-item { position: relative; }
-
-          .pdp__option-input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-          }
-
-          .pdp__option-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 16px 8px 12px;
-            border: 1.5px solid var(--pdp-border);
-            border-radius: var(--pdp-radius-color);
-            background: #fff;
-            cursor: pointer;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            text-align: center;
-          }
-          .pdp__option-label:hover {
-            border-color: #BABDC2;
-          }
-          .pdp__option-input:checked + .pdp__option-label {
-            border-color: var(--pdp-border-active);
-            border-width: 2px;
-            padding: 15.5px 7.5px 11.5px;
-          }
-          .pdp__option-input:focus-visible + .pdp__option-label {
-            outline: 2px solid var(--pdp-link);
-            outline-offset: 2px;
-          }
-          .pdp__option-input:disabled + .pdp__option-label {
-            opacity: 0.3;
-            cursor: not-allowed;
-            text-decoration: line-through;
-          }
-
-          .pdp__option-name {
-            font-size: 12px;
-            color: var(--pdp-text-secondary);
-          }
-
-          /* Quantidade / Volume card style */
-          .pdp__qty-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          }
-
-          .pdp__qty-item { position: relative; }
-
-          .pdp__qty-input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-          }
-
-          .pdp__qty-label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 24px 24px;
-            min-height: 72px;
-            border: 2px solid var(--pdp-border);
-            border-radius: 16px;
-            background: #fff;
-            cursor: pointer;
-            transition: border-color 0.15s, box-shadow 0.15s;
-          }
-          .pdp__qty-label:hover {
-            border-color: #BABDC2;
-          }
-          .pdp__qty-input:checked + .pdp__qty-label {
-            border-color: #0f3d2e;
-            box-shadow: none;
-          }
-          .pdp__qty-input:focus-visible + .pdp__qty-label {
-            outline: 2px solid var(--pdp-link);
-            outline-offset: 2px;
-          }
-          .pdp__qty-input:disabled + .pdp__qty-label {
-            opacity: 0.3;
-            cursor: not-allowed;
-          }
-
-          .pdp__qty-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--pdp-text);
-          }
-
-          .pdp__qty-price {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--pdp-text);
-          }
-
-          .pdp__buybox {
-            background: var(--pdp-surface);
-            border-radius: var(--pdp-radius-buybox);
-            padding: 24px;
-            margin-top: 32px;
-          }
-
-          .pdp__buybox .pdp__price-row { margin-bottom: 4px; }
-          .pdp__buybox .pdp__installment { margin-bottom: 20px; }
-
-          .pdp__add-btn {
-            width: 100%;
-            height: 48px;
-            border: none;
-            border-radius: var(--pdp-radius-pill);
-            font-size: 15px;
-            font-weight: 500;
-            font-family: var(--pdp-font);
-            cursor: pointer;
-            transition: background 0.2s, opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-          }
-          .pdp__add-btn:disabled {
-            background: var(--pdp-btn-disabled-bg);
-            color: var(--pdp-btn-disabled-text);
-            cursor: not-allowed;
-          }
-          .pdp__add-btn:not(:disabled) {
-            background: var(--pdp-btn-bg);
-            color: var(--pdp-btn-text);
-          }
-          .pdp__add-btn:not(:disabled):hover,
-          .pdp__add-btn:not(:disabled):active {
-            background: #b6e36d;
-            color: #0f3d2e;
-            opacity: 1;
-          }
-          .pdp__add-btn:focus-visible {
-            outline: 2px solid var(--pdp-link);
-            outline-offset: 2px;
-          }
-
-          .pdp__shipping {
-            margin-top: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-          }
-
-          .pdp__shipping-icon {
-            flex-shrink: 0;
-            color: var(--pdp-text-secondary);
-            margin-top: 1px;
-          }
-
-          .pdp__shipping-text {
-            font-size: 13px;
-            color: var(--pdp-text-secondary);
-            line-height: 1.5;
-          }
-
-          .pdp__shipping-link {
-            color: var(--pdp-link);
-            text-decoration: underline;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font: inherit;
-            font-size: 13px;
-            padding: 0;
-          }
-          .pdp__shipping-link:hover { opacity: 0.8; }
-
-          .pdp__shipping-result {
-            font-size: 13px;
-            line-height: 1.5;
-          }
-          .pdp__shipping-result strong {
-            color: #16a34a;
-            font-weight: 600;
-          }
-          .pdp__shipping-result .pdp__shipping-cep-link {
-            color: var(--pdp-text-secondary);
-            text-decoration: underline;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font: inherit;
-            font-size: 13px;
-            padding: 0;
-          }
-
-          /* Contact & Share box */
-          .pdp__contact-box {
-            margin-top: 24px;
-            background: transparent;
-            border: 1px solid var(--pdp-border);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-          }
-
-          .pdp__contact-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--pdp-text);
-            margin: 0 0 16px;
-          }
-
-          .pdp__contact-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            height: 44px;
-            border: 1.5px solid var(--pdp-border);
-            border-radius: 12px;
-            background: #fff;
-            color: var(--pdp-text);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-            text-decoration: none;
-          }
-          .pdp__contact-btn:hover {
-            border-color: var(--pdp-border-active);
-            background: #fafafa;
-          }
-
-          .pdp__share-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 16px;
-          }
-
-          .pdp__share-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: var(--pdp-text-secondary);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            transition: color 0.2s;
-          }
-          .pdp__share-link:hover {
-            color: var(--pdp-text);
-          }
-          .pdp__share-link--copied {
-            color: #16a34a;
-            animation: pulse-copied 0.3s ease-out;
-          }
-          @keyframes pulse-copied {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-          }
-
-          /* CEP Modal */
-          .pdp__cep-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-          }
-
-          .pdp__cep-modal {
-            background: #fff;
-            border-radius: 20px;
-            padding: 32px;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-            position: relative;
-          }
-
-          .pdp__cep-modal h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 20px;
-          }
-
-          .pdp__cep-modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--pdp-text-secondary);
-            padding: 4px;
-            border-radius: 50%;
-            display: flex;
-          }
-          .pdp__cep-modal-close:hover { color: var(--pdp-text); }
-
-          .pdp__cep-modal-row {
-            display: flex;
-            gap: 12px;
-            align-items: stretch;
-          }
-
-          .pdp__cep-modal-input {
-            flex: 1;
-            font-family: var(--pdp-font);
-            font-size: 15px;
-            border: 1.5px solid var(--pdp-border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            outline: none;
-            transition: border-color 0.15s;
-          }
-          .pdp__cep-modal-input:focus {
-            border-color: var(--pdp-border-active);
-          }
-
-          .pdp__cep-modal-btn {
-            font-family: var(--pdp-font);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 20px;
-            border: 1.5px solid var(--pdp-border);
-            border-radius: 10px;
-            background: #fff;
-            cursor: pointer;
-            color: var(--pdp-text);
-            transition: background 0.15s;
-          }
-          .pdp__cep-modal-btn:hover { background: var(--pdp-surface); }
-          .pdp__cep-modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-          .pdp__unavailable {
-            font-size: 13px;
-            color: var(--pdp-text-secondary);
-            margin-top: 12px;
-          }
-
-          @media (max-width: 1024px) {
-            .pdp__grid {
-              grid-template-columns: 1fr 380px;
-              gap: 32px;
-            }
-            .pdp__title { font-size: 32px; }
-          }
-
-          .pdp__mobile-bullets-overlay {
-            display: none;
-          }
-
-          @media (max-width: 768px) {
-            .pdp__container { padding: 24px 16px 40px; }
-            .pdp__grid {
-              grid-template-columns: 1fr;
-              gap: 24px;
-            }
-            .pdp__gallery { aspect-ratio: 1 / 1; position: relative; }
-            .pdp__title { font-size: 28px; }
-            .pdp__option-grid { grid-template-columns: repeat(2, 1fr); }
-          }
-
-          @media (max-width: 1024px) {
-            .pdp__bullets { display: none; }
-
-            .pdp__mobile-bullets-overlay {
-              display: flex;
-              justify-content: center;
-              overflow: hidden;
-              margin-top: 10px;
-            }
-
-            .pdp__mobile-bullets-pair {
-              display: flex;
-              gap: 6px;
-              justify-content: center;
-            }
-
-            .pdp__mobile-bullets-overlay .pdp__bullet-tag {
-              font-size: 13px;
-              padding: 4px 12px;
-            }
-          }
-
-          /* Lightbox / Fullscreen */
-          .pdp__lightbox {
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            background: rgba(0,0,0,0.92);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: grab;
-          }
-          .pdp__lightbox--dragging { cursor: grabbing; }
-
-          .pdp__lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 210;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #fff;
-            transition: background 0.15s;
-          }
-          .pdp__lightbox-close:hover { background: rgba(255,255,255,0.2); }
-
-          .pdp__lightbox-img-wrapper {
-            position: relative;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .pdp__lightbox-img {
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-            transition: transform 0.2s ease;
-            user-select: none;
-            -webkit-user-drag: none;
-          }
-
-          .pdp__lightbox-nav {
-            position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(12px);
-            border-radius: 999px;
-            padding: 0 18px;
-            height: 48px;
-          }
-
-          .pdp__lightbox-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            color: #fff;
-            border-radius: 50%;
-            transition: background 0.15s;
-          }
-          .pdp__lightbox-btn:hover { background: rgba(255,255,255,0.15); }
-
-          .pdp__lightbox-indicator {
-            font-size: 14px;
-            font-variant-numeric: tabular-nums;
-            color: rgba(255,255,255,0.6);
-            min-width: 36px;
-            text-align: center;
-            user-select: none;
-          }
-
-          .pdp__lightbox-zoom {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            display: flex;
-            gap: 8px;
-          }
-
-          .pdp__lightbox-zoom-btn {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(12px);
-            border: none;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 300;
-            transition: background 0.15s;
-          }
-          .pdp__lightbox-zoom-btn:hover { background: rgba(255,255,255,0.2); }
-
-          .pdp__gallery-zoom-hint {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-          }
-          .pdp__gallery:hover .pdp__gallery-zoom-hint { opacity: 1; }
-
-          .pdp__trust-bar {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-top: 16px;
-            overflow: hidden;
-            min-height: 54px;
-          }
-
-          .pdp__trust-pair {
-            display: flex;
-            gap: 32px;
-            justify-content: center;
-          }
-
-          .pdp__trust-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            background: none;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--pdp-text);
-          
-          }
-          .pdp__trust-item svg {
-            color: #0f3d2e;
-            flex-shrink: 0;
-          }
-
-          .pdp__trust-bar--mobile {
-            display: none;
-          }
-
-          @media (max-width: 768px) {
-            .pdp__trust-bar { display: none; }
-            .pdp__trust-bar--mobile { display: flex; overflow: hidden; min-height: 46px; gap: 16px; justify-content: center; margin-top: 16px; }
-            .pdp__trust-item { padding: 8px 0; font-size: 13px; gap: 8px; }
-            .pdp__trust-pair { gap: 16px; }
-          }
-
-          .pdp__stories-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 5;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2.5px solid #fff;
-            background: #0f3d2e;
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #fff;
-            transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-            animation: stories-pulse 2s ease-in-out infinite;
-          }
-          .pdp__stories-btn:hover {
-            transform: scale(1.1);
-            background: #0a2e21;
-          }
-          @keyframes stories-pulse {
-            0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
-            50% { box-shadow: 0 2px 16px rgba(182,227,109,0.5), 0 0 0 4px rgba(182,227,109,0.25); }
-          }
-          /* Section Navigation Menu */
-          .pdp__section-nav {
-            display: flex;
-            justify-content: center;
-            padding: 16px 24px;
-            background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            z-index: 40;
-          }
-          .pdp__section-nav--sticky {
-            position: sticky;
-            top: 64px;
-          }
-
-          .pdp__section-nav-inner {
-            display: inline-flex;
-            gap: 6px;
-            padding: 6px;
-            background: #f0f0f0;
-            border-radius: 50px;
-            justify-content: center;
-          }
-
-          .pdp__section-nav-btn {
-            font-family: var(--pdp-font);
-            font-size: 15px;
-            font-weight: 600;
-            padding: 12px 26px;
-            border: none;
-            border-radius: 50px;
-            background: transparent;
-            color: #555;
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
-            position: relative;
-            letter-spacing: -0.01em;
-          }
-          .pdp__section-nav-btn:hover {
-            background: #fff;
-            color: #0f3d2e;
-            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-          }
-          .pdp__section-nav-btn:active {
-            transform: scale(0.97);
-          }
-          .pdp__section-nav-btn--active {
-            background: #fff;
-            color: #0f3d2e;
-            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-          }
-
-          /* Content Sections */
-          .pdp__content-section {
-            padding: 64px 24px;
-            border-top: 1px solid var(--pdp-border);
-            scroll-margin-top: 70px;
-          }
-
-          .pdp__content-section-inner {
-            max-width: 1240px;
-            margin: 0 auto;
-          }
-
-          .pdp__content-section-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 0 0 20px;
-            letter-spacing: -0.01em;
-          }
-
-          .pdp__content-section-placeholder {
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--pdp-text-secondary);
-            max-width: 680px;
-          }
-
-          /* Descrição Section Layout */
-          .pdp__descricao-grid {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 64px;
-          }
-
-          .pdp__descricao-title {
-            font-size: 56px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin: 0 0 24px;
-            line-height: 1.1;
-          }
-
-          .pdp__descricao-text {
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--pdp-text-secondary);
-            margin: 0 auto;
-            white-space: pre-line;
-            max-width: 640px;
-          }
-
-          .pdp__descricao-media {
-            width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            background: var(--pdp-surface);
-            position: relative;
-          }
-
-          .pdp__descricao-media img,
-          .pdp__descricao-media video {
-            width: 100%;
-            height: 130%;
-            object-fit: cover;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            will-change: transform;
-          }
-
-          /* Specs Section — Apple-style */
-          .pdp__specs-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: start;
-          }
-          .pdp__specs-layout--full {
-            grid-template-columns: 1fr;
-            max-width: 640px;
-          }
-          .pdp__specs-title {
-            font-size: 40px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            color: var(--pdp-text-main, #1d1d1f);
-            margin-bottom: 48px;
-          }
-          .pdp__specs-list {
-            display: flex;
-            flex-direction: column;
-          }
-          .pdp__specs-item {
-            padding: 24px 0;
-          }
-          .pdp__specs-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--pdp-text-secondary, #86868b);
-            margin-bottom: 8px;
-          }
-          .pdp__specs-value {
-            display: block;
-            font-size: 17px;
-            font-weight: 400;
-            line-height: 1.6;
-            color: var(--pdp-text-main, #1d1d1f);
-          }
-          .pdp__specs-divider {
-            margin-top: 24px;
-            height: 1px;
-            background: #e5e5e5;
-          }
-          .pdp__specs-image-col {
-            position: sticky;
-            top: 120px;
-          }
-          .pdp__specs-image {
-            width: 100%;
-            border-radius: 24px;
-            object-fit: cover;
-            display: block;
-          }
-
-          @media (max-width: 768px) {
-            .pdp__descricao-grid {
-              gap: 40px;
-            }
-            .pdp__descricao-title {
-              font-size: 36px;
-            }
-            .pdp__descricao-media {
-              border-radius: 16px;
-            }
-            .pdp__specs-layout {
-              grid-template-columns: 1fr;
-              gap: 40px;
-            }
-            .pdp__specs-title {
-              font-size: 28px;
-              margin-bottom: 32px;
-            }
-            .pdp__specs-item {
-              padding: 20px 0;
-            }
-            .pdp__specs-value {
-              font-size: 15px;
-            }
-            .pdp__specs-image {
-              border-radius: 16px;
-            }
-            .pdp__specs-image-col {
-              position: static;
-            }
-          }
-
-          /* FAQ Section — Premium editorial */
-          .pdp__faq-layout {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 80px;
-            align-items: start;
-          }
-          .pdp__faq-header {
-            position: sticky;
-            top: 120px;
-          }
-          .pdp__faq-title {
-            font-size: 44px;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            line-height: 1.1;
-            color: var(--pdp-text-primary, #1d1d1f);
-          }
-          .pdp__faq-list {
-            width: 100%;
-          }
-          .pdp__faq-item {
-            /* no extra styling needed */
-          }
-          .pdp__faq-question {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 24px 0;
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1.4;
-            color: var(--pdp-text-primary, #1d1d1f);
-            transition: color 0.2s;
-          }
-          .pdp__faq-question:hover {
-            color: var(--pdp-text-secondary, #6e6e73);
-          }
-          .pdp__faq-chevron {
-            flex-shrink: 0;
-            color: var(--pdp-text-secondary, #86868b);
-            transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-          }
-          .pdp__faq-chevron--open {
-            transform: rotate(180deg);
-          }
-          .pdp__faq-answer-wrapper {
-            overflow: hidden;
-          }
-          .pdp__faq-answer {
-            padding: 0 0 24px 0;
-            font-size: 16px;
-            line-height: 1.7;
-            color: var(--pdp-text-secondary, #6e6e73);
-            max-width: 560px;
-          }
-          .pdp__faq-divider {
-            height: 1px;
-            background: #e5e5e5;
-          }
-          @media (max-width: 768px) {
-            .pdp__faq-layout {
-              grid-template-columns: 1fr;
-              gap: 32px;
-            }
-            .pdp__faq-header {
-              position: static;
-            }
-            .pdp__faq-title {
-              font-size: 32px;
-            }
-            .pdp__faq-question {
-              font-size: 16px;
-              padding: 20px 0;
-            }
-            .pdp__faq-answer {
-              font-size: 15px;
-            }
-          }
-
-
-            .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
-            .pdp__section-nav-inner {
-              display: flex;
-              flex-wrap: nowrap;
-              overflow-x: auto;
-              gap: 8px;
-              padding: 0 16px;
-              background: transparent;
-              border-radius: 0;
-              justify-content: flex-start;
-              -webkit-overflow-scrolling: touch;
-              scrollbar-width: none;
-              -ms-overflow-style: none;
-            }
-            .pdp__section-nav-inner::-webkit-scrollbar { display: none; }
-            .pdp__section-nav-btn {
-              font-size: 14px;
-              font-weight: 600;
-              padding: 16px 32px;
-              background: #f8f8f8;
-              flex-shrink: 0;
-              white-space: nowrap;
-              min-width: auto;
-              text-align: center;
-            }
-            .pdp__section-nav-btn:hover {
-              background: #eee;
-            }
-            .pdp__section-nav-btn--active {
-              background: #0f3d2e;
-              color: #fff;
-              box-shadow: none;
-            }
-            .pdp__content-section { padding: 48px 16px; }
-            .pdp__content-section-title { font-size: 20px; }
-          }
-        `}</style>
-
         <div className="pdp__container">
           <Link to="/colecao" className="pdp__back">
             <ArrowLeft size={28} color="#000" />
@@ -1684,21 +547,36 @@ export default function Produto() {
                 onClick={() => {setLightboxOpen(true);setZoomLevel(1);setPanPos({ x: 0, y: 0 });}}
                 style={{ cursor: 'zoom-in' }}>
                 
-                {imgs[selectedImage] ?
-                <AnimatePresence mode="wait">
-                    <motion.img
-                    key={selectedImage}
-                    src={imgs[selectedImage].node.url}
-                    alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
-                    className="pdp__gallery-img"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }} />
-
-                  </AnimatePresence> :
-                <div className="pdp__gallery-placeholder">Sem imagem</div>
-                }
+                {imgs[selectedImage] ? (
+                  userChangedImage.current ? (
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={selectedImage}
+                        src={optimizeShopifyImage(imgs[selectedImage].node.url, galleryImageWidth)}
+                        alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
+                        className="pdp__gallery-img"
+                        width={1000}
+                        height={1000}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                      />
+                    </AnimatePresence>
+                  ) : (
+                    <img
+                      src={optimizeShopifyImage(imgs[selectedImage].node.url, galleryImageWidth)}
+                      alt={imgs[selectedImage].node.altText || `${title} – imagem ${selectedImage + 1}`}
+                      className="pdp__gallery-img"
+                      width={1000}
+                      height={1000}
+                      loading="eager"
+                      fetchPriority="high"
+                    />
+                  )
+                ) : (
+                  <div className="pdp__gallery-placeholder">Sem imagem</div>
+                )}
                 <div className="pdp__gallery-zoom-hint">
                   <ZoomIn size={18} />
                 </div>
@@ -1746,7 +624,7 @@ export default function Produto() {
               </p>
 
               {description &&
-              <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px' }} className="py-[23px] font-semibold text-lg">
+              <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px', minHeight: '44px' }} className="py-[23px] font-semibold text-lg">
                   {description}
                 </p>
               }
@@ -1757,22 +635,20 @@ export default function Produto() {
                   
                   {options.map((option) => {
                   const isColor = option.name.toLowerCase() === 'cor';
-                  // Current selected value for this option
                   const currentVal = selectedVariant?.selectedOptions.find(
                     (o) => o.name === option.name
                   )?.value;
-                  // Deduplicate: show each unique option value only once
                   const uniqueValues = option.values;
                   return (
                     <div key={option.name} id={`option-group-${option.name}`} style={{ marginBottom: 24 }}>
                         <p className="pdp__option-title">
                           {isColor ?
                         <>
-                               {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
+                                {option.name}. <span className="pdp__option-title-hint">Escolha sua <span className="pdp__option-title-accent">favorita</span>.</span>
                             </> :
                         option.name.toLowerCase() === 'quantidade' ?
                         <>
-                               Volume. <span className="pdp__option-title-hint">Qual é o melhor <span className="pdp__option-title-accent">para você</span>?</span>
+                                Volume. <span className="pdp__option-title-hint">Qual é o melhor <span className="pdp__option-title-accent">para você</span>?</span>
                             </> :
                         option.name}
                         </p>
@@ -1786,7 +662,6 @@ export default function Produto() {
                             );
                             return matchesThisOption && v.node.availableForSale;
                           });
-                          // Find variant price for this quantity value
                           const matchingVariant = variants.edges.find((v) =>
                           v.node.selectedOptions.some(
                             (o) => o.name === option.name && o.value === val
@@ -1848,11 +723,27 @@ export default function Produto() {
                             );
                             return matchesThisOption && v.node.availableForSale;
                           });
-                          const swatchColor = isColor ? val?.toLowerCase() === 'preto' ? '#1a1a1a' : val?.toLowerCase() === 'branco' ? '#f5f5f5' : val?.toLowerCase() === 'cinza' ? '#9e9e9e' : val?.toLowerCase() === 'prata' ? '#c0c0c0' : val?.toLowerCase() === 'natural' ? '#d4c5a9' : val?.toLowerCase() === 'caramelo' ? '#8B5E3C' : val?.toLowerCase() === 'marrom' ? '#5C3A1E' : val?.toLowerCase() === 'marrom escuro' ? '#3B2314' : val?.toLowerCase() === 'bege' ? '#D4C4A8' : val?.toLowerCase() === 'verde' ? '#0f3d2e' : '#888' : null;
                           const inputId = `opt-${option.name}-${val}`;
+
+                          const COLOR_MAP: Record<string, string> = {
+                            preto: '#1a1a1a',
+                            'preto fosco': '#1a1a1a',
+                            branco: '#f5f5f5',
+                            cinza: '#9e9e9e',
+                            'cinza claro': '#c0c0c0',
+                            prata: '#c0c0c0',
+                            natural: '#d4c5a9',
+                            caramelo: '#8B5E3C',
+                            marrom: '#5C3A1E',
+                            'marrom escuro': '#3B2314',
+                            bege: '#D4C4A8',
+                            verde: '#0f3d2e',
+                          };
+                          const colorHex = isColor ? COLOR_MAP[val.toLowerCase().trim()] || null : null;
+
                           return (
                             <div className="pdp__option-item" key={val}>
-                                <input
+                                  <input
                                 type="radio"
                                 name={`option-${option.name}`}
                                 id={inputId}
@@ -1869,12 +760,15 @@ export default function Produto() {
                                   });
                                   if (newIdx >= 0) {
                                     setSelectedVariantIdx(newIdx);
-                                    // Switch gallery to variant image if color option
+                                    // Sync gallery image with variant image when color changes
                                     if (isColor) {
                                       const variantImgUrl = variants.edges[newIdx]?.node.image?.url;
                                       if (variantImgUrl) {
                                         const matchIdx = imgs.findIndex((img) => img.node.url === variantImgUrl);
-                                        if (matchIdx >= 0) setSelectedImage(matchIdx);
+                                        if (matchIdx >= 0) {
+                                          userChangedImage.current = true;
+                                          setSelectedImage(matchIdx);
+                                        }
                                       }
                                     }
                                   }
@@ -1893,10 +787,10 @@ export default function Produto() {
                                 }}
                                 className="pdp__option-input"
                                 disabled={!isAvailable} />
-
-                                <label htmlFor={inputId} className="pdp__option-label">
-                                  {isColor && swatchColor &&
-                                <span className="pdp__color-swatch" style={{ backgroundColor: swatchColor }} />
+                              
+                                  <label htmlFor={inputId} className="pdp__option-label">
+                                    {isColor && colorHex &&
+                                <span className="pdp__color-swatch" style={{ backgroundColor: colorHex }} />
                                 }
                                   <span className="pdp__option-name">{val}</span>
                                 </label>
@@ -1961,7 +855,7 @@ export default function Produto() {
 
               </div>
 
-              {/* Contact & Share box - separate card */}
+              {/* Contact & Share box */}
               <div className="pdp__contact-box">
                 <p className="pdp__contact-title">Ficou com alguma dúvida?</p>
                 <a
@@ -2063,6 +957,8 @@ export default function Produto() {
               <img
                 src={fotoDescricao.url}
                 alt={fotoDescricao.altText || tituloDescricao || title}
+                width={1240}
+                height={698}
                 loading="lazy" /> :
 
 
@@ -2075,7 +971,7 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: Especificações — Apple-style */}
+      {/* Seção: Especificações */}
       <section id="secao-especificacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           {(() => {
@@ -2115,6 +1011,8 @@ export default function Produto() {
                     src={specFoto!.url}
                     alt={specFoto!.altText || `${title} — Especificações`}
                     className="pdp__specs-image"
+                    width={600}
+                    height={600}
                     loading="lazy" />
                   
                   </div>
@@ -2133,7 +1031,7 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: FAQ — Premium editorial accordion */}
+      {/* Seção: FAQ */}
       {faq && faq.length > 0 &&
       <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
@@ -2159,10 +1057,19 @@ export default function Produto() {
         </section>
       }
 
-      {/* Seção: Avaliações */}
+      {/* Seção: Avaliações — lazy loaded */}
       <section id="secao-avaliacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
-          <ReviewsSection handle={handle} />
+          <Suspense fallback={
+            <div className="space-y-3">
+              <h2 className="pdp__content-section-title">Avaliações</h2>
+              <div className="flex items-center justify-center py-12">
+                <div className="w-5 h-5 border-2 border-foreground/20 border-t-foreground/60 rounded-full animate-spin" />
+              </div>
+            </div>
+          }>
+            <ReviewsSection handle={handle} />
+          </Suspense>
         </div>
       </section>
 
