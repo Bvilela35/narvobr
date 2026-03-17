@@ -64,6 +64,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <RoutePrefetcher />
         <AppContent />
       </BrowserRouter>
     </TooltipProvider>
