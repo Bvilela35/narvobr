@@ -14,7 +14,10 @@ import "./Produto.css";
 const ReviewsSection = lazy(() => import("@/components/ReviewsSection").then(m => ({ default: m.ReviewsSection })));
 
 function formatPrice(amount: string) {
-  return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
+  const value = parseFloat(amount);
+  return value % 1 === 0
+    ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+    : `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 // Shopify CDN image optimizer — request appropriately sized images
