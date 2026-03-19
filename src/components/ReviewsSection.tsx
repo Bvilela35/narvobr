@@ -208,12 +208,12 @@ export function ReviewsSection({ handle }: { handle?: string }) {
   if (usingStoreFallback) {
     return (
       <div className="space-y-8">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center justify-between gap-4">
           <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
             Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
           </h2>
           {average_rating && (
-            <span className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
+            <span className="text-[32px] md:text-[44px] font-bold leading-tight" style={{ color: '#c9c9c9' }}>
               {average_rating.toFixed(1)}
             </span>
           )}
