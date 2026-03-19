@@ -92,26 +92,24 @@ function ProductReviewCard({ review, index }: { review: Review; index: number })
   );
 }
 
-function StoreReviewCard({ review, averageRating }: { review: Review; averageRating: number | null }) {
+function StoreReviewCard({ review }: { review: Review }) {
   return (
     <div className="rounded-2xl p-6 md:p-8 h-full flex flex-col justify-between gap-6" style={{ backgroundColor: '#f8f8f8' }}>
       {/* Header: quote icon + rating */}
       <div className="flex items-start justify-between">
         <span className="text-4xl leading-none text-muted-foreground/40 font-serif select-none">"</span>
-        {averageRating && (
-          <div className="flex items-center gap-1.5">
-            <div className="relative" style={{ width: 18, height: 18 }}>
-              <Star size={18} className="fill-muted text-muted" strokeWidth={0} />
-              <div className="absolute inset-0 overflow-hidden" style={{ width: `${((averageRating || 0) / 5) * 100}%` }}>
-                <Star size={18} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
-              </div>
+        <div className="flex items-center gap-1.5">
+          <div className="relative" style={{ width: 18, height: 18 }}>
+            <Star size={18} className="fill-muted text-muted" strokeWidth={0} />
+            <div className="absolute inset-0 overflow-hidden" style={{ width: `${(review.rating / 5) * 100}%` }}>
+              <Star size={18} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
             </div>
-            <span className="text-2xl font-semibold text-foreground">
-              {averageRating.toFixed(1)}
-            </span>
-            <span className="text-sm text-muted-foreground">/5</span>
           </div>
-        )}
+          <span className="text-2xl font-semibold text-foreground">
+            {review.rating.toFixed(1)}
+          </span>
+          <span className="text-sm text-muted-foreground">/5</span>
+        </div>
       </div>
 
       {/* Body */}
@@ -244,7 +242,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
                 key={review.id}
                 className="pl-4 basis-full md:basis-1/3"
               >
-                <StoreReviewCard review={review} averageRating={average_rating} />
+                <StoreReviewCard review={review} />
               </CarouselItem>
             ))}
           </CarouselContent>
