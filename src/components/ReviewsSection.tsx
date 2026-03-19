@@ -106,7 +106,7 @@ function StoreReviewCard({ review }: { review: Review }) {
             </div>
           </div>
           <span className="text-2xl font-semibold text-foreground">
-            {review.rating.toFixed(1)}
+            {review.rating % 1 === 0 ? review.rating : review.rating.toFixed(1)}
           </span>
           <span className="text-sm text-muted-foreground">/5</span>
         </div>
