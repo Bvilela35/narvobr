@@ -242,7 +242,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
                 key={review.id}
                 className="pl-4 basis-full md:basis-1/3"
               >
-                <StoreReviewCard review={review} averageRating={average_rating} />
+                <StoreReviewCard review={review} />
               </CarouselItem>
             ))}
           </CarouselContent>
