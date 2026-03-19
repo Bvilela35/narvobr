@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
+import ProductHighlights from "@/components/ProductHighlights";
 import "./Produto.css";
 
 // Lazy load below-fold components
@@ -1033,7 +1034,11 @@ export default function Produto() {
       <section id="secao-detalhes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           <h2 className="pdp__content-section-title">Detalhes</h2>
-          <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
+          {product.node.highlights && product.node.highlights.length > 0 ? (
+            <ProductHighlights highlights={product.node.highlights} />
+          ) : (
+            <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
+          )}
         </div>
       </section>
 
