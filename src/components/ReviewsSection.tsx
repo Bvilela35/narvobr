@@ -211,7 +211,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight" style={{ marginBottom: 8 }}>
-              Avaliações<br />da Loja.
+              Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
             </h2>
             <div className="flex items-center gap-3">
               {average_rating && (
