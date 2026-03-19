@@ -77,6 +77,7 @@ export interface ShopifyProduct {
     specDetalhes?: string;
     specFoto?: { url: string; altText?: string | null } | null;
     faq?: Array<{ pergunta: string; resposta?: string }>;
+    highlights?: Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }>;
   };
 }
 
