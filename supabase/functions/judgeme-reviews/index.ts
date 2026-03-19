@@ -72,6 +72,7 @@ serve(async (req) => {
       body: r.body || "",
       reviewer: r.reviewer?.name || "Anônimo",
       created_at: r.created_at,
+      product_handle: r.product_handle || "",
       pictures: (r.pictures || []).map((p) => ({
         original: p.urls?.original || "",
         compact: p.urls?.compact || "",
@@ -79,14 +80,24 @@ serve(async (req) => {
       })),
     }));
 
+    // Filter by handle server-side if provided (Judge.me may not filter correctly)
+    const filtered = handle
+      ? normalized.filter((r) => r.product_handle === handle)
+      : normalized;
+
+    // Calculate average from filtered reviews
+    const avg = filtered.length > 0
+      ? filtered.reduce((sum, r) => sum + r.rating, 0) / filtered.length
+      : null;
+
     return new Response(
       JSON.stringify({
         ok: true,
-        reviews: normalized,
+        reviews: filtered,
         current_page: data.current_page || parseInt(page),
         per_page: parseInt(perPage),
-        total_count: data.total_count ?? normalized.length,
-        average_rating: data.average_rating ?? null,
+        total_count: filtered.length,
+        average_rating: avg,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
