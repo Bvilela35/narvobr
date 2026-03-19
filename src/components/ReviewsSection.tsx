@@ -208,27 +208,15 @@ export function ReviewsSection({ handle }: { handle?: string }) {
   if (usingStoreFallback) {
     return (
       <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight" style={{ marginBottom: 8 }}>
-              Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
-            </h2>
-            <div className="flex items-center gap-3">
-              {average_rating && (
-                <>
-                  <span className="text-3xl font-semibold text-foreground">
-                    {average_rating.toFixed(1)}
-                  </span>
-                  <div className="space-y-0.5">
-                    <Stars rating={Math.round(average_rating)} size={16} />
-                    <p className="text-xs text-muted-foreground">
-                    {total_count} {total_count !== 1 ? "avaliações" : "avaliação"}
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
+            Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
+          </h2>
+          {average_rating && (
+            <span className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
+              {average_rating.toFixed(1)}
+            </span>
+          )}
         </div>
 
         <Carousel
