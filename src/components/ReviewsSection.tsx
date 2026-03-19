@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, ImageOff } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Review {
   id: number;
