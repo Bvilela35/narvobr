@@ -26,22 +26,7 @@ const pillars = [
 export function TrustPillars() {
   return (
     <section className="px-6 md:px-10 py-12 md:py-16 bg-background">
-      {/* Mobile: horizontal scroll showing 2 at a time */}
-      <div className="max-w-[1400px] mx-auto md:hidden">
-        <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-          {pillars.map((item) => (
-            <div key={item.title} className="min-w-[calc(50%-12px)] flex-shrink-0 flex flex-col items-start gap-3">
-              <item.icon className="h-7 w-7 text-foreground" strokeWidth={1.3} />
-              <div>
-                <h3 className="text-sm font-semibold text-foreground leading-tight">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-snug mt-0.5">{item.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Desktop: 4 columns */}
-      <div className="max-w-[1400px] mx-auto hidden md:grid md:grid-cols-4 gap-6">
+      <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
         {pillars.map((item) => (
           <div key={item.title} className="flex flex-col items-start gap-3">
             <item.icon className="h-7 w-7 text-foreground" strokeWidth={1.3} />
