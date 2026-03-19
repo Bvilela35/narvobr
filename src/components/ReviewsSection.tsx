@@ -210,7 +210,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <h2 className="pdp__content-section-title" style={{ marginBottom: 8 }}>
+            <h2 className="text-2xl md:text-3xl font-semibold text-foreground" style={{ marginBottom: 8 }}>
               Avaliações da Loja
             </h2>
             <div className="flex items-center gap-3">
