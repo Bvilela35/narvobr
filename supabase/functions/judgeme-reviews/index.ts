@@ -80,10 +80,10 @@ serve(async (req) => {
       })),
     }));
 
-    // Filter by handle server-side if provided (Judge.me may not filter correctly)
+    // Filter: by product handle if provided, otherwise only shop-level reviews
     const filtered = handle
       ? normalized.filter((r) => r.product_handle === handle)
-      : normalized;
+      : normalized.filter((r) => r.product_handle === "judgeme-shop-reviews");
 
     // Calculate average from filtered reviews
     const avg = filtered.length > 0
