@@ -434,10 +434,34 @@ export async function fetchProductByHandle(handle: string) {
     }
   } catch { /* ignore parse errors */ }
 
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, ...cleanProduct } = product;
+  // Parse highlights metafield (list of metaobject references)
+  const highlightEdges = product.highlightsMeta?.references?.edges || [];
+  const highlights = highlightEdges
+    .map((edge: { node: { fields: Array<{ key: string; value: string | null; reference?: { image?: { url: string; altText?: string | null }; sources?: ShopifyVideoSource[]; previewImage?: { url: string } } }> } }) => {
+      const fields = edge.node.fields;
+      const getField = (key: string) => fields.find((f: { key: string }) => f.key === key);
+      const titulo = getField('titulo')?.value || '';
+      const descricao = getField('descricao')?.value || '';
+      const midiaField = getField('midia');
+      let midiaUrl = '';
+      let tipoMidia: 'image' | 'video' = 'image';
+      let videoSources: ShopifyVideoSource[] | undefined;
+      if (midiaField?.reference?.image) {
+        midiaUrl = midiaField.reference.image.url;
+        tipoMidia = 'image';
+      } else if (midiaField?.reference?.sources) {
+        midiaUrl = midiaField.reference.previewImage?.url || '';
+        tipoMidia = 'video';
+        videoSources = midiaField.reference.sources;
+      }
+      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
+    })
+    .filter((h: { titulo: string }) => h.titulo);
 
-  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } } as ShopifyProduct;
+  // Clean up metafield keys from product object
+  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, highlightsMeta, ...cleanProduct } = product;
+
+  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } } as ShopifyProduct;
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
