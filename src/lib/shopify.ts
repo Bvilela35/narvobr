@@ -282,6 +282,37 @@ const PRODUCT_BY_HANDLE_QUERY = `
       faqMeta: metafield(namespace: "custom", key: "faq") {
         value
       }
+      highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
+        references(first: 5) {
+          edges {
+            node {
+              ... on Metaobject {
+                fields {
+                  key
+                  value
+                  reference {
+                    ... on MediaImage {
+                      image {
+                        url
+                        altText
+                      }
+                    }
+                    ... on Video {
+                      sources {
+                        url
+                        mimeType
+                      }
+                      previewImage {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
