@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
 import { WhatsAppBanner } from "./WhatsAppBanner";
+import { TrustPillars } from "./TrustPillars";
 import { LeadCapturePopup } from "./LeadCapturePopup";
 
 export function Layout({ children }: { children: React.ReactNode }) {
