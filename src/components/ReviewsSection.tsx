@@ -222,7 +222,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
                   <div className="space-y-0.5">
                     <Stars rating={Math.round(average_rating)} size={16} />
                     <p className="text-xs text-muted-foreground">
-                      {total_count} avaliação{total_count !== 1 ? "ões" : ""}
+                    {total_count} {total_count !== 1 ? "avaliações" : "avaliação"}
                     </p>
                   </div>
                 </>
