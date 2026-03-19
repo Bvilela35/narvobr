@@ -181,7 +181,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h2 className="pdp__content-section-title" style={{ marginBottom: 8 }}>
-            Avaliações
+            Avaliações{usingStoreFallback ? " da Loja" : ""}
           </h2>
           <div className="flex items-center gap-3">
             {average_rating && (
