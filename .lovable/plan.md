@@ -1,68 +1,43 @@
 
 
-## Secao "The System: InSight & OutSight"
+## Product Highlights inside "Detalhes" Section
 
-Nova secao de categorias posicionada logo abaixo do HeroBanner, antes da secao "Por que Narvo".
+### Overview
+Replace the placeholder "Detalhes" section on the PDP with the dynamic highlights component that consumes `custom.highlight_de_produto` metafield (list of metaobject references) from Shopify. Renders up to 5 entries with Z-pattern alternating layout on desktop and stacked centered layout on mobile.
 
-### Posicao na Home
+### Files to modify/create
 
-```text
-HeroBanner
-   |
-   v
-[NOVA SECAO - The System]  <-- aqui
-   |
-   v
-Por que Narvo
-   |
-   v
-Produtos em destaque
-...
-```
+**1. `src/lib/shopify.ts`** — Add metafield to GraphQL query + parse highlights
 
-### Estrutura Visual
+- Add to `ShopifyProduct` interface: `highlights?: Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }>`
+- Add to `PRODUCT_BY_HANDLE_QUERY`:
+  ```graphql
+  highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
+    references(first: 5) {
+      edges {
+        node {
+          ... on Metaobject {
+            fields { key value reference { ... on MediaImage { image { url altText } } ... on Video { sources { url mimeType } previewImage { url } } } }
+          }
+        }
+      }
+    }
+  }
+  ```
+- Parse metaobject fields in `fetchProductByHandle` — extract `titulo`, `descricao`, and media from each entry's `fields` array. Clean up `highlightsMeta` from raw object.
 
-- **Headline**: "A arquitetura do foco." (font-light, texto grande)
-- **Subheadline**: "Dois planos. Um unico objetivo: o silencio visual absoluto." (text-muted-foreground)
-- **Grid de 2 cards** lado a lado (`grid md:grid-cols-2 gap-5`), inspirado na referencia com fundo `bg-card-elevated` e `rounded-2xl`
+**2. `src/components/ProductHighlights.tsx`** — New component
 
-### Conteudo dos Cards
+- Props: `highlights` array
+- Returns `null` if empty
+- Desktop (md+): Two-column grid per entry. Index 0, 2, 4 → media left, text right. Index 1, 3 → text left, media right.
+- Mobile: Stacked — title → description → media, all centered
+- Media: `rounded-2xl`, supports image and auto-play muted video
+- Typography: Title ~28-36px bold, description ~16px muted, generous spacing between entries
 
-**Card InSight:**
-- Label: "InSight(TM)"
-- Legenda: "Sobre a mesa."
-- Copy tecnica sobre ferramentas de contato, aco, feltro e geometria
-- CTA: "Explorar Superficie" com seta (Link para `/colecao?categoria=insight` ou `/colecao`)
-- Area de imagem placeholder (icone/ilustracao minimalista representando superficie de mesa)
+**3. `src/pages/Produto.tsx`** — Replace "Detalhes" placeholder (lines 1032-1038)
 
-**Card OutSight:**
-- Label: "OutSight(TM)"
-- Legenda: "Abaixo do horizonte."
-- Copy sobre engenharia invisivel e organizacao de cabos
-- CTA: "Explorar Infraestrutura" com seta (Link para `/colecao?categoria=outsight` ou `/colecao`)
-- Area de imagem placeholder (icone/ilustracao minimalista representando infraestrutura)
-
-### Detalhes Tecnicos
-
-**Novo arquivo:** `src/components/TheSystemSection.tsx`
-- Componente isolado com framer-motion para animacoes de entrada (fade-up)
-- Cards com layout vertical: area de imagem placeholder no topo (aspect-ratio 4:3, fundo neutro com icone SVG minimalista), texto e CTA embaixo
-- Responsivo: cards empilham verticalmente em mobile
-
-**Arquivo editado:** `src/pages/Index.tsx`
-- Importar `TheSystemSection`
-- Inserir `<TheSystemSection />` entre `<HeroBanner />` e a secao "Por que Narvo"
-
-### Estilo
-
-- Espacamento: `py-16 md:py-24 px-6 md:px-10`
-- Cards: `bg-card-elevated rounded-2xl p-6 md:p-8`
-- Tipografia sem serifa, tracking amplo nos labels
-- Imagens placeholder com fundo levemente mais claro e icones em stroke fino (Lucide) representando cada categoria ate que imagens reais sejam fornecidas
-- Hover sutil nos cards (scale ou shadow transition)
-
-### Mobile
-
-- Cards empilham verticalmente com gap de 4
-- Headline e subheadline centralizados ou alinhados a esquerda conforme padrao existente
+- Extract `highlights` from `product.node`
+- Import `ProductHighlights`
+- Inside `secao-detalhes`, render `<ProductHighlights highlights={highlights} />` instead of the placeholder text. If no highlights, keep the existing placeholder.
 
