@@ -110,7 +110,7 @@ function StoreReviewCard({ review, averageRating }: { review: Review; averageRat
       </div>
 
       {/* Body */}
-      <p className="text-base md:text-lg font-medium text-foreground leading-relaxed flex-1">
+      <p className="text-sm md:text-base font-normal text-foreground leading-relaxed flex-1">
         {review.body || review.title}
       </p>
 
