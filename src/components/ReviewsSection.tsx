@@ -102,7 +102,7 @@ function StoreReviewCard({ review }: { review: Review }) {
           <div className="relative" style={{ width: 18, height: 18 }}>
             <Star size={18} className="fill-muted text-muted" strokeWidth={0} />
             <div className="absolute inset-0 overflow-hidden" style={{ width: `${(review.rating / 5) * 100}%` }}>
-              <Star size={18} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
+              <Star size={18} className="fill-[#143e32] text-[#143e32]" strokeWidth={0} />
             </div>
           </div>
           <span className="text-2xl font-semibold text-foreground">
