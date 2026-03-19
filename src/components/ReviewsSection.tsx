@@ -101,7 +101,7 @@ function StoreReviewCard({ review, averageRating }: { review: Review; averageRat
         {averageRating && (
           <div className="flex items-center gap-1.5">
             <Star size={16} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
-            <span className="text-lg font-semibold text-foreground">
+            <span className="text-2xl font-semibold text-foreground">
               {averageRating.toFixed(1)}
             </span>
             <span className="text-sm text-muted-foreground">/5</span>
