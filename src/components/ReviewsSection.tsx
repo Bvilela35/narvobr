@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, ImageOff } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 interface Review {
   id: number;
@@ -34,13 +42,10 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
   );
 }
 
-function ReviewCard({ review, index }: { review: Review; index: number }) {
+function ProductReviewCard({ review, index }: { review: Review; index: number }) {
   const hasImage = review.pictures.length > 0;
   const imageUrl = hasImage ? review.pictures[0].compact || review.pictures[0].original : null;
   const [imgError, setImgError] = useState(false);
-
-  // Vary card heights for masonry effect
-  const showBody = review.body.length > 0;
 
   return (
     <motion.div
@@ -51,7 +56,6 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
       className="break-inside-avoid mb-4"
     >
       <div className="rounded-2xl overflow-hidden bg-card-elevated">
-        {/* Image */}
         {imageUrl && !imgError ? (
           <div className="w-full overflow-hidden">
             <img
@@ -67,8 +71,6 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
             <ImageOff size={24} className="text-muted-foreground/30" />
           </div>
         ) : null}
-
-        {/* Content */}
         <div className="p-4 space-y-2">
           <Stars rating={review.rating} />
           {review.title && (
@@ -76,7 +78,7 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
               {review.title}
             </p>
           )}
-          {showBody && (
+          {review.body.length > 0 && (
             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">
               {review.body}
             </p>
@@ -90,11 +92,40 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
   );
 }
 
+function StoreReviewCard({ review, averageRating }: { review: Review; averageRating: number | null }) {
+  return (
+    <div className="rounded-2xl bg-card-elevated p-6 md:p-8 h-full flex flex-col justify-between gap-6">
+      {/* Header: quote icon + rating */}
+      <div className="flex items-start justify-between">
+        <span className="text-4xl leading-none text-muted-foreground/40 font-serif select-none">"</span>
+        {averageRating && (
+          <div className="flex items-center gap-1.5">
+            <Star size={16} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
+            <span className="text-lg font-semibold text-foreground">
+              {averageRating.toFixed(1)}
+            </span>
+            <span className="text-sm text-muted-foreground">/5</span>
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <p className="text-base md:text-lg font-semibold text-foreground leading-relaxed flex-1">
+        {review.body || review.title}
+      </p>
+
+      {/* Reviewer */}
+      <p className="text-base font-bold text-foreground">
+        {review.reviewer}
+      </p>
+    </div>
+  );
+}
+
 export function ReviewsSection({ handle }: { handle?: string }) {
   const [data, setData] = useState<ReviewsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   const [usingStoreFallback, setUsingStoreFallback] = useState(false);
 
   useEffect(() => {
@@ -109,7 +140,6 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       async function doFetch(productHandle?: string): Promise<ReviewsData> {
         const params: Record<string, string> = { per_page: "30" };
         if (productHandle) params.handle = productHandle;
-
         const queryString = new URLSearchParams(params).toString();
         const res = await fetch(
           `${projectUrl}/functions/v1/judgeme-reviews?${queryString}`,
@@ -127,7 +157,6 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       }
 
       try {
-        // Try product-specific reviews first
         if (handle) {
           const result = await doFetch(handle);
           if (result.reviews.length > 0) {
@@ -135,8 +164,6 @@ export function ReviewsSection({ handle }: { handle?: string }) {
             return;
           }
         }
-
-        // Fallback: fetch all store reviews
         const fallback = await doFetch();
         setUsingStoreFallback(true);
         setData(fallback);
@@ -147,7 +174,6 @@ export function ReviewsSection({ handle }: { handle?: string }) {
         setLoading(false);
       }
     }
-
     fetchReviews();
   }, [handle]);
 
@@ -175,13 +201,64 @@ export function ReviewsSection({ handle }: { handle?: string }) {
 
   const { reviews, total_count, average_rating } = data;
 
+  // Store fallback: carousel layout
+  if (usingStoreFallback) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h2 className="pdp__content-section-title" style={{ marginBottom: 8 }}>
+              Avaliações da Loja
+            </h2>
+            <div className="flex items-center gap-3">
+              {average_rating && (
+                <>
+                  <span className="text-3xl font-semibold text-foreground">
+                    {average_rating.toFixed(1)}
+                  </span>
+                  <div className="space-y-0.5">
+                    <Stars rating={Math.round(average_rating)} size={16} />
+                    <p className="text-xs text-muted-foreground">
+                      {total_count} avaliação{total_count !== 1 ? "ões" : ""}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <Carousel
+          opts={{ align: "start", loop: true }}
+          plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {reviews.map((review) => (
+              <CarouselItem
+                key={review.id}
+                className="pl-4 basis-full md:basis-1/3"
+              >
+                <StoreReviewCard review={review} averageRating={average_rating} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-end gap-2 mt-4">
+            <CarouselPrevious className="static translate-y-0" />
+            <CarouselNext className="static translate-y-0" />
+          </div>
+        </Carousel>
+      </div>
+    );
+  }
+
+  // Product-specific: masonry layout
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h2 className="pdp__content-section-title" style={{ marginBottom: 8 }}>
-            Avaliações{usingStoreFallback ? " da Loja" : ""}
+            Avaliações
           </h2>
           <div className="flex items-center gap-3">
             {average_rating && (
@@ -200,11 +277,9 @@ export function ReviewsSection({ handle }: { handle?: string }) {
           </div>
         </div>
       </div>
-
-      {/* Masonry Grid */}
       <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
         {reviews.map((review, i) => (
-          <ReviewCard key={review.id} review={review} index={i} />
+          <ProductReviewCard key={review.id} review={review} index={i} />
         ))}
       </div>
     </div>
