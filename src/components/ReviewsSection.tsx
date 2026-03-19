@@ -94,7 +94,7 @@ function ProductReviewCard({ review, index }: { review: Review; index: number })
 
 function StoreReviewCard({ review, averageRating }: { review: Review; averageRating: number | null }) {
   return (
-    <div className="rounded-2xl bg-card-elevated p-6 md:p-8 h-full flex flex-col justify-between gap-6">
+    <div className="rounded-2xl p-6 md:p-8 h-full flex flex-col justify-between gap-6" style={{ backgroundColor: '#f8f8f8' }}>
       {/* Header: quote icon + rating */}
       <div className="flex items-start justify-between">
         <span className="text-4xl leading-none text-muted-foreground/40 font-serif select-none">"</span>
