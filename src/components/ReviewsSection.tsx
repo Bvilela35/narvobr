@@ -100,7 +100,12 @@ function StoreReviewCard({ review, averageRating }: { review: Review; averageRat
         <span className="text-4xl leading-none text-muted-foreground/40 font-serif select-none">"</span>
         {averageRating && (
           <div className="flex items-center gap-1.5">
-            <Star size={16} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
+            <div className="relative" style={{ width: 18, height: 18 }}>
+              <Star size={18} className="fill-muted text-muted" strokeWidth={0} />
+              <div className="absolute inset-0 overflow-hidden" style={{ width: `${((averageRating || 0) / 5) * 100}%` }}>
+                <Star size={18} className="fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" strokeWidth={0} />
+              </div>
+            </div>
             <span className="text-2xl font-semibold text-foreground">
               {averageRating.toFixed(1)}
             </span>
