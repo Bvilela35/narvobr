@@ -213,7 +213,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
             Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
           </h2>
           {average_rating && (
-            <span className="text-[32px] md:text-[44px] font-bold leading-tight" style={{ color: '#c9c9c9' }}>
+            <span className="text-[32px] md:text-[44px] font-bold leading-tight mr-4" style={{ color: '#c9c9c9' }}>
               {average_rating.toFixed(1)}
             </span>
           )}
