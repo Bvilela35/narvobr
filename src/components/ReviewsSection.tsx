@@ -96,23 +96,21 @@ export function ReviewsSection({ handle }: { handle?: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const [usingStoreFallback, setUsingStoreFallback] = useState(false);
+
   useEffect(() => {
     async function fetchReviews() {
       setLoading(true);
       setError(false);
-      try {
+      setUsingStoreFallback(false);
+
+      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+      async function doFetch(productHandle?: string): Promise<ReviewsData> {
         const params: Record<string, string> = { per_page: "30" };
-        if (handle) params.handle = handle;
+        if (productHandle) params.handle = productHandle;
 
-        const { data: fnData, error: fnError } = await supabase.functions.invoke(
-          "judgeme-reviews",
-          { body: null, headers: {}, method: "GET" }
-        );
-
-        // supabase.functions.invoke doesn't support GET query params natively,
-        // so we'll use a direct fetch instead
-        const projectUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
         const queryString = new URLSearchParams(params).toString();
         const res = await fetch(
           `${projectUrl}/functions/v1/judgeme-reviews?${queryString}`,
@@ -123,11 +121,26 @@ export function ReviewsSection({ handle }: { handle?: string }) {
             },
           }
         );
-
         if (!res.ok) throw new Error("Failed to fetch reviews");
         const result: ReviewsData = await res.json();
         if (!result.ok) throw new Error("Reviews fetch error");
-        setData(result);
+        return result;
+      }
+
+      try {
+        // Try product-specific reviews first
+        if (handle) {
+          const result = await doFetch(handle);
+          if (result.reviews.length > 0) {
+            setData(result);
+            return;
+          }
+        }
+
+        // Fallback: fetch all store reviews
+        const fallback = await doFetch();
+        setUsingStoreFallback(true);
+        setData(fallback);
       } catch (err) {
         console.error("[ReviewsSection] error:", err);
         setError(true);
