@@ -628,7 +628,7 @@ export default function Produto() {
                 <span className="pdp__price">{formatPrice(price)}</span>
               </div>
               <p className="pdp__installment">
-                ou R$ {installmentValue}/mês em até 10x sem juros
+                ou R$ {installmentValue}/mês em até {installmentCount}x sem juros
               </p>
 
               {description &&
