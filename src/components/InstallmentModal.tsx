@@ -12,26 +12,23 @@ interface InstallmentModalProps {
 
 const TIER_COPY = {
   friction: {
-    manifesto:
-      "Menos que um café por mês para eliminar a bagunça que rouba sua energia mental.",
+    hero: "Menos que um café por mês para eliminar a bagunça que rouba sua energia mental.",
     parcelado:
       "Criamos essa facilidade para que nada seja uma distração entre você e seu melhor trabalho.",
   },
   roi: {
-    manifesto:
-      "Sua produtividade se paga. Dividimos para que o tempo que você recupera focado pague o seu setup.",
+    hero: "Sua produtividade se paga. Dividimos para que o tempo que você recupera focado pague o seu setup.",
     parcelado:
       "Cada parcela é um investimento no seu fluxo de trabalho. O retorno é medido em horas de foco.",
   },
   identity: {
-    manifesto:
-      "O setup que separa amadores de profissionais. Invista na sua carreira com parcelas que cabem no seu fluxo mensal.",
+    hero: "O setup que separa amadores de profissionais. Invista na sua carreira com parcelas que cabem no seu fluxo mensal.",
     parcelado:
       "Projetamos condições para que a excelência do seu ambiente de trabalho não espere.",
   },
 };
 
-function formatCurrency(value: number): string {
+function fmt(value: number): string {
   return value.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -48,96 +45,80 @@ export function InstallmentModal({
   const { count, value } = calcInstallments(price);
   const tier = getPriceTier(price);
   const copy = TIER_COPY[tier];
-  const pixDiscount = price * 0.9;
+  const pixPrice = price * 0.9;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[520px] p-0 border-0 rounded-[20px] overflow-hidden bg-white shadow-2xl gap-0 [&>button]:hidden"
+        className="max-w-[640px] p-0 border-0 rounded-[20px] overflow-hidden bg-[#f5f5f7] shadow-2xl gap-0 [&>button]:hidden"
       >
-        <DialogTitle className="sr-only">Detalhes de parcelamento</DialogTitle>
+        <DialogTitle className="sr-only">Opções de pagamento</DialogTitle>
 
         {/* Close */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-5 right-5 z-10 w-8 h-8 rounded-full bg-[#f5f5f5] flex items-center justify-center hover:bg-[#e8e8e8] transition-colors active:scale-95"
+          className="absolute top-5 right-5 z-10 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center hover:bg-black/10 transition-colors active:scale-95"
           aria-label="Fechar"
         >
-          <X size={16} strokeWidth={2} color="#1d1d1f" />
+          <X size={16} strokeWidth={2.5} color="#1d1d1f" />
         </button>
 
-        <div className="px-8 pt-10 pb-8 sm:px-10 sm:pt-12 sm:pb-10">
-          {/* Hero */}
-          <p className="text-[13px] font-medium tracking-wide uppercase text-[#86868b] mb-3">
-            Parcelamento
-          </p>
+        <div className="px-8 pt-12 pb-10 sm:px-12 sm:pt-14 sm:pb-12">
+          {/* Hero headline — Apple style: big bold title, left-aligned */}
           <h2
-            className="text-[28px] sm:text-[32px] font-semibold leading-[1.1] tracking-tight text-[#1d1d1f] mb-4"
+            className="text-[32px] sm:text-[40px] font-bold leading-[1.05] tracking-tight text-[#1d1d1f] max-w-[460px]"
             style={{ textWrap: "balance" } as React.CSSProperties}
           >
-            O investimento no seu foco.
+            As opções de pagamento para o seu setup.
           </h2>
-          <p className="text-[15px] leading-relaxed text-[#6e6e73] mb-8">
-            {copy.manifesto}
+
+          <p className="text-[15px] sm:text-[17px] leading-[1.5] text-[#6e6e73] mt-5 max-w-[480px]">
+            {copy.hero} É rápido, fácil e conveniente.
           </p>
 
-          {/* Divider */}
-          <div className="h-px bg-[#e8e8e8] mb-8" />
-
-          {/* Options */}
-          <div className="space-y-6">
-            {/* PIX */}
-            <div className="rounded-2xl border border-[#e8e8e8] p-5 sm:p-6">
-              <div className="flex items-baseline justify-between mb-2">
-                <span className="text-[13px] font-medium uppercase tracking-wide text-[#86868b]">
-                  À Vista no PIX
-                </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0f3d2e] bg-[#0f3d2e]/8 px-2.5 py-1 rounded-full">
-                  −10%
-                </span>
-              </div>
-              <p className="text-[22px] sm:text-[24px] font-semibold text-[#1d1d1f] tracking-tight tabular-nums">
-                R$ {formatCurrency(pixDiscount)}
-              </p>
-              <p className="text-[13px] text-[#86868b] mt-1.5">
-                Economize. Menos custo, mais foco imediato.
-              </p>
-            </div>
-
-            {/* Parcelado */}
-            <div className="rounded-2xl border border-[#e8e8e8] p-5 sm:p-6">
-              <div className="flex items-baseline justify-between mb-2">
-                <span className="text-[13px] font-medium uppercase tracking-wide text-[#86868b]">
-                  Parcelado
-                </span>
-                <span className="text-[11px] font-medium uppercase tracking-wider text-[#86868b]">
-                  Sem juros
-                </span>
-              </div>
-              <p className="text-[22px] sm:text-[24px] font-semibold text-[#1d1d1f] tracking-tight tabular-nums">
-                {count}x de R$ {formatCurrency(value)}
-              </p>
-              <p className="text-[13px] text-[#86868b] mt-1.5">
-                {copy.parcelado}
-              </p>
-            </div>
+          {/* Section: PIX */}
+          <div className="mt-12">
+            <h3 className="text-[24px] sm:text-[28px] font-bold leading-[1.1] tracking-tight text-[#1d1d1f]">
+              Pague à vista e economize 10%
+            </h3>
+            <p className="text-[15px] leading-[1.5] text-[#6e6e73] mt-2.5">
+              Ganhe 10% de desconto no pagamento à vista via PIX.{" "}
+              <span className="font-semibold text-[#1d1d1f]">
+                R$ {fmt(pixPrice)}
+              </span>
+            </p>
           </div>
 
+          {/* Section: Installments */}
+          <div className="mt-10">
+            <h3 className="text-[24px] sm:text-[28px] font-bold leading-[1.1] tracking-tight text-[#1d1d1f]">
+              Pague em até {count}x sem juros
+            </h3>
+            <p className="text-[15px] leading-[1.5] text-[#6e6e73] mt-2.5">
+              {copy.parcelado}{" "}
+              <span className="font-semibold text-[#1d1d1f]">
+                {count}x de R$ {fmt(value)}
+              </span>{" "}
+              no cartão de crédito Visa, MasterCard ou American Express®.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-[#d2d2d7] mt-12 mb-8" />
+
           {/* CTA */}
-          {onAddToCart && (
-            <button
-              onClick={() => {
-                onAddToCart();
-                onOpenChange(false);
-              }}
-              className="w-full mt-8 h-[52px] rounded-xl bg-[#0f3d2e] text-white text-[15px] font-medium hover:bg-[#0f3d2e]/90 transition-colors active:scale-[0.98]"
-            >
-              Adicionar ao Setup
-            </button>
-          )}
+          <button
+            onClick={() => {
+              if (onAddToCart) onAddToCart();
+              onOpenChange(false);
+            }}
+            className="h-[44px] px-7 rounded-full bg-[#0f3d2e] text-white text-[15px] font-medium hover:bg-[#0f3d2e]/90 transition-colors active:scale-[0.97]"
+          >
+            Continue comprando
+          </button>
 
           {/* Footer microcopy */}
-          <p className="text-center text-[12px] text-[#86868b] mt-5">
+          <p className="text-[12px] text-[#86868b] mt-6 max-w-[400px] leading-[1.4]">
             Independente da sua escolha, nosso foco é a sua performance.
           </p>
         </div>
