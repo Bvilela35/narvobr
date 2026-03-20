@@ -65,17 +65,27 @@ export function InstallmentModal({
         </button>
 
         <div className="px-8 pt-12 pb-10 sm:px-12 sm:pt-14 sm:pb-12">
-          {/* Hero headline — Apple style: big bold title, left-aligned */}
-          <h2
-            className="text-[32px] sm:text-[40px] font-bold leading-[1.05] tracking-tight text-[#1d1d1f] max-w-[460px]"
-            style={{ textWrap: "balance" } as React.CSSProperties}
-          >
-            As opções de pagamento para o seu setup.
-          </h2>
+          {/* Hero — title left, logo right */}
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <h2
+                className="text-[32px] sm:text-[40px] font-bold leading-[1.05] tracking-tight text-[#1d1d1f] max-w-[400px]"
+                style={{ textWrap: "balance" } as React.CSSProperties}
+              >
+                As opções de pagamento para o seu setup.
+              </h2>
 
-          <p className="text-[15px] sm:text-[17px] leading-[1.5] text-[#6e6e73] mt-5 max-w-[480px]">
-            {copy.hero} É rápido, fácil e conveniente.
-          </p>
+              <p className="text-[15px] sm:text-[17px] leading-[1.5] text-[#6e6e73] mt-5 max-w-[400px]">
+                {copy.hero} É rápido, fácil e conveniente.
+              </p>
+            </div>
+
+            <img
+              src={narvoIcon}
+              alt="Narvo"
+              className="w-[80px] h-[80px] sm:w-[110px] sm:h-[110px] object-contain flex-shrink-0 mt-1"
+            />
+          </div>
 
           {/* Section: PIX */}
           <div className="mt-12">
