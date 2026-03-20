@@ -406,46 +406,19 @@ export async function fetchProductByHandle(handle: string) {
     }
   } catch { /* ignore parse errors */ }
 
-  // Parse highlights metafield (list of metaobject references)
-  const highlightEdges = product.highlightsMeta?.references?.edges || [];
-  const highlights = highlightEdges
-    .map((edge: any) => {
-      const node = edge.node;
-      const titulo = node.titulo?.value || '';
-      // descricao may be rich text JSON — extract plain text
-      let descricao = '';
-      try {
-        const raw = node.descricao?.value || '';
-        const parsed = JSON.parse(raw);
-        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
-          descricao = parsed.children
-            .map((block: any) => {
-              if (block.type === 'paragraph' && Array.isArray(block.children)) {
-                return block.children.map((c: any) => c.value || '').join('');
-              }
-              return '';
-            })
-            .filter(Boolean)
-            .join('\n');
-        }
-      } catch {
-        descricao = node.descricao?.value || '';
+  // Parse highlights metafield — two-step: get IDs from value, then fetch metaobjects via nodes()
+  let highlights: Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }> = [];
+  try {
+    const highlightIdsRaw = product.highlightsMeta?.value;
+    if (highlightIdsRaw) {
+      const ids: string[] = JSON.parse(highlightIdsRaw);
+      if (Array.isArray(ids) && ids.length > 0) {
+        highlights = await fetchHighlightMetaobjects(ids);
       }
-      const mediaRef = node.foto_video?.reference;
-      let midiaUrl = '';
-      let tipoMidia: 'image' | 'video' = 'image';
-      let videoSources: ShopifyVideoSource[] | undefined;
-      if (mediaRef?.image) {
-        midiaUrl = mediaRef.image.url;
-        tipoMidia = 'image';
-      } else if (mediaRef?.sources) {
-        midiaUrl = mediaRef.previewImage?.url || '';
-        tipoMidia = 'video';
-        videoSources = mediaRef.sources;
-      }
-      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
-    })
-    .filter((h: { titulo: string }) => h.titulo);
+    }
+  } catch (e) {
+    console.error('Failed to parse highlight IDs:', e);
+  }
 
   // Clean up metafield keys from product object
   const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, highlightsMeta, ...cleanProduct } = product;
