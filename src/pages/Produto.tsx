@@ -276,7 +276,12 @@ export default function Produto() {
   }, [product]);
 
   // IntersectionObserver for active section tracking
-  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-faq", "secao-avaliacoes"];
+  const SECTION_IDS = [
+    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao ? ["secao-descricao"] : []),
+    ...(product?.node?.specMateriais || product?.node?.specTamanho || product?.node?.specOQueAcompanha || product?.node?.specDetalhes || product?.node?.specFoto ? ["secao-especificacoes"] : []),
+    ...(product?.node?.faq && product.node.faq.length > 0 ? ["secao-faq"] : []),
+    "secao-avaliacoes",
+  ];
   const [isNavSticky, setIsNavSticky] = useState(false);
 
   useEffect(() => {
@@ -468,6 +473,10 @@ export default function Produto() {
   const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
+
+  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao);
+  const hasEspecificacoes = !!(specMateriais || specTamanho || specOQueAcompanha || specDetalhes || specFoto);
+  const hasFaq = !!(faq && faq.length > 0);
   const hasStories = videoStories.length > 0;
   const imgs = images.edges;
   const totalImages = imgs.length;
@@ -971,9 +980,9 @@ export default function Produto() {
       <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
           {[
-          { id: "secao-descricao", label: "Descrição" },
-          { id: "secao-especificacoes", label: "Especificações" },
-          { id: "secao-faq", label: "FAQ" },
+          ...(hasDescricao ? [{ id: "secao-descricao", label: "Descrição" }] : []),
+          ...(hasEspecificacoes ? [{ id: "secao-especificacoes", label: "Especificações" }] : []),
+          ...(hasFaq ? [{ id: "secao-faq", label: "FAQ" }] : []),
           { id: "secao-avaliacoes", label: "Avaliações" }].
           map((item) =>
           <button
@@ -991,6 +1000,7 @@ export default function Produto() {
       </nav>
 
       {/* Seção: Descrição */}
+      {hasDescricao && (
       <section id="secao-descricao" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           <div className="pdp__descricao-grid">
@@ -1029,8 +1039,9 @@ export default function Produto() {
           </div>
         </div>
       </section>
+      )}
 
-      {/* Seção: Especificações */}
+      {hasEspecificacoes && (
       <section id="secao-especificacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           {(() => {
@@ -1081,10 +1092,11 @@ export default function Produto() {
           })()}
         </div>
       </section>
+      )}
 
 
       {/* Seção: FAQ */}
-      {faq && faq.length > 0 &&
+      {hasFaq &&
       <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
@@ -1097,14 +1109,6 @@ export default function Produto() {
               )}
               </div>
             </div>
-          </div>
-        </section>
-      }
-      {(!faq || faq.length === 0) &&
-      <section id="secao-faq" className="pdp__content-section">
-          <div className="pdp__content-section-inner">
-            <h2 className="pdp__content-section-title">FAQ</h2>
-            <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
           </div>
         </section>
       }
