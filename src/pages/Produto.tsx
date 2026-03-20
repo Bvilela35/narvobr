@@ -975,7 +975,7 @@ export default function Produto() {
 
       {/* Section Navigation Menu */}
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
-        <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
+        <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: '24px 0' }} />
       </div>
       <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
