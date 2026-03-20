@@ -1,7 +1,7 @@
 const MIN_INSTALLMENT = 15;
 
 const TIER_LIMITS: [number, number][] = [
-  [50, 10],
+  [50, 3],
   [200, 6],
   [Infinity, 10],
 ];
@@ -9,13 +9,9 @@ const TIER_LIMITS: [number, number][] = [
 export function calcInstallments(price: number): { count: number; value: number } {
   if (price <= 0) return { count: 1, value: price };
 
-  // For low-ticket items (≤ R$50), allow up to 10x for aggressive conversion
   const tierMax = TIER_LIMITS.find(([cap]) => price <= cap)![1];
   const calculated = Math.floor(price / MIN_INSTALLMENT);
-  // For low-ticket, don't enforce MIN_INSTALLMENT — allow full 10x
-  const count = price <= 50
-    ? Math.max(1, tierMax)
-    : Math.max(1, Math.min(calculated, tierMax));
+  const count = Math.max(1, Math.min(calculated, tierMax));
   const value = price / count;
 
   return { count, value };
