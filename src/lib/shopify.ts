@@ -353,6 +353,70 @@ export async function fetchProducts(first = 20, query?: string) {
   return (data?.data?.products?.edges || []) as ShopifyProduct[];
 }
 
+const HIGHLIGHT_METAOBJECTS_QUERY = `
+  query getMetaobjectsDirectly($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Metaobject {
+        handle
+        titulo: field(key: "titulo") { value }
+        descricao: field(key: "descricao") { value }
+        foto_video: field(key: "foto_video") {
+          reference {
+            ... on MediaImage {
+              image { url altText }
+            }
+            ... on Video {
+              sources { url mimeType }
+              previewImage { url }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+async function fetchHighlightMetaobjects(ids: string[]): Promise<Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }>> {
+  const data = await storefrontApiRequest(HIGHLIGHT_METAOBJECTS_QUERY, { ids });
+  const nodes = data?.data?.nodes || [];
+  return nodes
+    .map((node: any) => {
+      if (!node?.titulo) return null;
+      const titulo = node.titulo.value || '';
+      let descricao = '';
+      try {
+        const raw = node.descricao?.value || '';
+        const parsed = JSON.parse(raw);
+        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
+          descricao = parsed.children
+            .map((block: any) => {
+              if (block.type === 'paragraph' && Array.isArray(block.children)) {
+                return block.children.map((c: any) => c.value || '').join('');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('\n');
+        }
+      } catch {
+        descricao = node.descricao?.value || '';
+      }
+      const mediaRef = node.foto_video?.reference;
+      let midiaUrl = '';
+      let tipoMidia: 'image' | 'video' = 'image' as const;
+      let videoSources: ShopifyVideoSource[] | undefined;
+      if (mediaRef?.image) {
+        midiaUrl = mediaRef.image.url;
+      } else if (mediaRef?.sources) {
+        midiaUrl = mediaRef.previewImage?.url || '';
+        tipoMidia = 'video';
+        videoSources = mediaRef.sources;
+      }
+      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
+    })
+    .filter(Boolean);
+}
+
 export async function fetchProductByHandle(handle: string) {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   const product = data?.data?.product;
