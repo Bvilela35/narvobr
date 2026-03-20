@@ -973,7 +973,6 @@ export default function Produto() {
           {[
           { id: "secao-descricao", label: "Descrição" },
           { id: "secao-especificacoes", label: "Especificações" },
-          { id: "secao-detalhes", label: "Detalhes" },
           { id: "secao-faq", label: "FAQ" },
           { id: "secao-avaliacoes", label: "Avaliações" }].
           map((item) =>
