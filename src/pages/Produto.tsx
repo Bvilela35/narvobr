@@ -248,7 +248,6 @@ export default function Produto() {
   useEffect(() => {
     setSelectedImage(0);
     setSelectedVariantIdx(0);
-    setCep("");
     userChangedImage.current = false;
   }, [handle]);
 
