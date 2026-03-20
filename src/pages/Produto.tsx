@@ -1092,10 +1092,11 @@ export default function Produto() {
           })()}
         </div>
       </section>
+      )}
 
 
       {/* Seção: FAQ */}
-      {faq && faq.length > 0 &&
+      {hasFaq &&
       <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
