@@ -220,6 +220,7 @@ export default function Produto() {
   const setGlobalCep = useCepStore((s) => s.setCep);
   const [cep, setCep] = useState(globalCep);
   const [cepResult, setCepResult] = useState<{type: string;dateRange: string;} | null>(null);
+  const cepInitialized = useRef(false);
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
