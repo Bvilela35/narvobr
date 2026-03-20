@@ -51,7 +51,7 @@ export function InstallmentModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[640px] p-0 border-0 rounded-[20px] overflow-hidden bg-[#f5f5f7] shadow-2xl gap-0 [&>button]:hidden"
+        className="max-w-[640px] p-0 border-0 rounded-[32px] overflow-hidden bg-[#f5f5f7] shadow-2xl gap-0 [&>button]:hidden"
       >
         <DialogTitle className="sr-only">Opções de pagamento</DialogTitle>
 
@@ -109,10 +109,7 @@ export function InstallmentModal({
 
           {/* CTA */}
           <button
-            onClick={() => {
-              if (onAddToCart) onAddToCart();
-              onOpenChange(false);
-            }}
+            onClick={() => onOpenChange(false)}
             className="h-[44px] px-7 rounded-full bg-[#0f3d2e] text-white text-[15px] font-medium hover:bg-[#0f3d2e]/90 transition-colors active:scale-[0.97]"
           >
             Continue comprando
