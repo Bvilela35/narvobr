@@ -57,7 +57,7 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
       >
         <div className="h-full flex flex-col rounded-2xl overflow-hidden bg-card-elevated">
           {/* Image container with rounded corners and grey bg */}
-          <div className="relative w-full pt-[100%] overflow-hidden rounded-2xl bg-card-elevated">
+          <div className="relative w-full pt-[100%] overflow-hidden rounded-t-2xl bg-card-elevated">
             {image ? (
               <img
                 src={image.url}
