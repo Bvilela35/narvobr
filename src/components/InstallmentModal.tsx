@@ -87,30 +87,20 @@ export function InstallmentModal({
             />
           </div>
 
-          {/* Section: PIX */}
+          {/* Section: Installments */}
           <div className="mt-12">
             <h3 className="text-[24px] sm:text-[28px] font-bold leading-[1.1] tracking-tight text-[#1d1d1f]">
-              Pague à vista e economize 10%
-            </h3>
-            <p className="text-[15px] leading-[1.5] text-[#6e6e73] mt-2.5">
-              Ganhe 10% de desconto no pagamento à vista via PIX.{" "}
-              <span className="font-semibold text-[#1d1d1f]">
-                R$ {fmt(pixPrice)}
-              </span>
-            </p>
-          </div>
-
-          {/* Section: Installments */}
-          <div className="mt-10">
-            <h3 className="text-[24px] sm:text-[28px] font-bold leading-[1.1] tracking-tight text-[#1d1d1f]">
-              Pague em até {count}x sem juros
+              Parcele em até 10x sem juros
             </h3>
             <p className="text-[15px] leading-[1.5] text-[#6e6e73] mt-2.5">
               {copy.parcelado}{" "}
               <span className="font-semibold text-[#1d1d1f]">
                 {count}x de R$ {fmt(value)}
               </span>{" "}
-              no cartão de crédito Visa, MasterCard ou American Express®.
+              no cartão de crédito Visa, MasterCard ou American Express®. Ou economize 5% à vista no PIX por{" "}
+              <span className="font-semibold text-[#1d1d1f]">
+                R$ {fmt(pixPrice)}
+              </span>.
             </p>
           </div>
 
