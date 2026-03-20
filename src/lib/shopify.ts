@@ -283,40 +283,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
         value
       }
       highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
-        references(first: 10) {
-          edges {
-            node {
-              ... on Metaobject {
-                handle
-                titulo: field(key: "titulo") {
-                  value
-                }
-                descricao: field(key: "descricao") {
-                  value
-                }
-                foto_video: field(key: "foto_video") {
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                        altText
-                      }
-                    }
-                    ... on Video {
-                      sources {
-                        url
-                        mimeType
-                      }
-                      previewImage {
-                        url
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        value
       }
     }
   }
