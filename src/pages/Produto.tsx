@@ -518,7 +518,7 @@ export default function Produto() {
     }
   }, [globalCep]);
 
-
+  const prevImage = () => {
     userChangedImage.current = true;
     setSelectedImage((p) => p === 0 ? totalImages - 1 : p - 1);
   };
