@@ -1208,9 +1208,9 @@
   }
   .pdp__section-nav-inner::-webkit-scrollbar { display: none; }
   .pdp__section-nav-btn {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 16px 32px;
+    padding: 10px 24px;
     background: transparent;
     flex-shrink: 0;
     white-space: nowrap;
