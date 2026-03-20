@@ -82,8 +82,10 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                     to={link.href}
                     onClick={onClose}
                     className={cn(
-                      "block text-sm tracking-wide py-3 transition-opacity hover:opacity-60",
-                      location.pathname === link.href ? "opacity-100" : "opacity-70"
+                      "block text-sm tracking-wide py-3 px-4 rounded-lg transition-all hover:opacity-60",
+                      location.pathname === link.href
+                        ? "bg-white text-[#143e32] opacity-100 font-medium"
+                        : "opacity-70"
                     )}
                   >
                     {link.label}
