@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight, Tag, ChevronDown, X } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { formatInstallmentText } from "@/lib/installments";
 
 const EMPTY_CART_SUGGESTIONS = [
   { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
