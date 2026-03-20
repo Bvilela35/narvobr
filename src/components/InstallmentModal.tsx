@@ -109,10 +109,7 @@ export function InstallmentModal({
 
           {/* CTA */}
           <button
-            onClick={() => {
-              if (onAddToCart) onAddToCart();
-              onOpenChange(false);
-            }}
+            onClick={() => onOpenChange(false)}
             className="h-[44px] px-7 rounded-full bg-[#0f3d2e] text-white text-[15px] font-medium hover:bg-[#0f3d2e]/90 transition-colors active:scale-[0.97]"
           >
             Continue comprando
