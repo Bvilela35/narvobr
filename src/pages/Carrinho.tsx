@@ -15,9 +15,22 @@ const WARRANTY_PRICE = 39.9;
 export default function Carrinho() {
   const navigate = useNavigate();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
+  const globalCep = useCepStore((s) => s.cep);
+  const setGlobalCep = useCepStore((s) => s.setCep);
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [extendedWarranty, setExtendedWarranty] = useState(false);
+  const [showCepInput, setShowCepInput] = useState(false);
+  const [cepInput, setCepInput] = useState("");
+
+  const cepResult = globalCep.length === 8 ? getShippingRegion(globalCep) : null;
+
+  function handleCepSubmit() {
+    const digits = normalizeCep(cepInput);
+    if (digits.length !== 8) return;
+    setGlobalCep(digits);
+    setShowCepInput(false);
+  }
 
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
   const finalSubtotal = discountCode && discountedTotal ? parseFloat(discountedTotal) : subtotal;
