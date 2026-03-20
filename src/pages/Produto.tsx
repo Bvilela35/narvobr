@@ -568,7 +568,22 @@ export default function Produto() {
                 role="region"
                 aria-label="Galeria do produto"
                 onClick={() => {setLightboxOpen(true);setZoomLevel(1);setPanPos({ x: 0, y: 0 });}}
-                style={{ cursor: 'zoom-in' }}>
+                style={{ cursor: 'zoom-in' }}
+                onTouchStart={(e) => {
+                  if (e.touches.length === 1) {
+                    swipeStartX.current = e.touches[0].clientX;
+                    isSwiping.current = true;
+                  }
+                }}
+                onTouchEnd={(e) => {
+                  if (!isSwiping.current) return;
+                  isSwiping.current = false;
+                  const diff = swipeStartX.current - (e.changedTouches[0]?.clientX ?? swipeStartX.current);
+                  if (Math.abs(diff) > 40 && totalImages > 1) {
+                    if (diff > 0) nextImage();
+                    else prevImage();
+                  }
+                }}>
                 
                 {imgs[selectedImage] ? (
                   userChangedImage.current ? (
