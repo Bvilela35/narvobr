@@ -283,13 +283,18 @@ const PRODUCT_BY_HANDLE_QUERY = `
         value
       }
       highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
-        references(first: 5) {
+        references(first: 10) {
           edges {
             node {
               ... on Metaobject {
-                fields {
-                  key
+                handle
+                titulo: field(key: "titulo") {
                   value
+                }
+                descricao: field(key: "descricao") {
+                  value
+                }
+                foto_video: field(key: "foto_video") {
                   reference {
                     ... on MediaImage {
                       image {
