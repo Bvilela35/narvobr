@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck } from "lucide-react";
+import { useCepStore } from "@/stores/cepStore";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatInstallmentText } from "@/lib/installments";
+import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
 
 const FREE_SHIPPING_THRESHOLD = 399;
 const GIFT_THRESHOLD = 699;
@@ -13,9 +15,22 @@ const WARRANTY_PRICE = 39.9;
 export default function Carrinho() {
   const navigate = useNavigate();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
+  const globalCep = useCepStore((s) => s.cep);
+  const setGlobalCep = useCepStore((s) => s.setCep);
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [extendedWarranty, setExtendedWarranty] = useState(false);
+  const [showCepInput, setShowCepInput] = useState(false);
+  const [cepInput, setCepInput] = useState("");
+
+  const cepResult = globalCep.length === 8 ? getShippingRegion(globalCep) : null;
+
+  function handleCepSubmit() {
+    const digits = normalizeCep(cepInput);
+    if (digits.length !== 8) return;
+    setGlobalCep(digits);
+    setShowCepInput(false);
+  }
 
   const subtotal = items.reduce((sum, item) => sum + parseFloat(item.price.amount) * item.quantity, 0);
   const finalSubtotal = discountCode && discountedTotal ? parseFloat(discountedTotal) : subtotal;
@@ -283,6 +298,62 @@ export default function Carrinho() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Garantia estendida</span>
                   <span className="font-semibold">R$ {formatPrice(WARRANTY_PRICE)}</span>
+                </div>
+              )}
+
+              {/* Shipping estimate */}
+              <div className="flex justify-between items-start">
+                <span className="text-muted-foreground">Entrega</span>
+                <div className="text-right">
+                  {cepResult ? (
+                    <div>
+                      <span className="font-semibold text-[#0f3d2e]">
+                        {hasFreeShipping ? "Grátis" : "Calcular no checkout"}
+                      </span>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {cepResult.type} · Entre {cepResult.dateRange}
+                      </p>
+                      <button
+                        onClick={() => { setCepInput(formatCep(globalCep)); setShowCepInput(true); }}
+                        className="text-xs text-[#0f3d2e] underline mt-0.5"
+                      >
+                        CEP {formatCep(globalCep)}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setCepInput(""); setShowCepInput(true); }}
+                      className="text-xs text-[#0f3d2e] underline font-medium"
+                    >
+                      Calcular frete
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {showCepInput && (
+                <div className="flex items-center gap-2 bg-white rounded-xl p-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <input
+                    type="text"
+                    value={formatCep(cepInput)}
+                    onChange={(e) => setCepInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()}
+                    placeholder="00000-000"
+                    inputMode="numeric"
+                    maxLength={9}
+                    autoFocus
+                    className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+                  />
+                  <button
+                    onClick={handleCepSubmit}
+                    className="text-xs font-semibold text-[#0f3d2e] hover:underline"
+                  >
+                    OK
+                  </button>
+                  <button onClick={() => setShowCepInput(false)} className="p-1 text-muted-foreground hover:text-foreground">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               )}
 
