@@ -276,7 +276,7 @@ export default function Produto() {
   }, [product]);
 
   // IntersectionObserver for active section tracking
-  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-detalhes", "secao-faq", "secao-avaliacoes"];
+  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-faq", "secao-avaliacoes"];
   const [isNavSticky, setIsNavSticky] = useState(false);
 
   useEffect(() => {
