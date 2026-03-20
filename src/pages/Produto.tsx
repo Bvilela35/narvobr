@@ -470,7 +470,7 @@ export default function Produto() {
       </div>);
   }
 
-  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
+  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
 
