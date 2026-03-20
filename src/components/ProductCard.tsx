@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
 import { usePrefetchProduct } from "@/hooks/useShopify";
+import { formatInstallmentText } from "@/lib/installments";
 
 const COLOR_MAP: Record<string, string> = {
   preto: "#1a1a1a",
