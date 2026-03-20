@@ -283,13 +283,18 @@ const PRODUCT_BY_HANDLE_QUERY = `
         value
       }
       highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
-        references(first: 5) {
+        references(first: 10) {
           edges {
             node {
               ... on Metaobject {
-                fields {
-                  key
+                handle
+                titulo: field(key: "titulo") {
                   value
+                }
+                descricao: field(key: "descricao") {
+                  value
+                }
+                foto_video: field(key: "foto_video") {
                   reference {
                     ... on MediaImage {
                       image {
@@ -437,22 +442,39 @@ export async function fetchProductByHandle(handle: string) {
   // Parse highlights metafield (list of metaobject references)
   const highlightEdges = product.highlightsMeta?.references?.edges || [];
   const highlights = highlightEdges
-    .map((edge: { node: { fields: Array<{ key: string; value: string | null; reference?: { image?: { url: string; altText?: string | null }; sources?: ShopifyVideoSource[]; previewImage?: { url: string } } }> } }) => {
-      const fields = edge.node.fields;
-      const getField = (key: string) => fields.find((f: { key: string }) => f.key === key);
-      const titulo = getField('titulo')?.value || '';
-      const descricao = getField('descricao')?.value || '';
-      const midiaField = getField('midia');
+    .map((edge: any) => {
+      const node = edge.node;
+      const titulo = node.titulo?.value || '';
+      // descricao may be rich text JSON — extract plain text
+      let descricao = '';
+      try {
+        const raw = node.descricao?.value || '';
+        const parsed = JSON.parse(raw);
+        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
+          descricao = parsed.children
+            .map((block: any) => {
+              if (block.type === 'paragraph' && Array.isArray(block.children)) {
+                return block.children.map((c: any) => c.value || '').join('');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('\n');
+        }
+      } catch {
+        descricao = node.descricao?.value || '';
+      }
+      const mediaRef = node.foto_video?.reference;
       let midiaUrl = '';
       let tipoMidia: 'image' | 'video' = 'image';
       let videoSources: ShopifyVideoSource[] | undefined;
-      if (midiaField?.reference?.image) {
-        midiaUrl = midiaField.reference.image.url;
+      if (mediaRef?.image) {
+        midiaUrl = mediaRef.image.url;
         tipoMidia = 'image';
-      } else if (midiaField?.reference?.sources) {
-        midiaUrl = midiaField.reference.previewImage?.url || '';
+      } else if (mediaRef?.sources) {
+        midiaUrl = mediaRef.previewImage?.url || '';
         tipoMidia = 'video';
-        videoSources = midiaField.reference.sources;
+        videoSources = mediaRef.sources;
       }
       return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
     })
