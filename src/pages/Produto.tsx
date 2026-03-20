@@ -990,7 +990,11 @@ export default function Produto() {
             className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
             onClick={() => {
               const el = document.getElementById(item.id);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              if (el) {
+                const navHeight = sectionNavRef.current?.getBoundingClientRect().height || 60;
+                const targetY = el.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                window.scrollTo({ top: targetY, behavior: "smooth" });
+              }
             }}>
             
               {item.label}
