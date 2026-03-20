@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus, RefreshCw, Star, Sparkles, MapPin } from "lucide-react";
 import { useProductByHandle, useProducts } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
+import { useCepStore } from "@/stores/cepStore";
 import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
@@ -215,8 +216,11 @@ export default function Produto() {
   const { data: allProducts = [] } = useProducts(4);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [cep, setCep] = useState("");
+  const globalCep = useCepStore((s) => s.cep);
+  const setGlobalCep = useCepStore((s) => s.setCep);
+  const [cep, setCep] = useState(globalCep);
   const [cepResult, setCepResult] = useState<{type: string;dateRange: string;} | null>(null);
+  const cepInitialized = useRef(false);
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
   const [added, setAdded] = useState(false);
@@ -245,7 +249,6 @@ export default function Produto() {
   useEffect(() => {
     setSelectedImage(0);
     setSelectedVariantIdx(0);
-    setCep("");
     userChangedImage.current = false;
   }, [handle]);
 
@@ -501,9 +504,19 @@ export default function Produto() {
     const digits = normalizeCep(cepInput);
     if (digits.length !== 8) return;
     setCep(digits);
+    setGlobalCep(digits);
     setCepResult(getShippingRegion(digits));
     setShowCepModal(false);
   }
+
+  // Initialize CEP result from global store on first render
+  useEffect(() => {
+    if (!cepInitialized.current && globalCep && globalCep.length === 8) {
+      cepInitialized.current = true;
+      setCep(globalCep);
+      setCepResult(getShippingRegion(globalCep));
+    }
+  }, [globalCep]);
 
   const prevImage = () => {
     userChangedImage.current = true;
