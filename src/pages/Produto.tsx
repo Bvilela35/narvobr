@@ -528,10 +528,10 @@ export default function Produto() {
 
   const price = selectedVariant?.price.amount || "0";
   const compareAtPrice = product.node.priceRange?.minVariantPrice?.amount;
-  const inst = parseFloat(price) / 10;
-  const installmentValue = inst % 1 === 0
-    ? inst.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-    : inst.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const { count: installmentCount, value: installmentVal } = calcInstallments(parseFloat(price));
+  const installmentValue = installmentVal % 1 === 0
+    ? installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+    : installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Get optimized image URL for mobile (800px) and desktop (1200px)
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
