@@ -304,16 +304,25 @@ export default function Produto() {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+            const sectionId = entry.target.closest("section")?.id || entry.target.parentElement?.closest("section")?.id;
+            if (sectionId) setActiveSection(sectionId);
           }
         }
       },
-      { threshold: 0.05, rootMargin: "-45% 0px -45% 0px" }
+      { threshold: 0, rootMargin: "-50% 0px -50% 0px" }
     );
 
+    // Observe section title elements (h2) instead of the full section
     SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) sectionObserver.observe(el);
+      const section = document.getElementById(id);
+      if (section) {
+        const title = section.querySelector("h2, h3, .pdp__content-section-title");
+        if (title) {
+          sectionObserver.observe(title);
+        } else {
+          sectionObserver.observe(section);
+        }
+      }
     });
 
     return () => {
