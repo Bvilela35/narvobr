@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
+import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import ProductHighlights from "@/components/ProductHighlights";
 import "./Produto.css";
 
