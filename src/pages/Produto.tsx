@@ -215,7 +215,9 @@ export default function Produto() {
   const { data: allProducts = [] } = useProducts(4);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [cep, setCep] = useState("");
+  const globalCep = useCepStore((s) => s.cep);
+  const setGlobalCep = useCepStore((s) => s.setCep);
+  const [cep, setCep] = useState(globalCep);
   const [cepResult, setCepResult] = useState<{type: string;dateRange: string;} | null>(null);
   const [showCepModal, setShowCepModal] = useState(false);
   const [cepInput, setCepInput] = useState("");
