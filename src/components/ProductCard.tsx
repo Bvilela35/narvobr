@@ -87,7 +87,7 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               return <p className="text-xs text-muted-foreground">{count}x {formatted} sem juros</p>;
             })()}
             {colorValues.length > 1 && (
-              <div className="flex items-center gap-1.5 pt-1">
+              <div className="flex items-center justify-center gap-1.5 pt-1">
                 {colorValues.map((color) => {
                   const hex = getColorHex(color);
                   if (!hex) return null;
