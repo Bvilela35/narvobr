@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
-import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck } from "lucide-react";
+import { useCepStore } from "@/stores/cepStore";
+import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatInstallmentText } from "@/lib/installments";
+import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
 
 const FREE_SHIPPING_THRESHOLD = 399;
 const GIFT_THRESHOLD = 699;
