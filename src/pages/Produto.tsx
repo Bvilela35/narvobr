@@ -276,7 +276,12 @@ export default function Produto() {
   }, [product]);
 
   // IntersectionObserver for active section tracking
-  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-faq", "secao-avaliacoes"];
+  const SECTION_IDS = [
+    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao ? ["secao-descricao"] : []),
+    ...(product?.node?.specMateriais || product?.node?.specTamanho || product?.node?.specOQueAcompanha || product?.node?.specDetalhes || product?.node?.specFoto ? ["secao-especificacoes"] : []),
+    ...(product?.node?.faq && product.node.faq.length > 0 ? ["secao-faq"] : []),
+    "secao-avaliacoes",
+  ];
   const [isNavSticky, setIsNavSticky] = useState(false);
 
   useEffect(() => {
