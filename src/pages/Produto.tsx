@@ -277,7 +277,7 @@ export default function Produto() {
 
   // IntersectionObserver for active section tracking
   const SECTION_IDS = [
-    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao ? ["secao-descricao"] : []),
+    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao || (product?.node?.highlights && product.node.highlights.length > 0) ? ["secao-descricao"] : []),
     ...(product?.node?.specMateriais || product?.node?.specTamanho || product?.node?.specOQueAcompanha || product?.node?.specDetalhes || product?.node?.specFoto ? ["secao-especificacoes"] : []),
     ...(product?.node?.faq && product.node.faq.length > 0 ? ["secao-faq"] : []),
     "secao-avaliacoes",
@@ -470,11 +470,12 @@ export default function Produto() {
       </div>);
   }
 
-  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
+  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
 
-  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao);
+  const hasHighlights = !!(highlights && highlights.length > 0);
+  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao || hasHighlights);
   const hasEspecificacoes = !!(specMateriais || specTamanho || specOQueAcompanha || specDetalhes || specFoto);
   const hasFaq = !!(faq && faq.length > 0);
   const hasStories = videoStories.length > 0;
@@ -1041,6 +1042,11 @@ export default function Produto() {
               }
             </div>
           </div>
+          {hasHighlights && (
+            <div style={{ marginTop: 80 }}>
+              <ProductHighlights highlights={highlights} />
+            </div>
+          )}
         </div>
       </section>
       )}
