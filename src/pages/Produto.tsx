@@ -630,8 +630,23 @@ export default function Produto() {
                 <span className="pdp__price">{formatPrice(price)}</span>
               </div>
               <p className="pdp__installment">
-                ou R$ {installmentValue}/mês em até {installmentCount}x sem juros
+                ou {installmentCount}x de R$ {installmentValue} sem juros{" "}
+                <button
+                  onClick={() => setInstallmentModalOpen(true)}
+                  className="inline-flex items-center gap-1 text-[#0f3d2e] underline underline-offset-2 decoration-[#0f3d2e]/30 hover:decoration-[#0f3d2e] transition-colors cursor-pointer bg-transparent border-0 p-0 font-inherit text-inherit"
+                  style={{ fontSize: "inherit" }}
+                >
+                  Saiba mais
+                </button>
               </p>
+
+              <InstallmentModal
+                open={installmentModalOpen}
+                onOpenChange={setInstallmentModalOpen}
+                price={parseFloat(price)}
+                productTitle={title}
+                onAddToCart={canBuy ? handleAdd : undefined}
+              />
 
               {description &&
               <p style={{ fontSize: '14px', fontWeight: 500, color: '#444', lineHeight: 1.6, marginTop: '12px', minHeight: '44px' }} className="py-[23px] font-semibold text-lg">
