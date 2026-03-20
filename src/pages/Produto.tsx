@@ -1000,6 +1000,7 @@ export default function Produto() {
       </nav>
 
       {/* Seção: Descrição */}
+      {hasDescricao && (
       <section id="secao-descricao" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           <div className="pdp__descricao-grid">
@@ -1038,8 +1039,9 @@ export default function Produto() {
           </div>
         </div>
       </section>
+      )}
 
-      {/* Seção: Especificações */}
+      {hasEspecificacoes && (
       <section id="secao-especificacoes" className="pdp__content-section">
         <div className="pdp__content-section-inner">
           {(() => {
