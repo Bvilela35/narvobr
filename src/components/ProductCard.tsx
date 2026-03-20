@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
 import { usePrefetchProduct } from "@/hooks/useShopify";
+import { formatInstallmentText } from "@/lib/installments";
 
 const COLOR_MAP: Record<string, string> = {
   preto: "#1a1a1a",
@@ -77,9 +78,10 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
             <p className="text-sm font-semibold text-foreground">
               R$ {parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Até 10x de R$ {(parseFloat(price.amount) / 10) % 1 === 0 ? (parseFloat(price.amount) / 10).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : (parseFloat(price.amount) / 10).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
+            {(() => {
+              const txt = formatInstallmentText(parseFloat(price.amount));
+              return txt ? <p className="text-xs text-muted-foreground">Até {txt} sem juros</p> : null;
+            })()}
             {colorValues.length > 1 && (
               <div className="flex items-center gap-1.5 pt-1">
                 {colorValues.map((color) => {
