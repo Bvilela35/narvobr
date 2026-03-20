@@ -468,6 +468,10 @@ export default function Produto() {
   const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq } = product.node;
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
+
+  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao);
+  const hasEspecificacoes = !!(specMateriais || specTamanho || specOQueAcompanha || specDetalhes || specFoto);
+  const hasFaq = !!(faq && faq.length > 0);
   const hasStories = videoStories.length > 0;
   const imgs = images.edges;
   const totalImages = imgs.length;
