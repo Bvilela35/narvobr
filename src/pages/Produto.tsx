@@ -474,7 +474,8 @@ export default function Produto() {
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
 
-  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao);
+  const hasHighlights = !!(highlights && highlights.length > 0);
+  const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao || hasHighlights);
   const hasEspecificacoes = !!(specMateriais || specTamanho || specOQueAcompanha || specDetalhes || specFoto);
   const hasFaq = !!(faq && faq.length > 0);
   const hasStories = videoStories.length > 0;
