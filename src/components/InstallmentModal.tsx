@@ -51,7 +51,7 @@ export function InstallmentModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[640px] p-0 border-0 rounded-[40px] overflow-hidden bg-[#f5f5f7] shadow-2xl gap-0 [&>button]:hidden"
+        className="max-w-[640px] p-0 border-0 rounded-[40px] sm:rounded-[40px] overflow-hidden bg-[#f5f5f7] shadow-2xl gap-0 [&>button]:hidden"
       >
         <DialogTitle className="sr-only">Opções de pagamento</DialogTitle>
 
