@@ -73,8 +73,8 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
           </div>
 
           {/* Text info below the image, no card background */}
-          <div className="pt-5 pb-2 space-y-1">
-            <h3 className="text-lg md:text-xl font-semibold text-foreground leading-snug mb-3">{title}</h3>
+          <div className="pt-5 pb-2 space-y-1 text-center">
+            <h3 className="text-base md:text-lg font-semibold text-foreground leading-snug mb-3">{title}</h3>
             <p className="text-base text-foreground">
               R${parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
@@ -87,7 +87,7 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               return <p className="text-xs text-muted-foreground">{count}x {formatted} sem juros</p>;
             })()}
             {colorValues.length > 1 && (
-              <div className="flex items-center gap-1.5 pt-1">
+              <div className="flex items-center justify-center gap-1.5 pt-1">
                 {colorValues.map((color) => {
                   const hex = getColorHex(color);
                   if (!hex) return null;
