@@ -1042,6 +1042,11 @@ export default function Produto() {
               }
             </div>
           </div>
+          {hasHighlights && (
+            <div style={{ marginTop: 80 }}>
+              <ProductHighlights highlights={highlights} />
+            </div>
+          )}
         </div>
       </section>
       )}
