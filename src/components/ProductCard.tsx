@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
 import { usePrefetchProduct } from "@/hooks/useShopify";
-import { formatInstallmentText } from "@/lib/installments";
+import { calcInstallments } from "@/lib/installments";
 
 const COLOR_MAP: Record<string, string> = {
   preto: "#1a1a1a",
@@ -73,14 +73,18 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
           </div>
 
           {/* Text info below the image, no card background */}
-          <div className="pt-4 pb-2 space-y-1">
-            <h3 className="text-sm font-semibold text-foreground leading-snug">{title}</h3>
-            <p className="text-sm font-semibold text-foreground">
-              R$ {parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="pt-4 pb-2 space-y-0.5">
+            <h3 className="text-base md:text-lg font-semibold text-foreground leading-snug">{title}</h3>
+            <p className="text-base text-foreground">
+              R${parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             {(() => {
-              const txt = formatInstallmentText(parseFloat(price.amount));
-              return txt ? <p className="text-xs text-muted-foreground">Até {txt} sem juros</p> : null;
+              const { count, value } = calcInstallments(parseFloat(price.amount));
+              if (count <= 1) return null;
+              const formatted = value % 1 === 0
+                ? value.toLocaleString("pt-BR")
+                : value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              return <p className="text-xs text-muted-foreground">{count}x {formatted} sem juros</p>;
             })()}
             {colorValues.length > 1 && (
               <div className="flex items-center gap-1.5 pt-1">
