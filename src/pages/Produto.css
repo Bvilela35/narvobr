@@ -1219,8 +1219,8 @@
   }
   .pdp__section-nav-btn:hover { background: #eee; }
   .pdp__section-nav-btn--active {
-    background: #0f3d2e;
-    color: #fff;
+    background: #fff;
+    color: #143e32;
     box-shadow: none;
   }
   .pdp__content-section { padding: 48px 16px; }
