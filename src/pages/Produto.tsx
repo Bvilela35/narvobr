@@ -276,7 +276,7 @@ export default function Produto() {
   }, [product]);
 
   // IntersectionObserver for active section tracking
-  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-detalhes", "secao-faq", "secao-avaliacoes"];
+  const SECTION_IDS = ["secao-descricao", "secao-especificacoes", "secao-faq", "secao-avaliacoes"];
   const [isNavSticky, setIsNavSticky] = useState(false);
 
   useEffect(() => {
@@ -973,7 +973,6 @@ export default function Produto() {
           {[
           { id: "secao-descricao", label: "Descrição" },
           { id: "secao-especificacoes", label: "Especificações" },
-          { id: "secao-detalhes", label: "Detalhes" },
           { id: "secao-faq", label: "FAQ" },
           { id: "secao-avaliacoes", label: "Avaliações" }].
           map((item) =>
@@ -1083,17 +1082,6 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: Detalhes */}
-      <section id="secao-detalhes" className="pdp__content-section">
-        <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Detalhes</h2>
-          {product.node.highlights && product.node.highlights.length > 0 ? (
-            <ProductHighlights highlights={product.node.highlights} />
-          ) : (
-            <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
-          )}
-        </div>
-      </section>
 
       {/* Seção: FAQ */}
       {faq && faq.length > 0 &&
