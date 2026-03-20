@@ -292,9 +292,10 @@ export default function Carrinho() {
                 <span className="text-base font-bold">Total</span>
                 <div className="text-right">
                   <span className="text-xl font-bold">R$ {formatPrice(total)}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    ou até 10x de R$ {formatPrice(total / 10)} sem juros
-                  </p>
+                  {(() => {
+                    const txt = formatInstallmentText(total);
+                    return txt ? <p className="text-xs text-muted-foreground mt-0.5">ou até {txt} sem juros</p> : null;
+                  })()}
                 </div>
               </div>
             </div>

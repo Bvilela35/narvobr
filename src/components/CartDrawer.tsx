@@ -226,9 +226,11 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                   ) : (
                     <span className="text-xl font-bold">R$ {totalPrice % 1 === 0 ? totalPrice.toLocaleString("pt-BR") : totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   )}
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    ou até 10x de R$ {(() => { const finalPrice = discountCode && discountedTotal ? parseFloat(discountedTotal) : totalPrice; const v = finalPrice / 10; return v % 1 === 0 ? v.toLocaleString("pt-BR") : v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); })()} sem juros
-                  </p>
+                  {(() => {
+                    const finalPrice = discountCode && discountedTotal ? parseFloat(discountedTotal) : totalPrice;
+                    const txt = formatInstallmentText(finalPrice);
+                    return txt ? <p className="text-xs text-muted-foreground mt-0.5">ou até {txt} sem juros</p> : null;
+                  })()}
                 </div>
               </div>
               <Button
