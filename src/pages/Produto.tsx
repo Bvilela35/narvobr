@@ -224,6 +224,7 @@ export default function Produto() {
   const sectionNavRef = useRef<HTMLElement>(null);
   const descricaoMediaRef = useRef<HTMLDivElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panPos, setPanPos] = useState({ x: 0, y: 0 });
