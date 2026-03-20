@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VideoStories } from "@/components/VideoStories";
 import { BulletPointsRotator } from "@/components/BulletPointsRotator";
 import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
+import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import ProductHighlights from "@/components/ProductHighlights";
 import "./Produto.css";
 
@@ -527,10 +528,10 @@ export default function Produto() {
 
   const price = selectedVariant?.price.amount || "0";
   const compareAtPrice = product.node.priceRange?.minVariantPrice?.amount;
-  const inst = parseFloat(price) / 10;
-  const installmentValue = inst % 1 === 0
-    ? inst.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-    : inst.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const { count: installmentCount, value: installmentVal } = calcInstallments(parseFloat(price));
+  const installmentValue = installmentVal % 1 === 0
+    ? installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+    : installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Get optimized image URL for mobile (800px) and desktop (1200px)
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
@@ -627,7 +628,7 @@ export default function Produto() {
                 <span className="pdp__price">{formatPrice(price)}</span>
               </div>
               <p className="pdp__installment">
-                ou R$ {installmentValue}/mês em até 10x sem juros
+                ou R$ {installmentValue}/mês em até {installmentCount}x sem juros
               </p>
 
               {description &&
@@ -818,7 +819,7 @@ export default function Produto() {
                   <span className="pdp__price">{formatPrice(price)}</span>
                 </div>
                 <p className="pdp__installment">
-                  ou R$ {installmentValue}/mês em até 10x sem juros
+                  ou R$ {installmentValue}/mês em até {installmentCount}x sem juros
                 </p>
 
                 <button
