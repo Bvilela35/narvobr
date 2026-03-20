@@ -301,6 +301,62 @@ export default function Carrinho() {
                 </div>
               )}
 
+              {/* Shipping estimate */}
+              <div className="flex justify-between items-start">
+                <span className="text-muted-foreground">Entrega</span>
+                <div className="text-right">
+                  {cepResult ? (
+                    <div>
+                      <span className="font-semibold text-[#0f3d2e]">
+                        {hasFreeShipping ? "Grátis" : "Calcular no checkout"}
+                      </span>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {cepResult.type} · Entre {cepResult.dateRange}
+                      </p>
+                      <button
+                        onClick={() => { setCepInput(formatCep(globalCep)); setShowCepInput(true); }}
+                        className="text-xs text-[#0f3d2e] underline mt-0.5"
+                      >
+                        CEP {formatCep(globalCep)}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setCepInput(""); setShowCepInput(true); }}
+                      className="text-xs text-[#0f3d2e] underline font-medium"
+                    >
+                      Calcular frete
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {showCepInput && (
+                <div className="flex items-center gap-2 bg-white rounded-xl p-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <input
+                    type="text"
+                    value={formatCep(cepInput)}
+                    onChange={(e) => setCepInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()}
+                    placeholder="00000-000"
+                    inputMode="numeric"
+                    maxLength={9}
+                    autoFocus
+                    className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+                  />
+                  <button
+                    onClick={handleCepSubmit}
+                    className="text-xs font-semibold text-[#0f3d2e] hover:underline"
+                  >
+                    OK
+                  </button>
+                  <button onClick={() => setShowCepInput(false)} className="p-1 text-muted-foreground hover:text-foreground">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+
               <div className="h-px bg-border" />
 
               <div className="flex justify-between items-baseline">
