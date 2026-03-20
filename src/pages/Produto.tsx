@@ -980,9 +980,9 @@ export default function Produto() {
       <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
           {[
-          { id: "secao-descricao", label: "Descrição" },
-          { id: "secao-especificacoes", label: "Especificações" },
-          { id: "secao-faq", label: "FAQ" },
+          ...(hasDescricao ? [{ id: "secao-descricao", label: "Descrição" }] : []),
+          ...(hasEspecificacoes ? [{ id: "secao-especificacoes", label: "Especificações" }] : []),
+          ...(hasFaq ? [{ id: "secao-faq", label: "FAQ" }] : []),
           { id: "secao-avaliacoes", label: "Avaliações" }].
           map((item) =>
           <button
