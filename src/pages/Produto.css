@@ -1192,7 +1192,7 @@
   .pdp__faq-question { font-size: 16px; padding: 20px 0; }
   .pdp__faq-answer { font-size: 15px; }
 
-  .pdp__section-nav { padding: 6px 12px; background: rgba(200,200,200,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 9999px; margin: 0 16px; }
+  .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
   .pdp__section-nav-inner {
     display: flex;
     flex-wrap: nowrap;
@@ -1208,10 +1208,10 @@
   }
   .pdp__section-nav-inner::-webkit-scrollbar { display: none; }
   .pdp__section-nav-btn {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    padding: 10px 24px;
-    background: transparent;
+    padding: 16px 32px;
+    background: #f8f8f8;
     flex-shrink: 0;
     white-space: nowrap;
     min-width: auto;
@@ -1219,8 +1219,8 @@
   }
   .pdp__section-nav-btn:hover { background: #eee; }
   .pdp__section-nav-btn--active {
-    background: #fff;
-    color: #143e32;
+    background: #0f3d2e;
+    color: #fff;
     box-shadow: none;
   }
   .pdp__content-section { padding: 48px 16px; }

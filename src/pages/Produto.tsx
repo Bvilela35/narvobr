@@ -304,25 +304,16 @@ export default function Produto() {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const sectionId = entry.target.closest("section")?.id || entry.target.parentElement?.closest("section")?.id;
-            if (sectionId) setActiveSection(sectionId);
+            setActiveSection(entry.target.id);
           }
         }
       },
-      { threshold: 0, rootMargin: "-50% 0px -50% 0px" }
+      { threshold: 0.05, rootMargin: "-45% 0px -45% 0px" }
     );
 
-    // Observe section title elements (h2) instead of the full section
     SECTION_IDS.forEach((id) => {
-      const section = document.getElementById(id);
-      if (section) {
-        const title = section.querySelector("h2, h3, .pdp__content-section-title");
-        if (title) {
-          sectionObserver.observe(title);
-        } else {
-          sectionObserver.observe(section);
-        }
-      }
+      const el = document.getElementById(id);
+      if (el) sectionObserver.observe(el);
     });
 
     return () => {
@@ -984,7 +975,7 @@ export default function Produto() {
 
       {/* Section Navigation Menu */}
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
-        <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: '24px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
       </div>
       <nav ref={sectionNavRef} className={`pdp__section-nav pdp__section-nav--sticky`}>
         <div className="pdp__section-nav-inner">
