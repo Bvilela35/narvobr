@@ -308,7 +308,7 @@ export default function Produto() {
           }
         }
       },
-      { threshold: 0.05, rootMargin: "-45% 0px -45% 0px" }
+      { threshold: 0.01, rootMargin: "-10% 0px -50% 0px" }
     );
 
     SECTION_IDS.forEach((id) => {
@@ -990,7 +990,11 @@ export default function Produto() {
             className={`pdp__section-nav-btn${activeSection === item.id ? ' pdp__section-nav-btn--active' : ''}`}
             onClick={() => {
               const el = document.getElementById(item.id);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              if (el) {
+                const navHeight = sectionNavRef.current?.getBoundingClientRect().height || 60;
+                const targetY = el.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                window.scrollTo({ top: targetY, behavior: "smooth" });
+              }
             }}>
             
               {item.label}
