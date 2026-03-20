@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { calcInstallments, getPriceTier } from "@/lib/installments";
 import { X } from "lucide-react";
-import narvoIcon from "@/assets/narvo-icon.jpg";
+import narvoIcon from "@/assets/narvo-icon.svg";
 
 interface InstallmentModalProps {
   open: boolean;
