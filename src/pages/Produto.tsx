@@ -504,6 +504,7 @@ export default function Produto() {
     const digits = normalizeCep(cepInput);
     if (digits.length !== 8) return;
     setCep(digits);
+    setGlobalCep(digits);
     setCepResult(getShippingRegion(digits));
     setShowCepModal(false);
   }
