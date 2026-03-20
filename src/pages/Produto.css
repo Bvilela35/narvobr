@@ -1192,7 +1192,7 @@
   .pdp__faq-question { font-size: 16px; padding: 20px 0; }
   .pdp__faq-answer { font-size: 15px; }
 
-  .pdp__section-nav { padding: 12px 0; background: rgba(255,255,255,0.95); }
+  .pdp__section-nav { padding: 12px 0; background: rgba(200,200,200,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
   .pdp__section-nav-inner {
     display: flex;
     flex-wrap: nowrap;
