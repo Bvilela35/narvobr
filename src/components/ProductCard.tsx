@@ -74,7 +74,7 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
 
           {/* Text info below the image, no card background */}
           <div className="pt-5 pb-2 space-y-1">
-            <h3 className="text-lg md:text-xl font-semibold text-foreground leading-snug">{title}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-foreground leading-snug mb-3">{title}</h3>
             <p className="text-base text-foreground">
               R${parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
