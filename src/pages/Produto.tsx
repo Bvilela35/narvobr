@@ -277,7 +277,7 @@ export default function Produto() {
 
   // IntersectionObserver for active section tracking
   const SECTION_IDS = [
-    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao ? ["secao-descricao"] : []),
+    ...(product?.node?.tituloDescricao || product?.node?.descricaoCompleta || product?.node?.fotoDescricao || (product?.node?.highlights && product.node.highlights.length > 0) ? ["secao-descricao"] : []),
     ...(product?.node?.specMateriais || product?.node?.specTamanho || product?.node?.specOQueAcompanha || product?.node?.specDetalhes || product?.node?.specFoto ? ["secao-especificacoes"] : []),
     ...(product?.node?.faq && product.node.faq.length > 0 ? ["secao-faq"] : []),
     "secao-avaliacoes",
