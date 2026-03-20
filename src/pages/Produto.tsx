@@ -1140,10 +1140,22 @@ export default function Produto() {
             <h2 className="pdp__faq-title" style={{ fontWeight: 900, marginBottom: 48 }}>
               Eleve seu foco.
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {related.map((p) =>
-            <ProductCard key={p.node.id} product={p} />
-            )}
+            <div className="relative group/carousel">
+              <div className="flex gap-5 overflow-x-auto scrollbar-hide scroll-smooth pb-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} id="related-carousel">
+                {related.map((p) =>
+                  <div key={p.node.id} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
+                    <ProductCard product={p} disableAnimation />
+                  </div>
+                )}
+              </div>
+              {related.length > 4 && <>
+                <button onClick={() => { const el = document.getElementById("related-carousel"); if (el) el.scrollBy({ left: -300, behavior: "smooth" }); }} className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity" aria-label="Anterior">
+                  <ChevronLeft className="h-5 w-5 text-foreground" />
+                </button>
+                <button onClick={() => { const el = document.getElementById("related-carousel"); if (el) el.scrollBy({ left: 300, behavior: "smooth" }); }} className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card-elevated shadow-md flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity" aria-label="Próximo">
+                  <ChevronRight className="h-5 w-5 text-foreground" />
+                </button>
+              </>}
             </div>
           </div>
         </section>
