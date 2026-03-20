@@ -46,7 +46,7 @@ export function InstallmentModal({
   const { count, value } = calcInstallments(price);
   const tier = getPriceTier(price);
   const copy = TIER_COPY[tier];
-  const pixPrice = price * 0.9;
+  const pixPrice = price * 0.95;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
