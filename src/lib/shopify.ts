@@ -283,7 +283,40 @@ const PRODUCT_BY_HANDLE_QUERY = `
         value
       }
       highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
-        value
+        references(first: 10) {
+          edges {
+            node {
+              ... on Metaobject {
+                handle
+                titulo: field(key: "titulo") {
+                  value
+                }
+                descricao: field(key: "descricao") {
+                  value
+                }
+                foto_video: field(key: "foto_video") {
+                  reference {
+                    ... on MediaImage {
+                      image {
+                        url
+                        altText
+                      }
+                    }
+                    ... on Video {
+                      sources {
+                        url
+                        mimeType
+                      }
+                      previewImage {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -353,70 +386,6 @@ export async function fetchProducts(first = 20, query?: string) {
   return (data?.data?.products?.edges || []) as ShopifyProduct[];
 }
 
-const HIGHLIGHT_METAOBJECTS_QUERY = `
-  query getMetaobjectsDirectly($ids: [ID!]!) {
-    nodes(ids: $ids) {
-      ... on Metaobject {
-        handle
-        titulo: field(key: "titulo") { value }
-        descricao: field(key: "descricao") { value }
-        foto_video: field(key: "foto_video") {
-          reference {
-            ... on MediaImage {
-              image { url altText }
-            }
-            ... on Video {
-              sources { url mimeType }
-              previewImage { url }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-async function fetchHighlightMetaobjects(ids: string[]): Promise<Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }>> {
-  const data = await storefrontApiRequest(HIGHLIGHT_METAOBJECTS_QUERY, { ids });
-  const nodes = data?.data?.nodes || [];
-  return nodes
-    .map((node: any) => {
-      if (!node?.titulo) return null;
-      const titulo = node.titulo.value || '';
-      let descricao = '';
-      try {
-        const raw = node.descricao?.value || '';
-        const parsed = JSON.parse(raw);
-        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
-          descricao = parsed.children
-            .map((block: any) => {
-              if (block.type === 'paragraph' && Array.isArray(block.children)) {
-                return block.children.map((c: any) => c.value || '').join('');
-              }
-              return '';
-            })
-            .filter(Boolean)
-            .join('\n');
-        }
-      } catch {
-        descricao = node.descricao?.value || '';
-      }
-      const mediaRef = node.foto_video?.reference;
-      let midiaUrl = '';
-      let tipoMidia: 'image' | 'video' = 'image' as const;
-      let videoSources: ShopifyVideoSource[] | undefined;
-      if (mediaRef?.image) {
-        midiaUrl = mediaRef.image.url;
-      } else if (mediaRef?.sources) {
-        midiaUrl = mediaRef.previewImage?.url || '';
-        tipoMidia = 'video';
-        videoSources = mediaRef.sources;
-      }
-      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
-    })
-    .filter(Boolean);
-}
-
 export async function fetchProductByHandle(handle: string) {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   const product = data?.data?.product;
@@ -470,19 +439,46 @@ export async function fetchProductByHandle(handle: string) {
     }
   } catch { /* ignore parse errors */ }
 
-  // Parse highlights metafield — two-step: get IDs from value, then fetch metaobjects via nodes()
-  let highlights: Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }> = [];
-  try {
-    const highlightIdsRaw = product.highlightsMeta?.value;
-    if (highlightIdsRaw) {
-      const ids: string[] = JSON.parse(highlightIdsRaw);
-      if (Array.isArray(ids) && ids.length > 0) {
-        highlights = await fetchHighlightMetaobjects(ids);
+  // Parse highlights metafield (list of metaobject references)
+  const highlightEdges = product.highlightsMeta?.references?.edges || [];
+  const highlights = highlightEdges
+    .map((edge: any) => {
+      const node = edge.node;
+      const titulo = node.titulo?.value || '';
+      // descricao may be rich text JSON — extract plain text
+      let descricao = '';
+      try {
+        const raw = node.descricao?.value || '';
+        const parsed = JSON.parse(raw);
+        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
+          descricao = parsed.children
+            .map((block: any) => {
+              if (block.type === 'paragraph' && Array.isArray(block.children)) {
+                return block.children.map((c: any) => c.value || '').join('');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('\n');
+        }
+      } catch {
+        descricao = node.descricao?.value || '';
       }
-    }
-  } catch (e) {
-    console.error('Failed to parse highlight IDs:', e);
-  }
+      const mediaRef = node.foto_video?.reference;
+      let midiaUrl = '';
+      let tipoMidia: 'image' | 'video' = 'image';
+      let videoSources: ShopifyVideoSource[] | undefined;
+      if (mediaRef?.image) {
+        midiaUrl = mediaRef.image.url;
+        tipoMidia = 'image';
+      } else if (mediaRef?.sources) {
+        midiaUrl = mediaRef.previewImage?.url || '';
+        tipoMidia = 'video';
+        videoSources = mediaRef.sources;
+      }
+      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
+    })
+    .filter((h: { titulo: string }) => h.titulo);
 
   // Clean up metafield keys from product object
   const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, highlightsMeta, ...cleanProduct } = product;
