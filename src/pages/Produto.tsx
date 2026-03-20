@@ -1137,7 +1137,7 @@ export default function Produto() {
       {related.length > 0 &&
       <section style={{ padding: "80px 24px", borderTop: "1px solid #E5E7EB" }}>
           <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-            <h2 className="pdp__faq-title" style={{ fontWeight: 900 }}>
+            <h2 className="pdp__faq-title" style={{ fontWeight: 900, marginBottom: 48 }}>
               Eleve seu foco.
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
