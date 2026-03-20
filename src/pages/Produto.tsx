@@ -1082,17 +1082,6 @@ export default function Produto() {
         </div>
       </section>
 
-      {/* Seção: Detalhes */}
-      <section id="secao-detalhes" className="pdp__content-section">
-        <div className="pdp__content-section-inner">
-          <h2 className="pdp__content-section-title">Detalhes</h2>
-          {product.node.highlights && product.node.highlights.length > 0 ? (
-            <ProductHighlights highlights={product.node.highlights} />
-          ) : (
-            <p className="pdp__content-section-placeholder">Detalhes do produto em breve.</p>
-          )}
-        </div>
-      </section>
 
       {/* Seção: FAQ */}
       {faq && faq.length > 0 &&
