@@ -1112,14 +1112,6 @@ export default function Produto() {
           </div>
         </section>
       }
-      {(!faq || faq.length === 0) &&
-      <section id="secao-faq" className="pdp__content-section">
-          <div className="pdp__content-section-inner">
-            <h2 className="pdp__content-section-title">FAQ</h2>
-            <p className="pdp__content-section-placeholder">Perguntas frequentes em breve.</p>
-          </div>
-        </section>
-      }
 
       {/* Seção: Avaliações — lazy loaded */}
       <section id="secao-avaliacoes" className="pdp__content-section">
