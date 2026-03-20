@@ -836,7 +836,14 @@ export default function Produto() {
                   <span className="pdp__price">{formatPrice(price)}</span>
                 </div>
                 <p className="pdp__installment">
-                  ou R$ {installmentValue}/mês em até {installmentCount}x sem juros
+                  ou {installmentCount}x de R$ {installmentValue} sem juros{" "}
+                  <button
+                    onClick={() => setInstallmentModalOpen(true)}
+                    className="inline-flex items-center gap-1 text-[#0f3d2e] underline underline-offset-2 decoration-[#0f3d2e]/30 hover:decoration-[#0f3d2e] transition-colors cursor-pointer bg-transparent border-0 p-0 font-inherit text-inherit"
+                    style={{ fontSize: "inherit" }}
+                  >
+                    Saiba mais
+                  </button>
                 </p>
 
                 <button
