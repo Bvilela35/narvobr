@@ -45,7 +45,7 @@ export function CorporateSection() {
           >
             {logos.map((l) => (
               <div key={l.name} className="flex items-center justify-center hover:opacity-70 transition-opacity">
-                <img src={l.img} alt={l.name} className="h-7 md:h-10 w-auto object-contain" />
+                <img src={l.img} alt={l.name} className={`${l.className} w-auto object-contain`} />
               </div>
             ))}
           </motion.div>
