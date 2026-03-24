@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 const logos = [
   { name: "Netflix", img: "/images/netflix-logo.png" },
   { name: "LinkedIn", img: "/images/linkedin-logo.png" },
-  { name: "Banco do Brasil", text: "BANCO DO BRASIL" },
-  { name: "Bradesco", text: "BRADESCO" },
   { name: "Amazon", img: "/images/amazon-logo.png" },
 ];
 
