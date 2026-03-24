@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 const logos = [
   { name: "Netflix", img: "/images/netflix-logo.png" },
   { name: "LinkedIn", img: "/images/linkedin-logo.png" },
-  { name: "Banco do Brasil", text: "BANCO DO BRASIL" },
-  { name: "Bradesco", text: "BRADESCO" },
   { name: "Amazon", img: "/images/amazon-logo.png" },
 ];
 
@@ -39,7 +37,7 @@ export function CorporateSection() {
 
           {/* Right – logos grid */}
           <motion.div
-            className="flex-1 grid grid-cols-3 md:grid-cols-5 gap-8 items-center"
+            className="flex-1 flex items-center justify-center gap-12 md:gap-16"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -47,13 +45,7 @@ export function CorporateSection() {
           >
             {logos.map((l) => (
               <div key={l.name} className="flex items-center justify-center hover:opacity-70 transition-opacity">
-                {l.img ? (
-                  <img src={l.img} alt={l.name} className="h-5 md:h-6 w-auto object-contain" />
-                ) : (
-                  <span className="text-[11px] md:text-xs font-bold tracking-[0.15em] text-foreground whitespace-nowrap">
-                    {l.text}
-                  </span>
-                )}
+                <img src={l.img} alt={l.name} className="h-7 md:h-10 w-auto object-contain" />
               </div>
             ))}
           </motion.div>
