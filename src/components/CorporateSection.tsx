@@ -50,9 +50,9 @@ export function CorporateSection() {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             {logos.map((l) => (
-              <div key={l.name} className="flex items-center justify-center opacity-40 hover:opacity-70 transition-opacity">
+              <div key={l.name} className="flex items-center justify-center hover:opacity-70 transition-opacity">
                 {l.svg ? l.svg : l.img ? (
-                  <img src={l.img} alt={l.name} className="h-5 md:h-6 w-auto object-contain" style={{ filter: 'grayscale(100%)' }} />
+                  <img src={l.img} alt={l.name} className="h-5 md:h-6 w-auto object-contain" />
                 ) : (
                   <span className="text-[11px] md:text-xs font-bold tracking-[0.15em] text-foreground whitespace-nowrap">
                     {l.text}
