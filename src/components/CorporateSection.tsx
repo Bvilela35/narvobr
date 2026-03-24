@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const logos = [
-  { name: "Netflix", img: "/images/netflix-logo.png" },
-  { name: "LinkedIn", img: "/images/linkedin-logo.png" },
-  { name: "Amazon", img: "/images/amazon-logo.png" },
+  { name: "Netflix", img: "/images/netflix-logo.png", className: "h-7 md:h-10" },
+  { name: "LinkedIn", img: "/images/linkedin-logo.png", className: "h-5 md:h-7" },
+  { name: "Amazon", img: "/images/amazon-logo.png", className: "h-9 md:h-14" },
 ];
 
 export function CorporateSection() {
