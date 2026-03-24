@@ -9,6 +9,7 @@ import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useProducts } from "@/hooks/useShopify";
 const fadeUp = {
