@@ -210,7 +210,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       <div className="space-y-8">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
-            Avaliações<span className="md:hidden"><br /></span><span className="hidden md:inline"> </span>da Loja.
+            O que dizem nossos clientes.
           </h2>
           {average_rating && (
             <span className="text-[32px] md:text-[44px] font-bold leading-tight mr-4" style={{ color: '#c9c9c9' }}>
