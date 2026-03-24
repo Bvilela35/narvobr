@@ -212,11 +212,6 @@ export function ReviewsSection({ handle }: { handle?: string }) {
           <h2 className="text-[32px] md:text-[44px] font-bold text-foreground leading-tight">
             O que dizem nossos clientes.
           </h2>
-          {average_rating && (
-            <span className="text-[32px] md:text-[44px] font-bold leading-tight mr-4" style={{ color: '#c9c9c9' }}>
-              {average_rating.toFixed(1)}
-            </span>
-          )}
         </div>
 
         <Carousel
