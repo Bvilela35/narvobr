@@ -9,6 +9,7 @@ import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useProducts } from "@/hooks/useShopify";
 const fadeUp = {
@@ -204,28 +205,7 @@ export default function Index() {
       {/* Depoimentos */}
       <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
         <div className="max-w-[1400px] mx-auto">
-          <motion.h2 {...fadeUp}>
-            <span className="text-2xl md:text-3xl font-semibold">Depoimentos. </span>
-            <span className="text-2xl md:text-3xl font-light text-muted-foreground">O que dizem sobre a Narvo.</span>
-          </motion.h2>
-          <div className="grid md:grid-cols-2 gap-5 mt-16">
-            {[1, 2].map((i) => <motion.div key={i} initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} viewport={{
-            once: true
-          }} transition={{
-            duration: 0.6,
-            delay: i * 0.1
-          }} className="bg-card-elevated rounded-2xl p-8">
-                <p className="text-sm text-muted-foreground italic leading-relaxed">
-                  Ainda sem avaliações.
-                </p>
-              </motion.div>)}
-          </div>
+          <ReviewsSection />
         </div>
       </section>
     </>;
