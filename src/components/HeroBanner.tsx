@@ -32,17 +32,10 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            Um escritório à altura do trabalho que você faz.
+            O ambiente onde você trabalha
+            <br />
+            não é decoração.
           </motion.h1>
-
-          <motion.p
-            className="text-sm md:text-base text-white/70 mt-5 max-w-md leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          >
-            Produtos para setup de trabalho construídos com critério. Para quem não aceita mediocridade no ambiente onde cria, decide e executa.
-          </motion.p>
 
           <motion.div
             className="mt-8"
