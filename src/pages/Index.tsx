@@ -104,6 +104,9 @@ export default function Index() {
       {/* Hero */}
       <HeroBanner />
 
+      {/* Manifesto Statement */}
+      <ManifestoStatement />
+
       {/* The System: InSight & OutSight */}
       <TheSystemSection />
 
