@@ -862,78 +862,30 @@ export interface ShopifyArticle {
   blog: { handle: string } | null;
 }
 
-const BLOG_ARTICLES_QUERY = `
-  query GetBlogArticles($blogHandle: String!, $first: Int!) {
-    blog(handle: $blogHandle) {
-      title
-      articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-        edges {
-          node {
-            id
-            title
-            handle
-            excerpt
-            contentHtml
-            publishedAt
-            tags
-            image {
-              url
-              altText
-            }
-            authorV2 {
-              name
-            }
-            seo {
-              title
-              description
-            }
-            blog {
-              handle
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-const BLOG_ARTICLE_BY_HANDLE_QUERY = `
-  query GetBlogArticle($blogHandle: String!, $articleHandle: String!) {
-    blog(handle: $blogHandle) {
-      articleByHandle(handle: $articleHandle) {
-        id
-        title
-        handle
-        excerpt
-        contentHtml
-        publishedAt
-        tags
-        image {
-          url
-          altText
-        }
-        authorV2 {
-          name
-        }
-        seo {
-          title
-          description
-        }
-        blog {
-          handle
-        }
-      }
-    }
-  }
-`;
+const BLOG_EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shopify-blog`;
 
 export async function fetchBlogArticles(blogHandle = "blog", first = 20): Promise<ShopifyArticle[]> {
-  const data = await storefrontApiRequest(BLOG_ARTICLES_QUERY, { blogHandle, first });
-  const edges = data?.data?.blog?.articles?.edges || [];
-  return edges.map((e: { node: ShopifyArticle }) => e.node);
+  const url = new URL(BLOG_EDGE_FUNCTION_URL);
+  url.searchParams.set('blog', blogHandle);
+  url.searchParams.set('first', String(first));
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error(`Blog fetch error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data.articles || [];
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
-  const data = await storefrontApiRequest(BLOG_ARTICLE_BY_HANDLE_QUERY, { blogHandle, articleHandle });
-  return data?.data?.blog?.articleByHandle || null;
+  const url = new URL(BLOG_EDGE_FUNCTION_URL);
+  url.searchParams.set('blog', blogHandle);
+  url.searchParams.set('article', articleHandle);
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error(`Blog article fetch error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data.article || null;
 }
