@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import beforeDesk from "@/assets/before-desk.jpg";
 import afterDesk from "@/assets/after-desk.jpg";
 
@@ -12,8 +12,19 @@ const fadeUp = {
 
 export function BeforeAfter() {
   const [position, setPosition] = useState(50);
+  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerWidth(entry.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const updatePosition = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -83,7 +94,7 @@ export function BeforeAfter() {
                 src={beforeDesk}
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{ width: `${containerRef.current?.offsetWidth || 9999}px`, maxWidth: "none" }}
+                style={{ width: `${containerWidth || 9999}px`, maxWidth: "none" }}
                 draggable={false} />
 
             </div>
