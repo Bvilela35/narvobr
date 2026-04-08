@@ -51,11 +51,37 @@ export default function Artigo() {
   const tag = article.tags?.[0] || "Journal";
   const readTime = estimateReadTime(article.contentHtml);
   const authorName = article.authorV2?.name || "Narvo";
+  const plainExcerpt = article.excerpt || article.contentHtml.replace(/<[^>]*>/g, "").slice(0, 155);
+  const seoTitle = article.seo?.title || `${article.title} — Narvo Journal`;
+  const seoDescription = article.seo?.description || plainExcerpt;
+  const canonicalUrl = `https://narvobr.lovable.app/journal/${article.handle}`;
 
   // Related articles (exclude current)
   const related = allArticles
     .filter((a) => a.handle !== article.handle)
     .slice(0, 2);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: seoDescription,
+    image: article.image?.url,
+    datePublished: article.publishedAt,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Narvo",
+      url: "https://narvobr.lovable.app",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+  };
 
   return (
     <article className="pb-24 md:pb-32">
