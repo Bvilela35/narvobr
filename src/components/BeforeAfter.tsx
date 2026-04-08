@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import beforeDesk from "@/assets/before-desk.jpg";
 import afterDesk from "@/assets/after-desk.jpg";
 
