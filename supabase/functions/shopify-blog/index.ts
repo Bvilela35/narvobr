@@ -49,8 +49,7 @@ Deno.serve(async (req) => {
                       altText
                     }
                     author {
-                      firstName
-                      lastName
+                      name
                     }
                     blog {
                       handle
