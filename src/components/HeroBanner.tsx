@@ -24,7 +24,7 @@ export function HeroBanner() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-      <div className="absolute inset-0 z-10 px-6 md:px-10 flex items-end md:items-center justify-center pb-16 md:pb-0">
+      <div className="absolute inset-0 z-10 px-6 md:px-10 flex items-center justify-center">
         <div className="max-w-[1400px] mx-auto flex flex-col items-center text-center">
           <motion.h1
             className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-white max-w-3xl"
