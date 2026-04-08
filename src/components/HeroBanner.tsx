@@ -32,7 +32,7 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            O ambiente onde você trabalha determina o padrão do trabalho que você produz.
+            Um escritório à altura do trabalho que você faz.
           </motion.h1>
 
           <motion.p
@@ -41,8 +41,7 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           >
-            Acessórios premium para seu setup. Projetados para quem exige
-            silêncio visual e máxima performance.
+            Produtos para setup de trabalho construídos com critério. Para quem não aceita mediocridade no ambiente onde cria, decide e executa.
           </motion.p>
 
           <motion.div
@@ -53,7 +52,7 @@ export function HeroBanner() {
           >
             <Button asChild className="h-12 px-10 rounded-full text-sm font-medium tracking-wide bg-white text-black hover:bg-white/90">
               <Link to="/colecao">
-                Ver coleção <ArrowRight className="ml-2 h-4 w-4" />
+                Conheça a coleção <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </motion.div>
