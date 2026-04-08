@@ -845,3 +845,95 @@ export async function applyDiscountToCart(cartId: string, discountCode: string):
 }
 
 export { CART_QUERY };
+
+// ─── Blog / Articles ────────────────────────────────────────────
+
+export interface ShopifyArticle {
+  id: string;
+  title: string;
+  handle: string;
+  excerpt: string | null;
+  contentHtml: string;
+  publishedAt: string;
+  tags: string[];
+  image: { url: string; altText: string | null } | null;
+  authorV2: { name: string } | null;
+  seo: { title: string | null; description: string | null } | null;
+  blog: { handle: string } | null;
+}
+
+const BLOG_ARTICLES_QUERY = `
+  query GetBlogArticles($blogHandle: String!, $first: Int!) {
+    blog(handle: $blogHandle) {
+      title
+      articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            excerpt
+            contentHtml
+            publishedAt
+            tags
+            image {
+              url
+              altText
+            }
+            authorV2 {
+              name
+            }
+            seo {
+              title
+              description
+            }
+            blog {
+              handle
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const BLOG_ARTICLE_BY_HANDLE_QUERY = `
+  query GetBlogArticle($blogHandle: String!, $articleHandle: String!) {
+    blog(handle: $blogHandle) {
+      articleByHandle(handle: $articleHandle) {
+        id
+        title
+        handle
+        excerpt
+        contentHtml
+        publishedAt
+        tags
+        image {
+          url
+          altText
+        }
+        authorV2 {
+          name
+        }
+        seo {
+          title
+          description
+        }
+        blog {
+          handle
+        }
+      }
+    }
+  }
+`;
+
+export async function fetchBlogArticles(blogHandle = "blog", first = 20): Promise<ShopifyArticle[]> {
+  const data = await storefrontApiRequest(BLOG_ARTICLES_QUERY, { blogHandle, first });
+  const edges = data?.data?.blog?.articles?.edges || [];
+  return edges.map((e: { node: ShopifyArticle }) => e.node);
+}
+
+export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
+  const data = await storefrontApiRequest(BLOG_ARTICLE_BY_HANDLE_QUERY, { blogHandle, articleHandle });
+  return data?.data?.blog?.articleByHandle || null;
+}
