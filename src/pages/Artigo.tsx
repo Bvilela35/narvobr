@@ -85,7 +85,21 @@ export default function Artigo() {
 
   return (
     <article className="pb-24 md:pb-32">
-      {/* Header */}
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        {article.image && <meta property="og:image" content={article.image.url} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        {article.image && <meta name="twitter:image" content={article.image.url} />}
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      </Helmet>
       <div className="max-w-3xl mx-auto px-6 pt-12 md:pt-20">
         {/* Back link */}
         <motion.div
