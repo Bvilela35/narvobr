@@ -27,124 +27,62 @@ Deno.serve(async (req) => {
     const articleHandle = url.searchParams.get('article');
     const first = Math.min(parseInt(url.searchParams.get('first') || '20', 10), 50);
 
-    let query: string;
-    let variables: Record<string, unknown>;
-
-    if (articleHandle) {
-      // Fetch single article by handle
-      query = `
-        query GetBlogArticle($blogHandle: String!, $articleHandle: String!) {
-          blogByHandle(handle: $blogHandle) {
-            articleByHandle(handle: $articleHandle) {
-              id
-              title
+    const query = `
+      query GetBlogArticles($first: Int!) {
+        blogs(first: 10) {
+          edges {
+            node {
               handle
-              excerpt
-              body
-              publishedAt
-              tags
-              image {
-                url
-                altText
-              }
-              author {
-                name
-              }
-              seo {
-                title
-                description
-              }
-              blog {
-                handle
-              }
-            }
-          }
-        }
-      `;
-      variables = { blogHandle, articleHandle };
-    } else {
-      // Fetch all articles
-      query = `
-        query GetBlogArticles($blogHandle: String!, $first: Int!) {
-          blogByHandle(handle: $blogHandle) {
-            title
-            articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-              edges {
-                node {
-                  id
-                  title
-                  handle
-                  excerpt
-                  body
-                  publishedAt
-                  tags
-                  image {
-                    url
-                    altText
-                  }
-                  author {
-                    name
-                  }
-                  seo {
+              title
+              articles(first: $first, reverse: true) {
+                edges {
+                  node {
+                    id
                     title
-                    description
-                  }
-                  blog {
                     handle
+                    summary
+                    body
+                    publishedAt
+                    tags
+                    image {
+                      url
+                      altText
+                    }
+                    author {
+                      firstName
+                      lastName
+                    }
+                    blog {
+                      handle
+                    }
                   }
                 }
               }
             }
           }
         }
-      `;
-      variables = { blogHandle, first };
-    }
-
-    const response = await fetch(ADMIN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error(`Shopify Admin API error [${response.status}]:`, text);
-      return new Response(JSON.stringify({ error: `Shopify API error: ${response.status}` }), {
-        status: response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const data = await response.json();
-
-    if (data.errors) {
-      console.error('Shopify GraphQL errors:', JSON.stringify(data.errors));
-      return new Response(JSON.stringify({ error: data.errors[0]?.message || 'GraphQL error' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Normalize response to match frontend ShopifyArticle interface
-    if (articleHandle) {
-      const article = data?.data?.blogByHandle?.articleByHandle;
-      if (!article) {
-        return new Response(JSON.stringify({ article: null }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
       }
+    `;
+
+    const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first: articleHandle ? 50 : first });
+    if (response instanceof Response) return response;
+
+    const blogs = response?.data?.blogs?.edges || [];
+    const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
+
+    if (articleHandle) {
+      const articles = targetBlog?.node?.articles?.edges || [];
+      const article = articles.find((a: any) => a.node.handle === articleHandle);
+
       return new Response(JSON.stringify({
-        article: normalizeArticle(article),
+        article: article ? normalizeArticle(article.node) : null,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } else {
-      const edges = data?.data?.blogByHandle?.articles?.edges || [];
-      const articles = edges.map((e: { node: Record<string, unknown> }) => normalizeArticle(e.node));
+      const edges = targetBlog?.node?.articles?.edges || [];
+      const articles = edges.map((e: any) => normalizeArticle(e.node));
+
       return new Response(JSON.stringify({ articles }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -158,19 +96,52 @@ Deno.serve(async (req) => {
   }
 });
 
-// Normalize Admin API article shape to match frontend ShopifyArticle interface
+async function fetchShopify(url: string, token: string, query: string, variables: Record<string, unknown>) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': token,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    console.error(`Shopify Admin API error [${response.status}]:`, text);
+    return new Response(JSON.stringify({ error: `Shopify API error: ${response.status}` }), {
+      status: response.status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const data = await response.json();
+
+  if (data.errors) {
+    console.error('Shopify GraphQL errors:', JSON.stringify(data.errors));
+    return new Response(JSON.stringify({ error: data.errors[0]?.message || 'GraphQL error' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  return data;
+}
+
 function normalizeArticle(article: Record<string, unknown>) {
+  const author = article.author as { firstName?: string; lastName?: string } | null;
+  const authorName = author ? [author.firstName, author.lastName].filter(Boolean).join(' ') : null;
   return {
     id: article.id,
     title: article.title,
     handle: article.handle,
-    excerpt: article.excerpt || null,
+    excerpt: (article.summary as string) || null,
     contentHtml: article.body || '',
     publishedAt: article.publishedAt,
     tags: article.tags || [],
     image: article.image || null,
-    authorV2: article.author ? { name: (article.author as { name: string }).name } : null,
-    seo: article.seo || null,
+    authorV2: authorName ? { name: authorName } : null,
+    seo: null,
     blog: article.blog || null,
   };
 }
