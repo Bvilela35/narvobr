@@ -94,7 +94,7 @@ export function BeforeAfter() {
                 src={beforeDesk}
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{ width: `${containerRef.current?.offsetWidth || 9999}px`, maxWidth: "none" }}
+                style={{ width: `${containerWidth || 9999}px`, maxWidth: "none" }}
                 draggable={false} />
 
             </div>
