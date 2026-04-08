@@ -49,8 +49,7 @@ Deno.serve(async (req) => {
                       altText
                     }
                     author {
-                      firstName
-                      lastName
+                      name
                     }
                     blog {
                       handle
@@ -129,8 +128,8 @@ async function fetchShopify(url: string, token: string, query: string, variables
 }
 
 function normalizeArticle(article: Record<string, unknown>) {
-  const author = article.author as { firstName?: string; lastName?: string } | null;
-  const authorName = author ? [author.firstName, author.lastName].filter(Boolean).join(' ') : null;
+  const author = article.author as { name?: string } | null;
+  const authorName = author?.name || null;
   return {
     id: article.id,
     title: article.title,
