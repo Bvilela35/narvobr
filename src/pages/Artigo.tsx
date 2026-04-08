@@ -1,18 +1,59 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
-import { articles, formatDate } from "@/data/articles";
+import { useBlogArticle, useBlogArticles } from "@/hooks/useBlog";
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function estimateReadTime(html: string): string {
+  const text = html.replace(/<[^>]*>/g, "");
+  const words = text.split(/\s+/).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min`;
+}
 
 export default function Artigo() {
   const { slug } = useParams<{ slug: string }>();
-  const article = articles.find((a) => a.slug === slug);
+  const { data: article, isLoading, isError } = useBlogArticle(slug);
+  const { data: allArticles = [] } = useBlogArticles("blog", 20);
 
-  if (!article) {
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-6 pt-20 pb-24">
+        <div className="animate-pulse space-y-6">
+          <div className="h-4 w-20 bg-muted rounded" />
+          <div className="h-10 w-3/4 bg-muted rounded mx-auto" />
+          <div className="h-4 w-40 bg-muted rounded mx-auto" />
+          <div className="h-64 bg-muted rounded-2xl" />
+          <div className="space-y-3">
+            <div className="h-4 bg-muted rounded" />
+            <div className="h-4 bg-muted rounded w-5/6" />
+            <div className="h-4 bg-muted rounded w-4/6" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!article || isError) {
     return <Navigate to="/journal" replace />;
   }
 
-  // Get related articles (exclude current)
-  const related = articles.filter((a) => a.slug !== slug).slice(0, 2);
+  const tag = article.tags?.[0] || "Journal";
+  const readTime = estimateReadTime(article.contentHtml);
+  const authorName = article.authorV2?.name || "Narvo";
+
+  // Related articles (exclude current)
+  const related = allArticles
+    .filter((a) => a.handle !== article.handle)
+    .slice(0, 2);
 
   return (
     <article className="pb-24 md:pb-32">
@@ -42,7 +83,7 @@ export default function Artigo() {
           className="flex justify-center mb-5"
         >
           <span className="text-[11px] tracking-[0.25em] uppercase font-medium text-muted-foreground border border-border rounded-full px-4 py-1.5">
-            {article.tag}
+            {tag}
           </span>
         </motion.div>
 
@@ -63,11 +104,11 @@ export default function Artigo() {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="flex items-center justify-center gap-4 text-sm text-muted-foreground mb-8"
         >
-          <span>{formatDate(article.date)}</span>
+          <span>{formatDate(article.publishedAt)}</span>
           <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
-            {article.readTime} de leitura
+            {readTime} de leitura
           </span>
         </motion.div>
 
@@ -80,32 +121,34 @@ export default function Artigo() {
         >
           <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-3">
             <span className="text-sm font-semibold text-foreground">
-              {article.author.name.charAt(0)}
+              {authorName.charAt(0)}
             </span>
           </div>
-          <span className="text-sm font-medium">{article.author.name}</span>
+          <span className="text-sm font-medium">{authorName}</span>
           <span className="text-xs text-muted-foreground">
-            {article.author.role}
+            Engenharia do Silêncio
           </span>
         </motion.div>
       </div>
 
       {/* Hero image */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.25 }}
-        className="max-w-5xl mx-auto px-6 mb-14 md:mb-20"
-      >
-        <div className="rounded-2xl overflow-hidden aspect-[21/9]">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="w-full h-full object-cover"
-            loading="eager"
-          />
-        </div>
-      </motion.div>
+      {article.image && (
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.25 }}
+          className="max-w-5xl mx-auto px-6 mb-14 md:mb-20"
+        >
+          <div className="rounded-2xl overflow-hidden aspect-[21/9]">
+            <img
+              src={article.image.url}
+              alt={article.image.altText || article.title}
+              className="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+        </motion.div>
+      )}
 
       {/* Article body */}
       <motion.div
@@ -114,56 +157,10 @@ export default function Artigo() {
         transition={{ duration: 0.6, delay: 0.35 }}
         className="max-w-[680px] mx-auto px-6"
       >
-        <div className="prose prose-lg dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-xl prose-h2:md:text-2xl prose-h3:text-lg prose-h3:md:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-strong:font-medium prose-a:text-foreground prose-a:underline prose-a:underline-offset-4 max-w-none">
-          {article.content.split("\n\n").map((block, i) => {
-            if (block.startsWith("### ")) {
-              return (
-                <h3 key={i}>{block.replace("### ", "")}</h3>
-              );
-            }
-            if (block.startsWith("## ")) {
-              return (
-                <h2 key={i}>{block.replace("## ", "")}</h2>
-              );
-            }
-            if (block.startsWith("1. ") || block.startsWith("- ")) {
-              const isOrdered = block.startsWith("1. ");
-              const items = block.split("\n").map((line) =>
-                line.replace(/^(\d+\.\s|\-\s)/, "")
-              );
-              const Tag = isOrdered ? "ol" : "ul";
-              return (
-                <Tag key={i}>
-                  {items.map((item, j) => {
-                    const parts = item.split(/(\*\*[^*]+\*\*)/);
-                    return (
-                      <li key={j}>
-                        {parts.map((part, k) => {
-                          if (part.startsWith("**") && part.endsWith("**")) {
-                            return <strong key={k}>{part.slice(2, -2)}</strong>;
-                          }
-                          return <span key={k}>{part}</span>;
-                        })}
-                      </li>
-                    );
-                  })}
-                </Tag>
-              );
-            }
-            // Paragraph with bold support
-            const parts = block.split(/(\*\*[^*]+\*\*)/);
-            return (
-              <p key={i}>
-                {parts.map((part, k) => {
-                  if (part.startsWith("**") && part.endsWith("**")) {
-                    return <strong key={k}>{part.slice(2, -2)}</strong>;
-                  }
-                  return <span key={k}>{part}</span>;
-                })}
-              </p>
-            );
-          })}
-        </div>
+        <div
+          className="prose prose-lg dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-xl prose-h2:md:text-2xl prose-h3:text-lg prose-h3:md:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-strong:font-medium prose-a:text-foreground prose-a:underline prose-a:underline-offset-4 prose-img:rounded-xl max-w-none"
+          dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+        />
       </motion.div>
 
       {/* Related articles */}
@@ -175,28 +172,30 @@ export default function Artigo() {
           <div className="grid md:grid-cols-2 gap-6">
             {related.map((rel) => (
               <Link
-                key={rel.slug}
-                to={`/journal/${rel.slug}`}
+                key={rel.handle}
+                to={`/journal/${rel.handle}`}
                 className="group"
               >
                 <div className="bg-card-elevated rounded-2xl overflow-hidden h-full flex flex-col">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={rel.image}
-                      alt={rel.title}
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                      loading="lazy"
-                    />
-                  </div>
+                  {rel.image && (
+                    <div className="aspect-[4/3] overflow-hidden">
+                      <img
+                        src={rel.image.url}
+                        alt={rel.image.altText || rel.title}
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                   <div className="p-6 flex flex-col flex-1">
                     <span className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground font-medium">
-                      {rel.tag}
+                      {rel.tags?.[0] || "Journal"}
                     </span>
                     <h3 className="text-base font-semibold mt-2 mb-2 leading-snug group-hover:opacity-70 transition-opacity">
                       {rel.title}
                     </h3>
                     <span className="text-xs text-muted-foreground mt-auto pt-4">
-                      {formatDate(rel.date)}
+                      {formatDate(rel.publishedAt)}
                     </span>
                   </div>
                 </div>
