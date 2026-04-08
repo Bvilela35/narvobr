@@ -158,7 +158,7 @@ export default function Artigo() {
         className="max-w-[680px] mx-auto px-6"
       >
         <div
-          className="prose prose-lg dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-h2:text-xl prose-h2:md:text-2xl prose-h3:text-lg prose-h3:md:text-xl prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-strong:font-medium prose-a:text-foreground prose-a:underline prose-a:underline-offset-4 prose-img:rounded-xl max-w-none"
+          className="article-body"
           dangerouslySetInnerHTML={{ __html: article.contentHtml }}
         />
       </motion.div>
