@@ -14,7 +14,7 @@ export function HeroBanner() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
-    <section ref={sectionRef} className="relative min-h-[95vw] md:min-h-[85vh] flex items-end overflow-hidden">
+    <section ref={sectionRef} <section ref={sectionRef} className="relative min-h-[120vw] md:min-h-[85vh] flex items-end overflow-hidden"> flex items-end overflow-hidden">
       <motion.img
         src={heroBanner}
         alt="Setup minimalista com acessórios Narvo"
