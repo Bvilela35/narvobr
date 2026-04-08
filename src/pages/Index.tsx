@@ -11,6 +11,7 @@ import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { ManifestoStatement } from "@/components/ManifestoStatement";
+import { CategoryCarousel } from "@/components/CategoryCarousel";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useProducts } from "@/hooks/useShopify";
 const fadeUp = {
@@ -106,6 +107,9 @@ export default function Index() {
 
       {/* Manifesto Statement */}
       <ManifestoStatement />
+
+      {/* Categorias */}
+      <CategoryCarousel />
 
       {/* The System: InSight & OutSight */}
       <TheSystemSection />
