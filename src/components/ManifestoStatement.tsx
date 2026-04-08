@@ -10,20 +10,20 @@ export function ManifestoStatement() {
 
   const bgColor = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.5, 0.7, 1],
-    ["#f0f0f0", "#0A0A0A", "#f0f0f0", "#0A0A0A", "#f0f0f0"]
+    [0, 0.4, 0.7],
+    ["#f0f0f0", "#f0f0f0", "#0A0A0A"]
   );
 
   const textColor = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.5, 0.7, 1],
-    ["#1a1a1a", "#F5F3EF", "#1a1a1a", "#F5F3EF", "#1a1a1a"]
+    [0, 0.4, 0.7],
+    ["#1a1a1a", "#1a1a1a", "#F5F3EF"]
   );
 
   const subtextColor = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.5, 0.7, 1],
-    ["#888780", "#888780", "#888780", "#888780", "#888780"]
+    [0, 0.4, 0.7],
+    ["#888780", "#888780", "#999"]
   );
 
   return (
