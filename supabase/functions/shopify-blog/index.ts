@@ -27,70 +27,39 @@ Deno.serve(async (req) => {
     const articleHandle = url.searchParams.get('article');
     const first = Math.min(parseInt(url.searchParams.get('first') || '20', 10), 50);
 
-    let query: string;
-    let variables: Record<string, unknown>;
-
     if (articleHandle) {
-      // Fetch single article by handle
-      query = `
-        query GetBlogArticle($blogHandle: String!, $articleHandle: String!) {
-          blogByHandle(handle: $blogHandle) {
-            articleByHandle(handle: $articleHandle) {
-              id
-              title
-              handle
-              excerpt
-              body
-              publishedAt
-              tags
-              image {
-                url
-                altText
-              }
-              author {
-                name
-              }
-              seo {
-                title
-                description
-              }
-              blog {
+      // Fetch all articles and find by handle
+      const query = `
+        query GetBlogArticles($first: Int!) {
+          blogs(first: 10) {
+            edges {
+              node {
                 handle
-              }
-            }
-          }
-        }
-      `;
-      variables = { blogHandle, articleHandle };
-    } else {
-      // Fetch all articles
-      query = `
-        query GetBlogArticles($blogHandle: String!, $first: Int!) {
-          blogByHandle(handle: $blogHandle) {
-            title
-            articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-              edges {
-                node {
-                  id
-                  title
-                  handle
-                  excerpt
-                  body
-                  publishedAt
-                  tags
-                  image {
-                    url
-                    altText
-                  }
-                  author {
-                    name
-                  }
-                  seo {
-                    title
-                    description
-                  }
-                  blog {
-                    handle
+                articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+                  edges {
+                    node {
+                      id
+                      title
+                      handle
+                      excerpt
+                      body
+                      publishedAt
+                      tags
+                      image {
+                        url
+                        altText
+                      }
+                      author {
+                        name
+                      }
+                      seo {
+                        title
+                        description
+                      }
+                      blog {
+                        handle
+                      }
+                    }
                   }
                 }
               }
@@ -98,53 +67,76 @@ Deno.serve(async (req) => {
           }
         }
       `;
-      variables = { blogHandle, first };
-    }
 
-    const response = await fetch(ADMIN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
+      const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first: 50 });
+      if (response instanceof Response) return response;
 
-    if (!response.ok) {
-      const text = await response.text();
-      console.error(`Shopify Admin API error [${response.status}]:`, text);
-      return new Response(JSON.stringify({ error: `Shopify API error: ${response.status}` }), {
-        status: response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+      const blogs = response?.data?.blogs?.edges || [];
+      const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
+      const articles = targetBlog?.node?.articles?.edges || [];
+      const article = articles.find((a: any) => a.node.handle === articleHandle);
 
-    const data = await response.json();
-
-    if (data.errors) {
-      console.error('Shopify GraphQL errors:', JSON.stringify(data.errors));
-      return new Response(JSON.stringify({ error: data.errors[0]?.message || 'GraphQL error' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Normalize response to match frontend ShopifyArticle interface
-    if (articleHandle) {
-      const article = data?.data?.blogByHandle?.articleByHandle;
       if (!article) {
         return new Response(JSON.stringify({ article: null }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
+
       return new Response(JSON.stringify({
-        article: normalizeArticle(article),
+        article: normalizeArticle(article.node),
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } else {
-      const edges = data?.data?.blogByHandle?.articles?.edges || [];
-      const articles = edges.map((e: { node: Record<string, unknown> }) => normalizeArticle(e.node));
+      // Fetch articles list
+      const query = `
+        query GetBlogArticles($first: Int!) {
+          blogs(first: 10) {
+            edges {
+              node {
+                handle
+                title
+                articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+                  edges {
+                    node {
+                      id
+                      title
+                      handle
+                      excerpt
+                      body
+                      publishedAt
+                      tags
+                      image {
+                        url
+                        altText
+                      }
+                      author {
+                        name
+                      }
+                      seo {
+                        title
+                        description
+                      }
+                      blog {
+                        handle
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first });
+      if (response instanceof Response) return response;
+
+      const blogs = response?.data?.blogs?.edges || [];
+      const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
+      const edges = targetBlog?.node?.articles?.edges || [];
+      const articles = edges.map((e: any) => normalizeArticle(e.node));
+
       return new Response(JSON.stringify({ articles }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -158,7 +150,38 @@ Deno.serve(async (req) => {
   }
 });
 
-// Normalize Admin API article shape to match frontend ShopifyArticle interface
+async function fetchShopify(url: string, token: string, query: string, variables: Record<string, unknown>) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': token,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    console.error(`Shopify Admin API error [${response.status}]:`, text);
+    return new Response(JSON.stringify({ error: `Shopify API error: ${response.status}` }), {
+      status: response.status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const data = await response.json();
+
+  if (data.errors) {
+    console.error('Shopify GraphQL errors:', JSON.stringify(data.errors));
+    return new Response(JSON.stringify({ error: data.errors[0]?.message || 'GraphQL error' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  return data;
+}
+
 function normalizeArticle(article: Record<string, unknown>) {
   return {
     id: article.id,
