@@ -32,7 +32,7 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            Engenharia<br />do Silêncio.
+            O ambiente onde você<br />trabalha determina o padrão<br />do trabalho que você produz.
           </motion.h1>
 
           <motion.p
