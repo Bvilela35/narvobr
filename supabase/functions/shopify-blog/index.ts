@@ -27,38 +27,36 @@ Deno.serve(async (req) => {
     const articleHandle = url.searchParams.get('article');
     const first = Math.min(parseInt(url.searchParams.get('first') || '20', 10), 50);
 
-    if (articleHandle) {
-      // Fetch all articles and find by handle
-      const query = `
-        query GetBlogArticles($first: Int!) {
-          blogs(first: 10) {
-            edges {
-              node {
-                handle
-                articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-                  edges {
-                    node {
-                      id
+    const query = `
+      query GetBlogArticles($first: Int!) {
+        blogs(first: 10) {
+          edges {
+            node {
+              handle
+              title
+              articles(first: $first, reverse: true) {
+                edges {
+                  node {
+                    id
+                    title
+                    handle
+                    excerpt
+                    body
+                    publishedAt
+                    tags
+                    image {
+                      url
+                      altText
+                    }
+                    author {
+                      name
+                    }
+                    seo {
                       title
+                      description
+                    }
+                    blog {
                       handle
-                      excerpt
-                      body
-                      publishedAt
-                      tags
-                      image {
-                        url
-                        altText
-                      }
-                      author {
-                        name
-                      }
-                      seo {
-                        title
-                        description
-                      }
-                      blog {
-                        handle
-                      }
                     }
                   }
                 }
@@ -66,74 +64,25 @@ Deno.serve(async (req) => {
             }
           }
         }
-      `;
+      }
+    `;
 
-      const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first: 50 });
-      if (response instanceof Response) return response;
+    const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first: articleHandle ? 50 : first });
+    if (response instanceof Response) return response;
 
-      const blogs = response?.data?.blogs?.edges || [];
-      const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
+    const blogs = response?.data?.blogs?.edges || [];
+    const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
+
+    if (articleHandle) {
       const articles = targetBlog?.node?.articles?.edges || [];
       const article = articles.find((a: any) => a.node.handle === articleHandle);
 
-      if (!article) {
-        return new Response(JSON.stringify({ article: null }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
       return new Response(JSON.stringify({
-        article: normalizeArticle(article.node),
+        article: article ? normalizeArticle(article.node) : null,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } else {
-      // Fetch articles list
-      const query = `
-        query GetBlogArticles($first: Int!) {
-          blogs(first: 10) {
-            edges {
-              node {
-                handle
-                title
-                articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
-                  edges {
-                    node {
-                      id
-                      title
-                      handle
-                      excerpt
-                      body
-                      publishedAt
-                      tags
-                      image {
-                        url
-                        altText
-                      }
-                      author {
-                        name
-                      }
-                      seo {
-                        title
-                        description
-                      }
-                      blog {
-                        handle
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `;
-
-      const response = await fetchShopify(ADMIN_URL, SHOPIFY_ACCESS_TOKEN, query, { first });
-      if (response instanceof Response) return response;
-
-      const blogs = response?.data?.blogs?.edges || [];
-      const targetBlog = blogs.find((b: any) => b.node.handle === blogHandle);
       const edges = targetBlog?.node?.articles?.edges || [];
       const articles = edges.map((e: any) => normalizeArticle(e.node));
 
