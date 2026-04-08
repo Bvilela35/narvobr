@@ -159,6 +159,7 @@ export default function Artigo() {
       >
         <div
           className="article-body"
+          style={{ minHeight: '200px' }}
           dangerouslySetInnerHTML={{ __html: article.contentHtml }}
         />
       </motion.div>
