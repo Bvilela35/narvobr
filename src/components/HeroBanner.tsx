@@ -27,12 +27,12 @@ export function HeroBanner() {
       <div className="absolute inset-0 z-10 px-6 md:px-10 flex items-end md:items-center justify-center pb-16 md:pb-0">
         <div className="max-w-[1400px] mx-auto flex flex-col items-center text-center">
           <motion.h1
-            className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight text-white"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-white max-w-3xl"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            Engenharia<br />do Silêncio.
+            O ambiente onde você trabalha determina o padrão do trabalho que você produz.
           </motion.h1>
 
           <motion.p
