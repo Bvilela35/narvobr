@@ -15,7 +15,7 @@ const categories = [
 
 export function CategoryCarousel() {
   return (
-    <section className="py-8 md:py-12 px-6 md:px-10 border-b border-border">
+    <section className="py-8 md:py-12 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex justify-center gap-8 md:gap-14 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
           {categories.map((cat) => (
