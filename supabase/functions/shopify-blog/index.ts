@@ -129,17 +129,19 @@ async function fetchShopify(url: string, token: string, query: string, variables
 }
 
 function normalizeArticle(article: Record<string, unknown>) {
+  const author = article.author as { firstName?: string; lastName?: string } | null;
+  const authorName = author ? [author.firstName, author.lastName].filter(Boolean).join(' ') : null;
   return {
     id: article.id,
     title: article.title,
     handle: article.handle,
-    excerpt: article.excerpt || null,
+    excerpt: (article.summary as string) || null,
     contentHtml: article.body || '',
     publishedAt: article.publishedAt,
     tags: article.tags || [],
     image: article.image || null,
-    authorV2: article.author ? { name: (article.author as { name: string }).name } : null,
-    seo: article.seo || null,
+    authorV2: authorName ? { name: authorName } : null,
+    seo: null,
     blog: article.blog || null,
   };
 }
