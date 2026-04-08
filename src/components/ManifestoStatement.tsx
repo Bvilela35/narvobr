@@ -1,6 +1,6 @@
 export function ManifestoStatement() {
   return (
-    <section className="w-full px-3 md:px-6">
+    <section className="w-full px-6 md:px-16">
       <div className="w-full rounded-b-3xl py-10 md:py-14 px-6 md:px-10" style={{ backgroundColor: "#f0f0f0" }}>
         <div className="max-w-[800px] mx-auto text-center">
           <p className="text-[32px] md:text-[48px] font-bold leading-[1.3] text-foreground">
