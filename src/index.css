@@ -158,7 +158,7 @@
 }
 
 .article-body li::marker {
-  @apply text-muted-foreground/50;
+  color: hsl(var(--muted-foreground) / 0.5);
 }
 
 .article-body blockquote {
