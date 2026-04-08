@@ -1,7 +1,9 @@
 import { useParams, Link, Navigate } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useBlogArticle, useBlogArticles } from "@/hooks/useBlog";
+import { Helmet } from "react-helmet-async";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
@@ -49,15 +51,55 @@ export default function Artigo() {
   const tag = article.tags?.[0] || "Journal";
   const readTime = estimateReadTime(article.contentHtml);
   const authorName = article.authorV2?.name || "Narvo";
+  const plainExcerpt = article.excerpt || article.contentHtml.replace(/<[^>]*>/g, "").slice(0, 155);
+  const seoTitle = article.seo?.title || `${article.title} — Narvo Journal`;
+  const seoDescription = article.seo?.description || plainExcerpt;
+  const canonicalUrl = `https://narvobr.lovable.app/journal/${article.handle}`;
 
   // Related articles (exclude current)
   const related = allArticles
     .filter((a) => a.handle !== article.handle)
     .slice(0, 2);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: seoDescription,
+    image: article.image?.url,
+    datePublished: article.publishedAt,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Narvo",
+      url: "https://narvobr.lovable.app",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+  };
+
   return (
     <article className="pb-24 md:pb-32">
-      {/* Header */}
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        {article.image && <meta property="og:image" content={article.image.url} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        {article.image && <meta name="twitter:image" content={article.image.url} />}
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      </Helmet>
       <div className="max-w-3xl mx-auto px-6 pt-12 md:pt-20">
         {/* Back link */}
         <motion.div
