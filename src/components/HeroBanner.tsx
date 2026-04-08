@@ -43,7 +43,7 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
           >
-            <Button asChild className="h-12 px-10 rounded-full text-sm font-medium tracking-wide bg-white text-black hover:bg-white/90">
+            <Button asChild className="h-12 px-10 rounded-full text-sm font-medium tracking-wide bg-white text-black hover:bg-black hover:text-white transition-colors duration-500 ease-in-out border border-transparent hover:border-white/30">
               <Link to="/colecao">
                 Conheça a coleção <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
