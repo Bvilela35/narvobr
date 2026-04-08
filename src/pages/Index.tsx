@@ -10,6 +10,7 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
+import { ManifestoStatement } from "@/components/ManifestoStatement";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useProducts } from "@/hooks/useShopify";
 const fadeUp = {
@@ -102,6 +103,9 @@ export default function Index() {
   return <>
       {/* Hero */}
       <HeroBanner />
+
+      {/* Manifesto Statement */}
+      <ManifestoStatement />
 
       {/* The System: InSight & OutSight */}
       <TheSystemSection />
