@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
                     id
                     title
                     handle
-                    excerpt
+                    summary
                     body
                     publishedAt
                     tags
@@ -49,11 +49,8 @@ Deno.serve(async (req) => {
                       altText
                     }
                     author {
-                      name
-                    }
-                    seo {
-                      title
-                      description
+                      firstName
+                      lastName
                     }
                     blog {
                       handle
