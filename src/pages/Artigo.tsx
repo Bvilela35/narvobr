@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useBlogArticle, useBlogArticles } from "@/hooks/useBlog";
