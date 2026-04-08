@@ -11,7 +11,7 @@ const fadeUp = {
 };
 
 export function BeforeAfter() {
-  const [position, setPosition] = useState(50);
+  const [position, setPosition] = useState(60);
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
