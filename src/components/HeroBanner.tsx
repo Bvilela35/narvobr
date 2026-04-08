@@ -13,8 +13,8 @@ export function HeroBanner() {
   });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
-  return (
-    <section ref={sectionRef} className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden">
+    return (
+    <section ref={sectionRef} className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-3xl">
       <motion.img
         src={heroBanner}
         alt="Setup minimalista com acessórios Narvo"
