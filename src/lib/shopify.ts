@@ -388,11 +388,9 @@ export async function fetchProducts(first = 20, query?: string) {
 }
 
 async function fetchProductByHandleCached(handle: string) {
-  const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shopify-product`);
-  url.searchParams.set('handle', handle);
-  const response = await fetch(url.toString(), {
-    headers: { 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY },
-  });
+  const response = await fetch(
+    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-product?handle=${encodeURIComponent(handle)}`
+  );
   if (!response.ok) throw new Error(`Cache fetch error: ${response.status}`);
   return response.json();
 }
