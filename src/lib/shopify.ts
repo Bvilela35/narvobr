@@ -387,8 +387,18 @@ export async function fetchProducts(first = 20, query?: string) {
   return (data?.data?.products?.edges || []) as ShopifyProduct[];
 }
 
+async function fetchProductByHandleCached(handle: string) {
+  const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shopify-product`);
+  url.searchParams.set('handle', handle);
+  const response = await fetch(url.toString(), {
+    headers: { 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY },
+  });
+  if (!response.ok) throw new Error(`Cache fetch error: ${response.status}`);
+  return response.json();
+}
+
 export async function fetchProductByHandle(handle: string) {
-  const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
+  const data = await fetchProductByHandleCached(handle);
   const product = data?.data?.product;
   if (!product) return null;
 
