@@ -540,7 +540,7 @@ export default function Produto() {
     setShowCepModal(false);
   }
 
-  // Initialize CEP result from global store on first render (moved inline below)
+  
 
   const prevImage = () => {
     userChangedImage.current = true;
