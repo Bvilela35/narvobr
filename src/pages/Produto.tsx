@@ -456,6 +456,27 @@ export default function Produto() {
     };
   }, [product]);
 
+  // Initialize CEP result from global store on first render
+  useEffect(() => {
+    if (!cepInitialized.current && globalCep && globalCep.length === 8) {
+      cepInitialized.current = true;
+      setCep(globalCep);
+      // Inline shipping region calc to avoid dependency on post-return function
+      const prefix = parseInt(globalCep.substring(0, 2), 10);
+      const now = new Date();
+      const fmt = (min: number, max: number) => {
+        const from = new Date(now); from.setDate(from.getDate() + min);
+        const to = new Date(now); to.setDate(to.getDate() + max);
+        const months = ["jan.", "fev.", "mar.", "abr.", "mai.", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+        return from.getMonth() === to.getMonth()
+          ? `${from.getDate()}–${to.getDate()} de ${months[from.getMonth()]}`
+          : `${from.getDate()} de ${months[from.getMonth()]} – ${to.getDate()} de ${months[to.getMonth()]}`;
+      };
+      const isRapido = (prefix >= 1 && prefix <= 39) || (prefix >= 70 && prefix <= 76) || (prefix >= 78 && prefix <= 79) || (prefix >= 80 && prefix <= 99);
+      setCepResult({ type: isRapido ? "Envio Rápido" : "Envio Normal", dateRange: isRapido ? fmt(2, 5) : fmt(4, 12) });
+    }
+  }, [globalCep]);
+
   const related = allProducts.filter((p) => p.node.handle !== handle).slice(0, 4);
 
   // Show skeleton loader instead of spinner — matches final layout to prevent CLS
