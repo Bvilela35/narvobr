@@ -27,7 +27,14 @@ const Carrinho = lazy(() => import("./pages/Carrinho"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 30 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 function AppContent() {
   useCartSync();
