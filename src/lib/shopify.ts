@@ -89,6 +89,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
       'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
     },
     body: JSON.stringify({ query, variables }),
+    keepalive: true,
   });
 
   if (response.status === 402) {
