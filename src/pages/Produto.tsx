@@ -519,14 +519,7 @@ export default function Produto() {
     setShowCepModal(false);
   }
 
-  // Initialize CEP result from global store on first render
-  useEffect(() => {
-    if (!cepInitialized.current && globalCep && globalCep.length === 8) {
-      cepInitialized.current = true;
-      setCep(globalCep);
-      setCepResult(getShippingRegion(globalCep));
-    }
-  }, [globalCep]);
+  // Initialize CEP result from global store on first render (moved inline below)
 
   const prevImage = () => {
     userChangedImage.current = true;
