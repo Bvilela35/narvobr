@@ -21,7 +21,8 @@ export function useProducts(first = 20, query?: string) {
   return useQuery({
     queryKey: shopifyKeys.products(first, query),
     queryFn: () => fetchProducts(first, query),
-    staleTime: 5 * 60 * 1000, // 5 min
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -31,6 +32,7 @@ export function useProductByHandle(handle: string | undefined) {
     queryFn: () => fetchProductByHandle(handle!),
     enabled: !!handle,
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -40,6 +42,7 @@ export function useCollectionByHandle(handle: string | undefined, first = 40) {
     queryFn: () => fetchCollectionByHandle(handle!, first),
     enabled: !!handle,
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -49,6 +52,7 @@ export function useProductRecommendations(productId: string | undefined) {
     queryFn: () => fetchProductRecommendations(productId!),
     enabled: !!productId,
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -61,6 +65,7 @@ export function usePrefetchProduct() {
         queryKey: shopifyKeys.product(handle),
         queryFn: () => fetchProductByHandle(handle),
         staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
       });
     },
     [qc]
@@ -75,6 +80,7 @@ export function usePrefetchCollection() {
         queryKey: shopifyKeys.collection(handle, first),
         queryFn: () => fetchCollectionByHandle(handle, first),
         staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
       });
     },
     [qc]
