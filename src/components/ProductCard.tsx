@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
@@ -26,7 +27,7 @@ interface ProductCardProps {
   disableAnimation?: boolean;
 }
 
-export function ProductCard({ product, disableAnimation }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, disableAnimation }: ProductCardProps) {
   const { title, handle, priceRange, images, options } = product.node;
   const image = images.edges[0]?.node;
   const price = priceRange.minVariantPrice;
@@ -62,8 +63,11 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
               <img
                 src={image.url}
                 alt={image.altText || title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                width={600}
+                height={600}
                 loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
               <div className="absolute inset-0 w-full h-full flex items-center justify-center opacity-20">
@@ -107,4 +111,4 @@ export function ProductCard({ product, disableAnimation }: ProductCardProps) {
       </Link>
     </Wrapper>
   );
-}
+});

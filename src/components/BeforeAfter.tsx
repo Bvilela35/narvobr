@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { useState, useRef, useCallback, useEffect } from "react";
-import beforeDesk from "@/assets/before-desk.jpg";
-import afterDesk from "@/assets/after-desk.jpg";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -53,9 +51,6 @@ export function BeforeAfter() {
     <section className="py-24 px-6 md:px-10 border-t border-border md:py-[29px]">
       <div className="max-w-[1400px] mx-auto">
         <motion.div {...fadeUp} className="mb-16">
-          
-
-
           <p className="md:text-3xl font-semibold text-3xl">
             O poder da organização.{" "}
             <span className="font-light text-muted-foreground">
@@ -77,21 +72,18 @@ export function BeforeAfter() {
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}>
 
-            {/* After (background - full) */}
             <img
-              src={afterDesk}
+              src="/assets/after-desk.jpg"
               alt="Mesa organizada com acessórios Narvo"
               className="absolute inset-0 w-full h-full object-cover"
               draggable={false} />
 
-
-            {/* Before (clipped) */}
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ width: `${position}%` }}>
 
               <img
-                src={beforeDesk}
+                src="/assets/before-desk.jpg"
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ width: `${containerWidth || 9999}px`, maxWidth: "none" }}
@@ -99,13 +91,10 @@ export function BeforeAfter() {
 
             </div>
 
-            {/* Divider line */}
             <div
               className="absolute top-0 bottom-0 w-0.5 bg-background/80 z-10"
               style={{ left: `${position}%`, transform: "translateX(-50%)" }} />
 
-
-            {/* Handle */}
             <div
               className="absolute top-1/2 z-20 w-10 h-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background shadow-lg flex items-center justify-center"
               style={{ left: `${position}%` }}>
@@ -116,7 +105,6 @@ export function BeforeAfter() {
               </svg>
             </div>
 
-            {/* Labels */}
             <span className="absolute top-4 left-4 bg-foreground/80 text-background text-[11px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full font-medium z-10">
               Antes
             </span>

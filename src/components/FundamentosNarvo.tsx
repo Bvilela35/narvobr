@@ -1,28 +1,25 @@
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import garantiaImg from "@/assets/fundamentos-garantia.jpg";
-import financeiroImg from "@/assets/fundamentos-financeiro.jpg";
-import robustezImg from "@/assets/fundamentos-robustez.jpg";
 
 const cards = [
   {
     label: "Garantia",
     headline: "12 Meses de Garantia.",
     body: "Ciclo de vida estendido. Projetado para longevidade estrutural. Cobertura total contra falhas de fabricação.",
-    image: garantiaImg,
+    image: "/assets/fundamentos-garantia.jpg",
   },
   {
     label: "Financeiro",
     headline: "10x Sem Juros.",
     body: "Acesso viabilizado. Investimento fragmentado em dez parcelas fixas. Sem acréscimo, sem ruído financeiro.",
-    image: financeiroImg,
+    image: "/assets/fundamentos-financeiro.jpg",
   },
   {
     label: "Robustez",
     headline: "Construção Industrial.",
     body: "Aço carbono de alta densidade. Pintura eletrostática microtexturizada. Resistência absoluta ao uso contínuo.",
-    image: robustezImg,
+    image: "/assets/fundamentos-robustez.jpg",
   },
 ];
 
