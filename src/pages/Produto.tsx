@@ -94,7 +94,7 @@ function TrustBarRotator({ mobile }: {mobile?: boolean;}) {
 
   return (
     <div className={`pdp__trust-bar${mobile ? ' pdp__trust-bar--mobile' : ''}`}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={idx}
           className="pdp__trust-pair"
@@ -611,7 +611,7 @@ export default function Produto() {
                 
                 {imgs[selectedImage] ? (
                   userChangedImage.current ? (
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="wait" initial={false}>
                       <motion.img
                         key={selectedImage}
                         src={optimizeShopifyImage(imgs[selectedImage].node.url, galleryImageWidth)}
