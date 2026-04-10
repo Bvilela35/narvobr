@@ -873,17 +873,13 @@ export interface ShopifyArticle {
 
 const BLOG_EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shopify-blog`;
 
-export async function fetchBlogArticles(blogHandle = "blog", first = 20): Promise<ShopifyArticle[]> {
-  const url = new URL(BLOG_EDGE_FUNCTION_URL);
-  url.searchParams.set('blog', blogHandle);
-  url.searchParams.set('first', String(first));
-
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error(`Blog fetch error: ${response.status}`);
-  }
+export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
+  const response = await fetch(
+    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-blog?blog=${encodeURIComponent(blogHandle)}&first=${first}`
+  );
+  if (!response.ok) throw new Error(`Blog fetch error: ${response.status}`);
   const data = await response.json();
-  return data.articles || [];
+  return data?.data?.blog?.articles?.edges?.map((e: any) => e.node) ?? [];
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
