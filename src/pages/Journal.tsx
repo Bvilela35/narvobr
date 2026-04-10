@@ -26,12 +26,15 @@ function ArticleCard({ article, index }: { article: ShopifyArticle; index: numbe
         <div className="bg-card-elevated rounded-2xl overflow-hidden h-full flex flex-col">
           {article.image && (
             <div className="aspect-[4/3] overflow-hidden">
-              <img
-                src={article.image.url}
-                alt={article.image.altText || article.title}
-                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                loading="lazy"
-              />
+                <img
+                  src={article.image.url}
+                  alt={article.image.altText || article.title}
+                  width={800}
+                  height={600}
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  loading="lazy"
+                  decoding="async"
+                />
             </div>
           )}
           <div className="p-6 flex flex-col flex-1">
@@ -125,8 +128,11 @@ export default function Journal() {
                     <img
                       src={featured.image.url}
                       alt={featured.image.altText || featured.title}
+                      width={800}
+                      height={600}
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                       loading="eager"
+                      decoding="async"
                     />
                   </div>
                 )}

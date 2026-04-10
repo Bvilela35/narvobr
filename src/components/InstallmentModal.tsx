@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { calcInstallments, getPriceTier } from "@/lib/installments";
 import { X } from "lucide-react";
-import narvoIcon from "@/assets/narvo-icon.svg";
+
 
 interface InstallmentModalProps {
   open: boolean;
@@ -81,7 +81,7 @@ export function InstallmentModal({
             </div>
 
             <img
-              src={narvoIcon}
+              src="/assets/narvo-icon.svg"
               alt="Narvo"
               className="w-[80px] h-[80px] sm:w-[110px] sm:h-[110px] object-contain flex-shrink-0 mt-1"
             />

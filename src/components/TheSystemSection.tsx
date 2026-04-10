@@ -2,9 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { usePrefetchCollection } from "@/hooks/useShopify";
 
-import insightImg from "@/assets/insight-card.jpg";
-import outsightImg from "@/assets/outsight-card.jpg";
-
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
@@ -18,14 +15,14 @@ const cards = [
     copy: "Ferramentas sobre a mesa para organizar o fluxo de trabalho.",
     link: "/colecao/narvo-insight",
     handle: "narvo-insight",
-    image: insightImg
+    image: "/assets/insight-card.jpg"
   },
   {
     title: "OutSight™",
     copy: "Engenharia invisível para eliminar o ruído técnico.",
     link: "/colecao/narvo-outsight",
     handle: "narvo-outsight",
-    image: outsightImg
+    image: "/assets/outsight-card.jpg"
   }
 ];
 

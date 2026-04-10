@@ -66,8 +66,11 @@ export function BlogSection() {
                         <img
                           src={article.image.url}
                           alt={article.image.altText || article.title}
+                          width={800}
+                          height={600}
                           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                           loading="lazy"
+                          decoding="async"
                         />
                       </div>
                     )}

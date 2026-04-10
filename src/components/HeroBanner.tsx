@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBanner from "@/assets/hero-banner.jpg";
 import { useRef } from "react";
 
 export function HeroBanner() {
@@ -16,10 +15,14 @@ export function HeroBanner() {
     return (
     <section ref={sectionRef} className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-t-3xl rounded-b-none">
       <motion.img
-        src={heroBanner}
+        src="/assets/hero-banner.jpg"
         alt="Setup minimalista com acessórios Narvo"
         className="absolute inset-0 w-full h-[120%] object-cover"
         loading="eager"
+        fetchPriority="high"
+        width={1920}
+        height={1080}
+        decoding="async"
         style={{ y }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

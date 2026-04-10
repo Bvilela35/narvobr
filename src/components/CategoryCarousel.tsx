@@ -1,18 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import categorySetup from "@/assets/category-montar-setup.png";
-import categoryInsight from "@/assets/category-insight.png";
-import categoryOutsight from "@/assets/category-outsight.png";
-import categoryAcessorios from "@/assets/category-acessorios.png";
-import categoryDecoracao from "@/assets/category-decoracao.png";
 
 const categories = [
-  { label: "Montar Setup", img: categorySetup, href: "/colecao" },
-  { label: "InSight", img: categoryInsight, href: "/colecao/narvo-insight" },
-  { label: "OutSight", img: categoryOutsight, href: "/colecao/narvo-outsight" },
-  { label: "Acessórios", img: categoryAcessorios, href: "/colecao" },
-  { label: "Decoração", img: categoryDecoracao, href: "/colecao" },
+  { label: "Montar Setup", img: "/assets/category-montar-setup.png", href: "/colecao" },
+  { label: "InSight", img: "/assets/category-insight.png", href: "/colecao/narvo-insight" },
+  { label: "OutSight", img: "/assets/category-outsight.png", href: "/colecao/narvo-outsight" },
+  { label: "Acessórios", img: "/assets/category-acessorios.png", href: "/colecao" },
+  { label: "Decoração", img: "/assets/category-decoracao.png", href: "/colecao" },
 ];
 
 export function CategoryCarousel() {
@@ -46,7 +41,6 @@ export function CategoryCarousel() {
   return (
     <section className="py-8 md:py-12 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto relative">
-        {/* Mobile arrows */}
         {canLeft && (
           <button
             onClick={() => scroll("left")}

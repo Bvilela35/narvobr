@@ -12,7 +12,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Colecao = lazy(() => import("./pages/Colecao"));
 const ColecaoHandle = lazy(() => import("./pages/ColecaoHandle"));
 const Produto = lazy(() => import("./pages/Produto"));
-const ProdutoEssss = lazy(() => import("./pages/ProdutoEssss"));
+
 const ProdutoAdicionado = lazy(() => import("./pages/ProdutoAdicionado"));
 
 const Journal = lazy(() => import("./pages/Journal"));
@@ -46,7 +46,7 @@ function AppContent() {
           <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/colecao" element={<Colecao />} />
           <Route path="/colecao/:handle" element={<ColecaoHandle />} />
-          <Route path="/produto/essss" element={<ProdutoEssss />} />
+          
           
           <Route path="/produto/:handle/adicionado" element={<ProdutoAdicionado />} />
           <Route path="/produto/:handle" element={<Produto />} />
