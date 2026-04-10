@@ -186,6 +186,9 @@ export default function Index() {
       {/* Antes e Depois */}
       <BeforeAfter />
 
+      {/* Gallery + Text Reveal + Carousel */}
+      <GalleryRevealSection />
+
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
 
