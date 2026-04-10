@@ -5,7 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import narvoLogo from "@/assets/narvo-logo.png";
+
 import { MobileMenu } from "./MobileMenu";
 
 const navLinks = [
