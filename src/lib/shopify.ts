@@ -883,14 +883,30 @@ export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promis
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
-  const url = new URL(BLOG_EDGE_FUNCTION_URL);
-  url.searchParams.set('blog', blogHandle);
-  url.searchParams.set('article', articleHandle);
-
-  const response = await fetch(url.toString());
+  const response = await fetch(
+    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-blog?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
+  );
   if (!response.ok) {
     throw new Error(`Blog article fetch error: ${response.status}`);
   }
   const data = await response.json();
-  return data.article || null;
+  const article = data?.data?.blog?.articles?.edges?.find((e: any) => e?.node?.handle === articleHandle)?.node
+    ?? data?.data?.blog?.articles?.edges?.[0]?.node
+    ?? null;
+
+  if (!article) return null;
+
+  return {
+    id: article.id,
+    title: article.title,
+    handle: article.handle,
+    excerpt: article.excerpt || null,
+    contentHtml: article.content || "",
+    publishedAt: article.publishedAt,
+    tags: article.tags || [],
+    image: article.image || null,
+    authorV2: article.author?.name ? { name: article.author.name } : null,
+    seo: null,
+    blog: { handle: blogHandle },
+  };
 }
