@@ -15,41 +15,18 @@ export function ManifestoStatement() {
   });
 
   return (
-    <section ref={containerRef} className="relative" style={{ height: `${(phrases.length + 1) * 100}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
-        {/* Background image with progressive darken */}
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "url(/assets/hero-banner.jpg)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <motion.div
-            className="absolute inset-0 bg-black"
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.3], [0.3, 0.7]) }}
-          />
-        </motion.div>
-
-        {/* Phrases */}
-        <div className="relative z-10 flex flex-col items-center gap-4 md:gap-6 px-6">
-          {phrases.map((phrase, i) => {
-            const start = (i + 0.5) / (phrases.length + 1);
-            const peak = (i + 1) / (phrases.length + 1);
-            const end = (i + 1.5) / (phrases.length + 1);
-
-            return (
-              <PhraseItem
-                key={i}
-                phrase={phrase}
-                scrollYProgress={scrollYProgress}
-                start={start}
-                peak={peak}
-                end={end}
-              />
-            );
-          })}
+    <section ref={containerRef} className="relative bg-background" style={{ height: `${(phrases.length + 1) * 100}vh` }}>
+      <div className="sticky top-0 h-screen flex items-center justify-center">
+        <div className="relative w-full flex items-center justify-center">
+          {phrases.map((phrase, i) => (
+            <PhraseItem
+              key={i}
+              phrase={phrase}
+              index={i}
+              total={phrases.length}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -58,22 +35,64 @@ export function ManifestoStatement() {
 
 interface PhraseItemProps {
   phrase: string;
+  index: number;
+  total: number;
   scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
-  start: number;
-  peak: number;
-  end: number;
 }
 
-function PhraseItem({ phrase, scrollYProgress, start, peak, end }: PhraseItemProps) {
-  const opacity = useTransform(scrollYProgress, [start, peak, end], [0, 1, 1]);
-  const y = useTransform(scrollYProgress, [start, peak], [40, 0]);
-  const blur = useTransform(scrollYProgress, [start, peak], [8, 0]);
-  const filter = useTransform(blur, (v) => `blur(${v}px)`);
+function PhraseItem({ phrase, index, total, scrollYProgress }: PhraseItemProps) {
+  const segmentSize = 1 / (total + 1);
+  const fadeInStart = index * segmentSize;
+  const activeStart = fadeInStart + segmentSize * 0.3;
+  const activeEnd = (index + 1) * segmentSize;
+  const fadeOutEnd = activeEnd + segmentSize * 0.3;
+
+  // Opacity: fade in → fully visible → fade out
+  const opacity = useTransform(
+    scrollYProgress,
+    [fadeInStart, activeStart, activeEnd, Math.min(fadeOutEnd, 1)],
+    [0, 1, 1, index === total - 1 ? 1 : 0]
+  );
+
+  // Scale: slightly smaller → normal → slightly smaller
+  const scale = useTransform(
+    scrollYProgress,
+    [fadeInStart, activeStart, activeEnd, Math.min(fadeOutEnd, 1)],
+    [0.85, 1, 1, index === total - 1 ? 1 : 0.95]
+  );
+
+  // Color transition: light gray italic → dark black bold
+  // We use fontWeight and color interpolation
+  const color = useTransform(
+    scrollYProgress,
+    [fadeInStart, activeStart],
+    ["hsl(0, 0%, 75%)", "hsl(0, 0%, 5%)"]
+  );
+
+  // Font weight via a mapped value
+  const fontWeight = useTransform(
+    scrollYProgress,
+    [fadeInStart, activeStart],
+    [300, 700]
+  );
+
+  // Italic → normal: use skewX as a proxy for italic feel
+  const skewX = useTransform(
+    scrollYProgress,
+    [fadeInStart, activeStart],
+    [-8, 0]
+  );
 
   return (
     <motion.p
-      className="text-[28px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-white text-center leading-[1.15] tracking-tight"
-      style={{ opacity, y, filter }}
+      className="absolute text-[28px] sm:text-[40px] md:text-[56px] lg:text-[72px] text-center leading-[1.1] tracking-tight px-6"
+      style={{
+        opacity,
+        scale,
+        color,
+        fontWeight,
+        skewX,
+      }}
     >
       {phrase}
     </motion.p>
