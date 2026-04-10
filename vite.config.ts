@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: "ES2020",
-    minify: "terser",
+    minify: "esbuild",
     cssCodeSplit: true,
     rollupOptions: {
       output: {
