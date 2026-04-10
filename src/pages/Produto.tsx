@@ -491,7 +491,8 @@ export default function Produto() {
       </div>);
   }
 
-  const { title, description, images, variants, options, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } = product.node;
+  const { title, description, images, variants, options: rawOptions, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } = product.node;
+  const options = rawOptions || [];
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
 
