@@ -6,6 +6,7 @@ export function useBlogArticles(blogHandle = "blog", first = 20) {
     queryKey: ["blog-articles", blogHandle, first],
     queryFn: () => fetchBlogArticles(blogHandle, first),
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 }
 
@@ -15,5 +16,6 @@ export function useBlogArticle(articleHandle: string | undefined, blogHandle = "
     queryFn: () => fetchBlogArticleByHandle(articleHandle!, blogHandle),
     enabled: !!articleHandle,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 }
