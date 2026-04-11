@@ -7,7 +7,6 @@ import { HeroBanner } from "@/components/HeroBanner";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
-import { GalleryRevealSection } from "@/components/GalleryRevealSection";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
@@ -185,9 +184,6 @@ export default function Index() {
 
       {/* Antes e Depois */}
       <BeforeAfter />
-
-      {/* Gallery + Text Reveal + Carousel */}
-      <GalleryRevealSection />
 
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
