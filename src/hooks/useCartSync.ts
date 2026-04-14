@@ -24,14 +24,14 @@ export function useCartSync() {
       };
     }
 
-    const timeoutId = window.setTimeout(runSync, 300);
+    const timeoutId = globalThis.setTimeout(runSync, 300);
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') runSync();
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       cancelled = true;
-      window.clearTimeout(timeoutId);
+      globalThis.clearTimeout(timeoutId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [syncCart]);
