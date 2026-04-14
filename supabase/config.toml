@@ -15,5 +15,8 @@ verify_jwt = false
 [functions.shopify-blog]
 verify_jwt = false
 
+[functions.shopify-journal]
+verify_jwt = false
+
 [functions.shopify-lead-capture]
 verify_jwt = false

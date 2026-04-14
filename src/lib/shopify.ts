@@ -974,28 +974,61 @@ export interface ShopifyArticle {
   blog: { handle: string } | null;
 }
 
-const BLOG_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-blog`;
+const BLOG_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-journal`;
+
+async function fetchJournalSnapshot(): Promise<ShopifyArticle[]> {
+  try {
+    const response = await fetch("/journal.json");
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.articles) ? data.articles : [];
+  } catch {
+    return [];
+  }
+}
 
 export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
-  const response = await fetch(
-    `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&first=${first}`
-  );
-  if (!response.ok) throw new Error(`Blog fetch error: ${response.status}`);
-  const data = await response.json();
-  return data?.data?.blog?.articles?.edges?.map((e: any) => e.node) ?? [];
+  try {
+    const response = await fetch(
+      `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&first=${first}`
+    );
+    if (response.ok) {
+      const data = await response.json();
+      const articles = data?.articles ?? data?.data?.blog?.articles?.edges?.map((e: any) => e.node) ?? [];
+      if (Array.isArray(articles) && articles.length > 0) {
+        return articles;
+      }
+    }
+  } catch {
+    // Falls back to static snapshot below.
+  }
+
+  const snapshot = await fetchJournalSnapshot();
+  return snapshot.slice(0, first);
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
-  const response = await fetch(
-    `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
-  );
-  if (!response.ok) {
-    throw new Error(`Blog article fetch error: ${response.status}`);
+  let article: any = null;
+  try {
+    const response = await fetch(
+      `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
+    );
+    if (response.ok) {
+      const data = await response.json();
+      article = data?.article
+        ?? data?.articles?.find((e: any) => e?.handle === articleHandle)
+        ?? data?.data?.blog?.articles?.edges?.find((e: any) => e?.node?.handle === articleHandle)?.node
+        ?? data?.data?.blog?.articles?.edges?.[0]?.node
+        ?? null;
+    }
+  } catch {
+    // Falls back to static snapshot below.
   }
-  const data = await response.json();
-  const article = data?.data?.blog?.articles?.edges?.find((e: any) => e?.node?.handle === articleHandle)?.node
-    ?? data?.data?.blog?.articles?.edges?.[0]?.node
-    ?? null;
+
+  if (!article) {
+    const snapshot = await fetchJournalSnapshot();
+    article = snapshot.find((item) => item.handle === articleHandle) ?? null;
+  }
 
   if (!article) return null;
 
