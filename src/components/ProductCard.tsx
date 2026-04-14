@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShopifyProduct } from "@/lib/shopify";
+import { optimizeShopifyImage, ShopifyProduct } from "@/lib/shopify";
 import { usePrefetchProduct } from "@/hooks/useShopify";
 import { calcInstallments } from "@/lib/installments";
 
@@ -61,7 +61,7 @@ export const ProductCard = memo(function ProductCard({ product, disableAnimation
           <div className="relative w-full pt-[100%] overflow-hidden rounded-t-2xl bg-card-elevated">
             {image ? (
               <img
-                src={image.url}
+                src={optimizeShopifyImage(image.url, 600)}
                 alt={image.altText || title}
                 width={600}
                 height={600}

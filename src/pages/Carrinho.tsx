@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Tru
 import { Button } from "@/components/ui/button";
 import { formatInstallmentText } from "@/lib/installments";
 import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
+import { optimizeShopifyImage } from "@/lib/shopify";
 
 const FREE_SHIPPING_THRESHOLD = 399;
 const GIFT_THRESHOLD = 699;
@@ -155,7 +156,7 @@ export default function Carrinho() {
               >
                 {item.product.node.images?.edges?.[0]?.node && (
                   <img
-                    src={item.product.node.images.edges[0].node.url}
+                    src={optimizeShopifyImage(item.product.node.images.edges[0].node.url, 192)}
                     alt={item.product.node.title}
                     className="w-full h-full object-cover"
                   />

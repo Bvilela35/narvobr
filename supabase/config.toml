@@ -1,4 +1,19 @@
-project_id = "swkzreayulbvahthaxsk"
+project_id = "uttnlfgoxwgzogtsskbk"
 
 [functions.judgeme-health]
+verify_jwt = false
+
+[functions.shopify-product]
+verify_jwt = false
+
+[functions.shopify-collection]
+verify_jwt = false
+
+[functions.shopify-products]
+verify_jwt = false
+
+[functions.shopify-blog]
+verify_jwt = false
+
+[functions.shopify-lead-capture]
 verify_jwt = false

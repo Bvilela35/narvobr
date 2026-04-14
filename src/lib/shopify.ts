@@ -4,6 +4,10 @@ const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'efxqrr-1y.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9645130db6cf2b0f59c6feeb3f76f3b9';
+const SUPABASE_FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const PRODUCT_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-product`;
+const COLLECTION_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-collection`;
+const PRODUCTS_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-products`;
 
 export interface ShopifyVideoSource {
   url: string;
@@ -15,6 +19,14 @@ export interface ShopifyVideo {
   alt: string | null;
   sources: ShopifyVideoSource[];
   previewImage?: { url: string } | null;
+}
+
+export function optimizeShopifyImage(url: string | undefined, width = 800): string {
+  if (!url) return "";
+  if (!url.includes("cdn.shopify.com")) return url;
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}width=${width}`;
 }
 
 export interface ShopifyProduct {
@@ -109,6 +121,159 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   }
 
   return data;
+}
+
+async function fetchEdgeJson(url: string) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
+function isProductEdgeList(value: unknown): value is ShopifyProduct[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null && "node" in item);
+}
+
+function normalizeCollectionResponse(collection: any) {
+  if (!collection) return null;
+
+  const products = collection.products?.edges;
+  if (!Array.isArray(products)) return null;
+
+  return {
+    title: collection.title as string,
+    description: collection.description as string,
+    products: products as ShopifyProduct[],
+  };
+}
+
+function normalizeProductResponse(product: any): ShopifyProduct | null {
+  if (!product) return null;
+
+  // Parse video stories metafield
+  const videoEdges = product.videoStoriesMeta?.references?.edges || [];
+  const videoStories: ShopifyVideo[] = videoEdges
+    .map((e: { node: ShopifyVideo }) => e.node)
+    .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
+
+  // Parse bullet points metafield (JSON list of strings)
+  let bulletPoints: string[] = [];
+  try {
+    if (product.bulletPointsMeta?.value) {
+      bulletPoints = JSON.parse(product.bulletPointsMeta.value);
+    }
+  } catch { /* ignore parse errors */ }
+
+  // Parse description metafields
+  const tituloDescricao = product.tituloDescricaoMeta?.value || undefined;
+  const descricaoCompleta = product.descricaoCompletaMeta?.value || undefined;
+
+  // Parse foto/video description metafield
+  let fotoDescricao: ShopifyProduct['node']['fotoDescricao'] = null;
+  const fotoRef = product.fotoDescricaoMeta?.reference;
+  if (fotoRef?.image) {
+    fotoDescricao = { type: 'image', url: fotoRef.image.url, altText: fotoRef.image.altText };
+  } else if (fotoRef?.sources) {
+    fotoDescricao = { type: 'video', sources: fotoRef.sources, previewImage: fotoRef.previewImage?.url };
+  }
+
+  // Parse spec metafields
+  const specMateriais = product.specMateriaisMeta?.value || undefined;
+  const specTamanho = product.specTamanhoMeta?.value || undefined;
+  const specOQueAcompanha = product.specOQueAcompanhaMeta?.value || undefined;
+  const specDetalhes = product.specDetalhesMeta?.value || undefined;
+  let specFoto: ShopifyProduct['node']['specFoto'] = null;
+  if (product.specFotoMeta?.reference?.image) {
+    specFoto = { url: product.specFotoMeta.reference.image.url, altText: product.specFotoMeta.reference.image.altText };
+  }
+
+  // Parse FAQ metafield
+  let faq: Array<{ pergunta: string; resposta?: string }> = [];
+  try {
+    if (product.faqMeta?.value) {
+      const parsed = JSON.parse(product.faqMeta.value);
+      if (Array.isArray(parsed)) {
+        faq = parsed.filter((item: any) => item?.pergunta);
+      }
+    }
+  } catch { /* ignore parse errors */ }
+
+  // Parse highlights metafield (list of metaobject references)
+  const highlightEdges = product.highlightsMeta?.references?.edges || [];
+  const highlights = highlightEdges
+    .map((edge: any) => {
+      const node = edge.node;
+      const titulo = node.titulo?.value || '';
+      let descricao = '';
+      try {
+        const raw = node.descricao?.value || '';
+        const parsed = JSON.parse(raw);
+        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
+          descricao = parsed.children
+            .map((block: any) => {
+              if (block.type === 'paragraph' && Array.isArray(block.children)) {
+                return block.children.map((c: any) => c.value || '').join('');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('\n');
+        }
+      } catch {
+        descricao = node.descricao?.value || '';
+      }
+      const mediaRef = node.foto_video?.reference;
+      let midiaUrl = '';
+      let tipoMidia: 'image' | 'video' = 'image';
+      let videoSources: ShopifyVideoSource[] | undefined;
+      if (mediaRef?.image) {
+        midiaUrl = mediaRef.image.url;
+        tipoMidia = 'image';
+      } else if (mediaRef?.sources) {
+        midiaUrl = mediaRef.previewImage?.url || '';
+        tipoMidia = 'video';
+        videoSources = mediaRef.sources;
+      }
+      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
+    })
+    .filter((h: { titulo: string }) => h.titulo);
+
+  const {
+    videoStoriesMeta,
+    bulletPointsMeta,
+    tituloDescricaoMeta,
+    descricaoCompletaMeta,
+    fotoDescricaoMeta,
+    specMateriaisMeta,
+    specTamanhoMeta,
+    specOQueAcompanhaMeta,
+    specDetalhesMeta,
+    specFotoMeta,
+    faqMeta,
+    highlightsMeta,
+    ...cleanProduct
+  } = product;
+
+  return {
+    node: {
+      ...cleanProduct,
+      videoStories,
+      bulletPoints,
+      tituloDescricao,
+      descricaoCompleta,
+      fotoDescricao,
+      specMateriais,
+      specTamanho,
+      specOQueAcompanha,
+      specDetalhes,
+      specFoto,
+      faq,
+      highlights,
+    },
+  } as ShopifyProduct;
 }
 
 const PRODUCTS_QUERY = `
@@ -383,127 +548,61 @@ const COLLECTION_BY_HANDLE_QUERY = `
 `;
 
 export async function fetchProducts(first = 20, query?: string) {
+  const edgeParams = new URLSearchParams({ first: String(first) });
+  if (query) edgeParams.set("query", query);
+
+  const edgeData = await fetchEdgeJson(`${PRODUCTS_EDGE_FUNCTION_URL}?${edgeParams.toString()}`);
+  const edgeProducts =
+    edgeData?.data?.products?.edges ??
+    edgeData?.products?.edges ??
+    edgeData?.products ??
+    edgeData?.data?.products;
+
+  if (isProductEdgeList(edgeProducts)) {
+    return edgeProducts;
+  }
+
   const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
   return (data?.data?.products?.edges || []) as ShopifyProduct[];
 }
 
 async function fetchProductByHandleCached(handle: string) {
   const response = await fetch(
-    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-product?handle=${encodeURIComponent(handle)}`
+    `${PRODUCT_EDGE_FUNCTION_URL}?handle=${encodeURIComponent(handle)}`
   );
   if (!response.ok) throw new Error(`Cache fetch error: ${response.status}`);
   return response.json();
 }
 
+async function fetchProductByHandleDirect(handle: string) {
+  const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
+  return data?.data?.product ?? null;
+}
+
 export async function fetchProductByHandle(handle: string) {
-  const data = await fetchProductByHandleCached(handle);
-  const product = data?.data?.product;
-  if (!product) return null;
-
-  // Parse video stories metafield
-  const videoEdges = product.videoStoriesMeta?.references?.edges || [];
-  const videoStories: ShopifyVideo[] = videoEdges
-    .map((e: { node: ShopifyVideo }) => e.node)
-    .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
-
-  // Parse bullet points metafield (JSON list of strings)
-  let bulletPoints: string[] = [];
   try {
-    if (product.bulletPointsMeta?.value) {
-      bulletPoints = JSON.parse(product.bulletPointsMeta.value);
-    }
-  } catch { /* ignore parse errors */ }
-
-  // Parse description metafields
-  const tituloDescricao = product.tituloDescricaoMeta?.value || undefined;
-  const descricaoCompleta = product.descricaoCompletaMeta?.value || undefined;
-
-  // Parse foto/video description metafield
-  let fotoDescricao: ShopifyProduct['node']['fotoDescricao'] = null;
-  const fotoRef = product.fotoDescricaoMeta?.reference;
-  if (fotoRef?.image) {
-    fotoDescricao = { type: 'image', url: fotoRef.image.url, altText: fotoRef.image.altText };
-  } else if (fotoRef?.sources) {
-    fotoDescricao = { type: 'video', sources: fotoRef.sources, previewImage: fotoRef.previewImage?.url };
+    const data = await fetchProductByHandleCached(handle);
+    const normalized = normalizeProductResponse(data?.data?.product);
+    if (normalized) return normalized;
+  } catch {
+    // Falls back to direct Shopify fetch below.
   }
 
-  // Parse spec metafields
-  const specMateriais = product.specMateriaisMeta?.value || undefined;
-  const specTamanho = product.specTamanhoMeta?.value || undefined;
-  const specOQueAcompanha = product.specOQueAcompanhaMeta?.value || undefined;
-  const specDetalhes = product.specDetalhesMeta?.value || undefined;
-  let specFoto: ShopifyProduct['node']['specFoto'] = null;
-  if (product.specFotoMeta?.reference?.image) {
-    specFoto = { url: product.specFotoMeta.reference.image.url, altText: product.specFotoMeta.reference.image.altText };
-  }
-
-  // Parse FAQ metafield
-  let faq: Array<{ pergunta: string; resposta?: string }> = [];
-  try {
-    if (product.faqMeta?.value) {
-      const parsed = JSON.parse(product.faqMeta.value);
-      if (Array.isArray(parsed)) {
-        faq = parsed.filter((item: any) => item?.pergunta);
-      }
-    }
-  } catch { /* ignore parse errors */ }
-
-  // Parse highlights metafield (list of metaobject references)
-  const highlightEdges = product.highlightsMeta?.references?.edges || [];
-  const highlights = highlightEdges
-    .map((edge: any) => {
-      const node = edge.node;
-      const titulo = node.titulo?.value || '';
-      // descricao may be rich text JSON — extract plain text
-      let descricao = '';
-      try {
-        const raw = node.descricao?.value || '';
-        const parsed = JSON.parse(raw);
-        if (parsed?.type === 'root' && Array.isArray(parsed.children)) {
-          descricao = parsed.children
-            .map((block: any) => {
-              if (block.type === 'paragraph' && Array.isArray(block.children)) {
-                return block.children.map((c: any) => c.value || '').join('');
-              }
-              return '';
-            })
-            .filter(Boolean)
-            .join('\n');
-        }
-      } catch {
-        descricao = node.descricao?.value || '';
-      }
-      const mediaRef = node.foto_video?.reference;
-      let midiaUrl = '';
-      let tipoMidia: 'image' | 'video' = 'image';
-      let videoSources: ShopifyVideoSource[] | undefined;
-      if (mediaRef?.image) {
-        midiaUrl = mediaRef.image.url;
-        tipoMidia = 'image';
-      } else if (mediaRef?.sources) {
-        midiaUrl = mediaRef.previewImage?.url || '';
-        tipoMidia = 'video';
-        videoSources = mediaRef.sources;
-      }
-      return { titulo, descricao, midiaUrl, tipoMidia, videoSources };
-    })
-    .filter((h: { titulo: string }) => h.titulo);
-
-  // Clean up metafield keys from product object
-  const { videoStoriesMeta, bulletPointsMeta, tituloDescricaoMeta, descricaoCompletaMeta, fotoDescricaoMeta, specMateriaisMeta, specTamanhoMeta, specOQueAcompanhaMeta, specDetalhesMeta, specFotoMeta, faqMeta, highlightsMeta, ...cleanProduct } = product;
-
-  return { node: { ...cleanProduct, videoStories, bulletPoints, tituloDescricao, descricaoCompleta, fotoDescricao, specMateriais, specTamanho, specOQueAcompanha, specDetalhes, specFoto, faq, highlights } } as ShopifyProduct;
+  const product = await fetchProductByHandleDirect(handle);
+  return normalizeProductResponse(product);
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
+  const edgeData = await fetchEdgeJson(
+    `${COLLECTION_EDGE_FUNCTION_URL}?handle=${encodeURIComponent(handle)}&first=${first}`
+  );
+  const edgeCollection = normalizeCollectionResponse(
+    edgeData?.data?.collection ?? edgeData?.collection
+  );
+  if (edgeCollection) return edgeCollection;
+
   const data = await storefrontApiRequest(COLLECTION_BY_HANDLE_QUERY, { handle, first });
-  const collection = data?.data?.collection;
-  if (!collection) return null;
-  return {
-    title: collection.title as string,
-    description: collection.description as string,
-    products: (collection.products.edges || []) as ShopifyProduct[],
-  };
+  return normalizeCollectionResponse(data?.data?.collection);
 }
 
 const PRODUCT_RECOMMENDATIONS_QUERY = `
@@ -871,11 +970,11 @@ export interface ShopifyArticle {
   blog: { handle: string } | null;
 }
 
-const BLOG_EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shopify-blog`;
+const BLOG_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-blog`;
 
 export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
   const response = await fetch(
-    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-blog?blog=${encodeURIComponent(blogHandle)}&first=${first}`
+    `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&first=${first}`
   );
   if (!response.ok) throw new Error(`Blog fetch error: ${response.status}`);
   const data = await response.json();
@@ -884,7 +983,7 @@ export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promis
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
   const response = await fetch(
-    `https://uttnlfgoxwgzogtsskbk.supabase.co/functions/v1/shopify-blog?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
+    `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
   );
   if (!response.ok) {
     throw new Error(`Blog article fetch error: ${response.status}`);

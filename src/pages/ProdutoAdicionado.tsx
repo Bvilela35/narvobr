@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ShoppingCart, Loader2 } from "lucide-react";
-import { fetchProductRecommendations } from "@/lib/shopify";
+import { fetchProductRecommendations, optimizeShopifyImage } from "@/lib/shopify";
 import { shopifyKeys, useProductByHandle } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -30,7 +30,7 @@ export default function ProdutoAdicionado() {
     }
   }, [isLoading, productId, recommendations, navigate, handle]);
 
-  const productImage = product?.node?.images?.edges?.[0]?.node?.url;
+  const productImage = optimizeShopifyImage(product?.node?.images?.edges?.[0]?.node?.url, 96);
   const productTitle = product?.node?.title;
 
   if (isLoading || !productId) {

@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowRight, Tag, ChevronDow
 import { useCartStore } from "@/stores/cartStore";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatInstallmentText } from "@/lib/installments";
+import { optimizeShopifyImage } from "@/lib/shopify";
 
 const EMPTY_CART_SUGGESTIONS = [
   { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
@@ -115,7 +116,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                     >
                       {item.product.node.images?.edges?.[0]?.node && (
                         <img
-                          src={item.product.node.images.edges[0].node.url}
+                          src={optimizeShopifyImage(item.product.node.images.edges[0].node.url, 192)}
                           alt={item.product.node.title}
                           className="w-full h-full object-cover"
                         />
