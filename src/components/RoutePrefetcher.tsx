@@ -33,12 +33,6 @@ export function RoutePrefetcher() {
         queryFn: () => fetchProductByHandle(handle),
         staleTime: 5 * 60 * 1000,
       });
-      // Also prefetch related products list (used for "Compatível com")
-      queryClient.prefetchQuery({
-        queryKey: shopifyKeys.products(4, undefined),
-        queryFn: () => fetchProducts(4),
-        staleTime: 5 * 60 * 1000,
-      });
       return;
     }
 

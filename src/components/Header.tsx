@@ -94,7 +94,14 @@ export function Header({ onCartOpen }: HeaderProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 md:px-10 h-16">
           <Link to="/" className="flex items-center">
-            <img alt="NARVO" className="h-28 object-cover" src="/lovable-uploads/7d9ccf03-8171-466d-9771-2d6306af8551.png" />
+            <img
+              alt="NARVO"
+              src="/optimized/narvo-logo-224.png"
+              width={112}
+              height={112}
+              className="h-28 w-28 object-cover"
+              fetchPriority="high"
+            />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">

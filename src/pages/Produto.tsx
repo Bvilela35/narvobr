@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus, RefreshCw, Star, Sparkles, MapPin } from "lucide-react";
-import { useProductByHandle, useProducts } from "@/hooks/useShopify";
+import { shopifyKeys, useProductByHandle } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { useCepStore } from "@/stores/cepStore";
 import { ProductCard } from "@/components/ProductCard";
@@ -12,6 +13,7 @@ import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { InstallmentModal } from "@/components/InstallmentModal";
 import ProductHighlights from "@/components/ProductHighlights";
+import { fetchProducts } from "@/lib/shopify";
 import "./Produto.css";
 
 // Lazy load below-fold components
@@ -213,7 +215,7 @@ export default function Produto() {
   const location = useLocation();
   const { handle } = useParams<{handle: string;}>();
   const { data: product, isLoading: loadingProduct } = useProductByHandle(handle);
-  const { data: allProducts = [] } = useProducts(4);
+  const [loadRelatedProducts, setLoadRelatedProducts] = useState(false);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const globalCep = useCepStore((s) => s.cep);
@@ -249,10 +251,41 @@ export default function Produto() {
   const defaultDescription = "Acessórios premium para seu setup. Projetados para quem exige silêncio visual e máxima performance.";
   const defaultOgImage = "/images/og-narvo.jpg";
 
+  const { data: allProducts = [] } = useQuery({
+    queryKey: shopifyKeys.products(4, undefined),
+    queryFn: () => fetchProducts(4),
+    enabled: loadRelatedProducts,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+
   useEffect(() => {
     setSelectedImage(0);
     setSelectedVariantIdx(0);
     userChangedImage.current = false;
+  }, [handle]);
+
+  useEffect(() => {
+    setLoadRelatedProducts(false);
+    if (typeof window === "undefined") return;
+
+    const startLoading = () => setLoadRelatedProducts(true);
+
+    if ("requestIdleCallback" in window) {
+      const idleId = (window as Window & {
+        requestIdleCallback: (callback: () => void, options?: { timeout: number }) => number;
+        cancelIdleCallback: (id: number) => void;
+      }).requestIdleCallback(startLoading, { timeout: 2000 });
+
+      return () => {
+        (window as Window & {
+          cancelIdleCallback: (id: number) => void;
+        }).cancelIdleCallback(idleId);
+      };
+    }
+
+    const timeoutId = window.setTimeout(startLoading, 1500);
+    return () => window.clearTimeout(timeoutId);
   }, [handle]);
 
   // Preload LCP image as soon as product data arrives
