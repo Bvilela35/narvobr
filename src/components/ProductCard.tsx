@@ -30,7 +30,7 @@ interface ProductCardProps {
 export const ProductCard = memo(function ProductCard({ product, disableAnimation }: ProductCardProps) {
   const { title, handle, priceRange, images, options } = product.node;
   const image = images.edges[0]?.node;
-  const price = priceRange.minVariantPrice;
+  const price = priceRange?.minVariantPrice ?? { amount: "0", currencyCode: "BRL" };
   const prefetchProduct = usePrefetchProduct();
 
   const colorOption = options?.find(
