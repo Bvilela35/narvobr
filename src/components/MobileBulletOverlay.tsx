@@ -50,8 +50,11 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
 
   if (!isSmallScreen || len === 0) return null;
 
-  const hasLongBullet = bulletPoints.some(bp => bp.length > 40);
-  const showCount = hasLongBullet ? 1 : 2;
+  // Check if any consecutive pair exceeds 40 chars combined
+  const hasPairTooLong = bulletPoints.some((bp, i) =>
+    (bp.length + bulletPoints[(i + 1) % len].length) > 40
+  );
+  const showCount = hasPairTooLong ? 1 : 2;
 
   if (len <= showCount) {
     return (
