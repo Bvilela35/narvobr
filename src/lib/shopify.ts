@@ -1037,7 +1037,7 @@ export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle
     title: article.title,
     handle: article.handle,
     excerpt: article.excerpt || null,
-    contentHtml: article.content || "",
+    contentHtml: article.contentHtml || article.content || "",
     publishedAt: article.publishedAt,
     tags: article.tags || [],
     image: article.image || null,
