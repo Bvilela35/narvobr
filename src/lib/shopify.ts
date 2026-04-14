@@ -125,7 +125,11 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
 
 async function fetchEdgeJson(url: string) {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      },
+    });
     if (!response.ok) return null;
     return response.json();
   } catch {
