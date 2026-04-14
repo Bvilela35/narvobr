@@ -813,6 +813,7 @@ export default function Produto() {
                             cinza: '#9e9e9e',
                             'cinza claro': '#c0c0c0',
                             grafite: '#4a4a4a',
+                            chumbo: '#3d3d3d',
                             prata: '#c0c0c0',
                             natural: '#d4c5a9',
                             caramelo: '#8B5E3C',
