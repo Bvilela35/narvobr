@@ -1,7 +1,10 @@
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { ProductCard } from "@/components/ProductCard";
 import { useCollectionByHandle } from "@/hooks/useShopify";
+
+const SITE_URL = "https://narvobr.lovable.app";
 
 export default function ColecaoHandle() {
   const { handle } = useParams<{ handle: string }>();
@@ -10,10 +13,26 @@ export default function ColecaoHandle() {
   const title = collection?.title || "Coleção";
   const description = collection?.description || "Peças do sistema Narvo.";
   const products = collection?.products || [];
+  const seoTitle = `${title} | Narvo`;
+  const seoDescription = `${description} Explore a colecao ${title} da Narvo com foco em funcionalidade, ergonomia e acabamento premium.`.slice(0, 160);
+  const canonicalUrl = `${SITE_URL}/colecao/${handle}`;
 
   return (
-    <section className="py-16 md:py-24 px-6 md:px-10">
-      <div className="max-w-[1400px] mx-auto">
+    <>
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+      </Helmet>
+      <section className="py-16 md:py-24 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -51,7 +70,8 @@ export default function ColecaoHandle() {
             ))}
           </div>
         )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

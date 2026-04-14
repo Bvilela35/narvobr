@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useCartStore } from "@/stores/cartStore";
 import { useCepStore } from "@/stores/cepStore";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
@@ -76,18 +77,31 @@ export default function Carrinho() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center px-6">
-        <h1 className="text-3xl font-bold mb-3">Seu carrinho está vazio.</h1>
-        <p className="text-muted-foreground mb-8">Explore nossos produtos e encontre o que precisa.</p>
-        <Button asChild variant="outline" className="rounded-2xl h-12 px-8">
-          <Link to="/colecao">Ver coleções</Link>
-        </Button>
-      </div>
+      <>
+        <Helmet>
+          <title>Carrinho | Narvo</title>
+          <meta name="robots" content="noindex,nofollow" />
+          <link rel="canonical" href="https://narvobr.lovable.app/carrinho" />
+        </Helmet>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center px-6">
+          <h1 className="text-3xl font-bold mb-3">Seu carrinho está vazio.</h1>
+          <p className="text-muted-foreground mb-8">Explore nossos produtos e encontre o que precisa.</p>
+          <Button asChild variant="outline" className="rounded-2xl h-12 px-8">
+            <Link to="/colecao">Ver coleções</Link>
+          </Button>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
+    <>
+      <Helmet>
+        <title>Carrinho | Narvo</title>
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://narvobr.lovable.app/carrinho" />
+      </Helmet>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
       {/* Back */}
       <button
         onClick={() => navigate(-1)}
@@ -387,6 +401,7 @@ export default function Carrinho() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

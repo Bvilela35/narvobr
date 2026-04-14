@@ -1,14 +1,33 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { ProductCard } from "@/components/ProductCard";
 import { FundamentosNarvo } from "@/components/FundamentosNarvo";
 import { useProducts } from "@/hooks/useShopify";
 
+const SITE_URL = "https://narvobr.lovable.app";
+
 export default function Colecao() {
   const { data: products = [], isLoading: loading } = useProducts(20);
+  const title = "Colecao Narvo: acessorios premium para setup e home office";
+  const description = "Explore a colecao completa da Narvo com acessorios premium para organizacao, ergonomia e setups intencionais.";
+  const canonicalUrl = `${SITE_URL}/colecao`;
 
   return (
-    <section className="py-16 md:py-24 px-6 md:px-10">
-      <div className="max-w-[1400px] mx-auto">
+    <>
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+      </Helmet>
+      <section className="py-16 md:py-24 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,9 +62,10 @@ export default function Colecao() {
             ))}
           </div>
         )}
-      </div>
+        </div>
 
-      <FundamentosNarvo />
-    </section>
+        <FundamentosNarvo />
+      </section>
+    </>
   );
 }

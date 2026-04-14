@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useBlogArticles } from "@/hooks/useBlog";
 import type { ShopifyArticle } from "@/lib/shopify";
+
+const SITE_URL = "https://narvobr.lovable.app";
+
+function stripHtml(html: string) {
+  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
@@ -56,32 +63,66 @@ function ArticleCard({ article, index }: { article: ShopifyArticle; index: numbe
 
 export default function Journal() {
   const { data: articles = [], isLoading } = useBlogArticles("blog", 20);
+  const canonicalUrl = `${SITE_URL}/journal`;
+  const featuredArticle = articles[0];
+  const description = featuredArticle?.excerpt
+    ? stripHtml(featuredArticle.excerpt).slice(0, 160)
+    : "Artigos sobre ergonomia, produtividade, organizacao e clareza no ambiente de trabalho.";
+  const title = "Journal Narvo: ergonomia, foco e setups intencionais";
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-24 px-6 md:px-10">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 w-48 bg-muted rounded" />
-            <div className="h-64 bg-muted rounded-2xl" />
-            <div className="grid md:grid-cols-2 gap-6">
+      <>
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <link rel="canonical" href={canonicalUrl} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta property="og:url" content={canonicalUrl} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+        </Helmet>
+        <section className="py-16 md:py-24 px-6 md:px-10">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="animate-pulse space-y-6">
+              <div className="h-8 w-48 bg-muted rounded" />
               <div className="h-64 bg-muted rounded-2xl" />
-              <div className="h-64 bg-muted rounded-2xl" />
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="h-64 bg-muted rounded-2xl" />
+                <div className="h-64 bg-muted rounded-2xl" />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </>
     );
   }
 
   if (articles.length === 0) {
     return (
-      <section className="py-16 md:py-24 px-6 md:px-10">
-        <div className="max-w-[1400px] mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-semibold mb-4">Journal.</h1>
-          <p className="text-muted-foreground">Nenhum artigo publicado ainda.</p>
-        </div>
-      </section>
+      <>
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <link rel="canonical" href={canonicalUrl} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta property="og:url" content={canonicalUrl} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+        </Helmet>
+        <section className="py-16 md:py-24 px-6 md:px-10">
+          <div className="max-w-[1400px] mx-auto text-center">
+            <h1 className="text-3xl md:text-4xl font-semibold mb-4">Journal.</h1>
+            <p className="text-muted-foreground">Nenhum artigo publicado ainda.</p>
+          </div>
+        </section>
+      </>
     );
   }
 
@@ -97,8 +138,23 @@ export default function Journal() {
   }
 
   return (
-    <section className="py-16 md:py-24 px-6 md:px-10">
-      <div className="max-w-[1400px] mx-auto">
+    <>
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalUrl} />
+        {featured.image && <meta property="og:image" content={featured.image.url} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        {featured.image && <meta name="twitter:image" content={featured.image.url} />}
+      </Helmet>
+      <section className="py-16 md:py-24 px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -180,7 +236,8 @@ export default function Journal() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

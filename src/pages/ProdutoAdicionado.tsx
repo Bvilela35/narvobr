@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 import { Check, ShoppingCart, Loader2 } from "lucide-react";
 import { fetchProductRecommendations, optimizeShopifyImage } from "@/lib/shopify";
 import { shopifyKeys, useProductByHandle } from "@/hooks/useShopify";
@@ -35,16 +36,29 @@ export default function ProdutoAdicionado() {
 
   if (isLoading || !productId) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin opacity-30" />
-      </div>
+      <>
+        <Helmet>
+          <title>Produto adicionado | Narvo</title>
+          <meta name="robots" content="noindex,nofollow" />
+          <link rel="canonical" href={`https://narvobr.lovable.app/produto/${handle}`} />
+        </Helmet>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <Loader2 className="h-5 w-5 animate-spin opacity-30" />
+        </div>
+      </>
     );
   }
 
   if (recommendations.length === 0) return null;
 
   return (
-    <section className="added-page">
+    <>
+      <Helmet>
+        <title>Produto adicionado | Narvo</title>
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href={`https://narvobr.lovable.app/produto/${handle}`} />
+      </Helmet>
+      <section className="added-page">
       <style>{`
         .added-page {
           --added-font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -178,6 +192,7 @@ export default function ProdutoAdicionado() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+    </>
   );
 }
