@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Layers, Target, Zap, ChevronLeft, ChevronRight } from "lucide-react";
@@ -102,6 +103,9 @@ function ProductCarousel({
 export default function Index() {
   const { data: products = [], isLoading: loading } = useProducts(8);
   return <>
+      <Helmet>
+        <link rel="preload" as="image" href="/assets/hero-banner.jpg" fetchPriority="high" />
+      </Helmet>
       {/* Hero */}
       <HeroBanner />
 

@@ -573,9 +573,11 @@ export default function Produto() {
     ? installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
     : installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Get optimized image URL for mobile (800px) and desktop (1200px)
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  const galleryImageWidth = isMobile ? 800 : 1200;
+  // Stable image width — computed once on mount to avoid re-downloads on resize
+  const galleryImageWidth = useMemo(() => {
+    if (typeof window === 'undefined') return 1200;
+    return window.innerWidth <= 768 ? 800 : 1200;
+  }, []);
 
   return (
     <>
