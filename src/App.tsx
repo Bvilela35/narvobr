@@ -31,7 +31,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       gcTime: 30 * 60 * 1000,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 1 * 60 * 1000,
     },
   },
 });
@@ -46,8 +46,7 @@ function AppContent() {
           <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/colecao" element={<Colecao />} />
           <Route path="/colecao/:handle" element={<ColecaoHandle />} />
-          
-          
+
           <Route path="/produto/:handle/adicionado" element={<ProdutoAdicionado />} />
           <Route path="/produto/:handle" element={<Produto />} />
           <Route path="/journal" element={<Journal />} />
