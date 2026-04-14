@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
 
     const query = `
       query GetProductByHandle($handle: String!) {
-        product(handle: $handle) {
+        productByHandle(handle: $handle) {
           id
           title
           description
@@ -35,12 +35,6 @@ Deno.serve(async (req) => {
           seo {
             title
             description
-          }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
           }
           images(first: 6) {
             edges {
@@ -55,11 +49,8 @@ Deno.serve(async (req) => {
               node {
                 id
                 title
-                price {
-                  amount
-                  currencyCode
-                }
-                availableForSale
+                price
+                inventoryQuantity
                 selectedOptions {
                   name
                   value
