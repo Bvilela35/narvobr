@@ -7,8 +7,12 @@ import { calcInstallments } from "@/lib/installments";
 
 const COLOR_MAP: Record<string, string> = {
   preto: "#1a1a1a",
+  "preto fosco": "#1a1a1a",
   branco: "#f5f5f5",
+  "off-white": "#f5f0e8",
   cinza: "#9e9e9e",
+  "cinza claro": "#c0c0c0",
+  grafite: "#4a4a4a",
   prata: "#c0c0c0",
   natural: "#d4c5a9",
   caramelo: "#8B5E3C",
