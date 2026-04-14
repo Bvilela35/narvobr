@@ -33,7 +33,7 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
   }, [bulletPoints, isSmallScreen, len]);
 
   useEffect(() => {
-    if (!isSmallScreen || len <= 2) return;
+    if (!isSmallScreen || len <= 1) return;
 
     const delay = isFirstRound.current && idx === 0 ? 3000 : 8000;
 
@@ -50,7 +50,10 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
 
   if (!isSmallScreen || len === 0) return null;
 
-  if (len <= 2) {
+  const hasLongBullet = bulletPoints.some(bp => bp.length > 40);
+  const showCount = hasLongBullet ? 1 : 2;
+
+  if (len <= showCount) {
     return (
       <div className="pdp__mobile-bullets-overlay">
         <div className="pdp__mobile-bullets-pair">
@@ -62,8 +65,9 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
     );
   }
 
-  const first = bulletPoints[idx % len];
-  const second = bulletPoints[(idx + 1) % len];
+  const visible = Array.from({ length: showCount }, (_, i) =>
+    bulletPoints[(idx + i) % len]
+  );
 
   return (
     <div className="pdp__mobile-bullets-overlay">
@@ -76,8 +80,9 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
           exit={{ x: -30, opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <span className="pdp__bullet-tag">{first}</span>
-          <span className="pdp__bullet-tag">{second}</span>
+          {visible.map((bp, i) => (
+            <span key={i} className="pdp__bullet-tag">{bp}</span>
+          ))}
         </motion.div>
       </AnimatePresence>
     </div>
