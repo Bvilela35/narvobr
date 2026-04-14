@@ -26,8 +26,10 @@ Deno.serve(async (req) => {
     }
 
     const query = `
-      query GetProductByHandle($handle: String!) {
-        productByHandle(handle: $handle) {
+      query GetProductByHandle($query: String!) {
+        products(first: 1, query: $query) {
+          edges {
+            node {
           id
           title
           description
@@ -50,7 +52,7 @@ Deno.serve(async (req) => {
                 id
                 title
                 price
-                inventoryQuantity
+                availableForSale
                 selectedOptions {
                   name
                   value
@@ -169,11 +171,17 @@ Deno.serve(async (req) => {
             }
           }
         }
+            }
+          }
+        }
+            }
+          }
+        }
       }
     `;
 
-    const data = await fetchShopify(query, { handle }, shopifyAccessToken);
-    return jsonResponse(data);
+    const data = await fetchShopify(query, { query: `handle:${handle}` }, shopifyAccessToken);
+    return jsonResponse(normalizeProductResponse(data));
   } catch (error) {
     console.error("shopify-product error:", error);
     return jsonResponse({ error: "Internal server error" }, 500);
@@ -210,4 +218,21 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function normalizeProductResponse(data: any) {
+  const product = data?.data?.products?.edges?.[0]?.node || null;
+  data.data.product = product;
+  delete data.data.products;
+  const currencyCode = product?.priceRange?.minVariantPrice?.currencyCode || "BRL";
+  for (const variantEdge of product?.variants?.edges || []) {
+    const variant = variantEdge?.node;
+    if (variant && typeof variant.price === "string") {
+      variant.price = {
+        amount: variant.price,
+        currencyCode,
+      };
+    }
+  }
+  return data;
 }

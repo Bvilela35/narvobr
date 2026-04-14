@@ -8,6 +8,7 @@ const SUPABASE_FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v
 const PRODUCT_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-product`;
 const COLLECTION_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-collection`;
 const PRODUCTS_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-products`;
+const USE_EDGE_CATALOG = false;
 
 export interface ShopifyVideoSource {
   url: string;
@@ -125,9 +126,11 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
 
 async function fetchEdgeJson(url: string) {
   try {
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
     const response = await fetch(url, {
       headers: {
-        "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        "apikey": anonKey,
+        "Authorization": `Bearer ${anonKey}`,
       },
     });
     if (!response.ok) return null;
@@ -552,18 +555,20 @@ const COLLECTION_BY_HANDLE_QUERY = `
 `;
 
 export async function fetchProducts(first = 20, query?: string) {
-  const edgeParams = new URLSearchParams({ first: String(first) });
-  if (query) edgeParams.set("query", query);
+  if (USE_EDGE_CATALOG) {
+    const edgeParams = new URLSearchParams({ first: String(first) });
+    if (query) edgeParams.set("query", query);
 
-  const edgeData = await fetchEdgeJson(`${PRODUCTS_EDGE_FUNCTION_URL}?${edgeParams.toString()}`);
-  const edgeProducts =
-    edgeData?.data?.products?.edges ??
-    edgeData?.products?.edges ??
-    edgeData?.products ??
-    edgeData?.data?.products;
+    const edgeData = await fetchEdgeJson(`${PRODUCTS_EDGE_FUNCTION_URL}?${edgeParams.toString()}`);
+    const edgeProducts =
+      edgeData?.data?.products?.edges ??
+      edgeData?.products?.edges ??
+      edgeData?.products ??
+      edgeData?.data?.products;
 
-  if (isProductEdgeList(edgeProducts)) {
-    return edgeProducts;
+    if (isProductEdgeList(edgeProducts)) {
+      return edgeProducts;
+    }
   }
 
   const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query });
@@ -584,12 +589,14 @@ async function fetchProductByHandleDirect(handle: string) {
 }
 
 export async function fetchProductByHandle(handle: string) {
-  try {
-    const data = await fetchProductByHandleCached(handle);
-    const normalized = normalizeProductResponse(data?.data?.product);
-    if (normalized) return normalized;
-  } catch {
-    // Falls back to direct Shopify fetch below.
+  if (USE_EDGE_CATALOG) {
+    try {
+      const data = await fetchProductByHandleCached(handle);
+      const normalized = normalizeProductResponse(data?.data?.product);
+      if (normalized) return normalized;
+    } catch {
+      // Falls back to direct Shopify fetch below.
+    }
   }
 
   const product = await fetchProductByHandleDirect(handle);
@@ -597,13 +604,15 @@ export async function fetchProductByHandle(handle: string) {
 }
 
 export async function fetchCollectionByHandle(handle: string, first = 20) {
-  const edgeData = await fetchEdgeJson(
-    `${COLLECTION_EDGE_FUNCTION_URL}?handle=${encodeURIComponent(handle)}&first=${first}`
-  );
-  const edgeCollection = normalizeCollectionResponse(
-    edgeData?.data?.collection ?? edgeData?.collection
-  );
-  if (edgeCollection) return edgeCollection;
+  if (USE_EDGE_CATALOG) {
+    const edgeData = await fetchEdgeJson(
+      `${COLLECTION_EDGE_FUNCTION_URL}?handle=${encodeURIComponent(handle)}&first=${first}`
+    );
+    const edgeCollection = normalizeCollectionResponse(
+      edgeData?.data?.collection ?? edgeData?.collection
+    );
+    if (edgeCollection) return edgeCollection;
+  }
 
   const data = await storefrontApiRequest(COLLECTION_BY_HANDLE_QUERY, { handle, first });
   return normalizeCollectionResponse(data?.data?.collection);

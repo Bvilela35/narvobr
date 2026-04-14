@@ -27,8 +27,10 @@ Deno.serve(async (req) => {
     }
 
     const query = `
-      query GetCollectionByHandle($handle: String!, $first: Int!) {
-        collection(handle: $handle) {
+      query GetCollectionByHandle($query: String!, $first: Int!) {
+        collections(first: 1, query: $query) {
+          edges {
+            node {
           id
           title
           description
@@ -62,10 +64,7 @@ Deno.serve(async (req) => {
                     node {
                       id
                       title
-                      price {
-                        amount
-                        currencyCode
-                      }
+                      price
                       availableForSale
                       selectedOptions {
                         name
@@ -82,11 +81,14 @@ Deno.serve(async (req) => {
             }
           }
         }
+            }
+          }
+        }
       }
     `;
 
-    const data = await fetchShopify(query, { handle, first }, shopifyAccessToken);
-    return jsonResponse(data);
+    const data = await fetchShopify(query, { query: `handle:${handle}`, first }, shopifyAccessToken);
+    return jsonResponse(normalizeCollectionResponse(data));
   } catch (error) {
     console.error("shopify-collection error:", error);
     return jsonResponse({ error: "Internal server error" }, 500);
@@ -123,4 +125,25 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function normalizeCollectionResponse(data: any) {
+  const collection = data?.data?.collections?.edges?.[0]?.node || null;
+  data.data.collection = collection;
+  delete data.data.collections;
+  const edges = collection?.products?.edges || [];
+  for (const edge of edges) {
+    const product = edge?.node;
+    const currencyCode = product?.priceRange?.minVariantPrice?.currencyCode || "BRL";
+    for (const variantEdge of product?.variants?.edges || []) {
+      const variant = variantEdge?.node;
+      if (variant && typeof variant.price === "string") {
+        variant.price = {
+          amount: variant.price,
+          currencyCode,
+        };
+      }
+    }
+  }
+  return data;
 }

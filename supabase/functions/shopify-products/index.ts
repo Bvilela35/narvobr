@@ -46,6 +46,7 @@ Deno.serve(async (req) => {
                     title
                     price
                     inventoryQuantity
+                    availableForSale
                     selectedOptions {
                       name
                       value
@@ -64,7 +65,7 @@ Deno.serve(async (req) => {
     `;
 
     const data = await fetchShopify(query, { first, query: queryString }, shopifyAccessToken);
-    return jsonResponse(data);
+    return jsonResponse(normalizeProductsResponse(data));
   } catch (error) {
     console.error("shopify-products error:", error);
     return jsonResponse({ error: "Internal server error" }, 500);
@@ -101,4 +102,22 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function normalizeProductsResponse(data: any) {
+  const edges = data?.data?.products?.edges || [];
+  for (const edge of edges) {
+    const product = edge?.node;
+    const currencyCode = product?.priceRange?.minVariantPrice?.currencyCode || "BRL";
+    for (const variantEdge of product?.variants?.edges || []) {
+      const variant = variantEdge?.node;
+      if (variant && typeof variant.price === "string") {
+        variant.price = {
+          amount: variant.price,
+          currencyCode,
+        };
+      }
+    }
+  }
+  return data;
 }
