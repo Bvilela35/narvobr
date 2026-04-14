@@ -31,12 +31,6 @@ Deno.serve(async (req) => {
               title
               description
               handle
-              priceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
               images(first: 6) {
                 edges {
                   node {
@@ -50,11 +44,8 @@ Deno.serve(async (req) => {
                   node {
                     id
                     title
-                    price {
-                      amount
-                      currencyCode
-                    }
-                    availableForSale
+                    price
+                    inventoryQuantity
                     selectedOptions {
                       name
                       value
