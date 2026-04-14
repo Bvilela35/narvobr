@@ -103,6 +103,9 @@ function ProductCarousel({
 export default function Index() {
   const { data: products = [], isLoading: loading } = useProducts(8);
   return <>
+      <Helmet>
+        <link rel="preload" as="image" href="/assets/hero-banner.jpg" fetchPriority="high" />
+      </Helmet>
       {/* Hero */}
       <HeroBanner />
 
