@@ -18,7 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header onCartOpen={() => setCartOpen(true)} />
-      <main className="flex-1 pt-16">{children}</main>
+      <main className="flex-1 pt-16 min-h-screen">{children}</main>
       <WhatsAppBanner />
       <TrustPillars />
       <Footer />
