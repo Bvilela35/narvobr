@@ -33,7 +33,7 @@ export function MobileBulletOverlay({ bulletPoints }: Props) {
   }, [bulletPoints, isSmallScreen, len]);
 
   useEffect(() => {
-    if (!isSmallScreen || len <= 2) return;
+    if (!isSmallScreen || len <= 1) return;
 
     const delay = isFirstRound.current && idx === 0 ? 3000 : 8000;
 
