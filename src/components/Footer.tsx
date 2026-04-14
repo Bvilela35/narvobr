@@ -113,7 +113,9 @@ export function Footer() {
             <img
               src="/images/google-loja-segura.svg"
               alt="Google Loja Segura"
-              className="h-8"
+              width={153}
+              height={55}
+              className="h-8 w-auto"
             />
           </a>
         </div>

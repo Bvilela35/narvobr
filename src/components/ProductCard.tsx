@@ -37,6 +37,8 @@ export const ProductCard = memo(function ProductCard({ product, disableAnimation
   const image = images.edges[0]?.node;
   const price = priceRange?.minVariantPrice ?? { amount: "0", currencyCode: "BRL" };
   const prefetchProduct = usePrefetchProduct();
+  const priceAmount = Number.parseFloat(price.amount || "0");
+  const safePriceAmount = Number.isFinite(priceAmount) ? priceAmount : 0;
 
   const colorOption = options?.find(
     (o) => o.name.toLowerCase() === "cor" || o.name.toLowerCase() === "color"
@@ -85,10 +87,10 @@ export const ProductCard = memo(function ProductCard({ product, disableAnimation
           <div className="pt-5 pb-4 px-4 space-y-1 text-center rounded-b-2xl bg-card-elevated">
             <h3 className="text-base md:text-lg font-semibold text-foreground leading-snug mb-3">{title}</h3>
             <p className="text-sm text-foreground">
-              R${parseFloat(price.amount) % 1 === 0 ? parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : parseFloat(price.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              R${safePriceAmount % 1 === 0 ? safePriceAmount.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : safePriceAmount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             {(() => {
-              const { count, value } = calcInstallments(parseFloat(price.amount));
+              const { count, value } = calcInstallments(safePriceAmount);
               if (count <= 1) return null;
               const formatted = value % 1 === 0
                 ? value.toLocaleString("pt-BR")

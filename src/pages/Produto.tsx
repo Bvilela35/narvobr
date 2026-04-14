@@ -245,6 +245,9 @@ export default function Produto() {
   const userChangedImage = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
+  const defaultTitle = "Narvo — Engenharia do Silêncio";
+  const defaultDescription = "Acessórios premium para seu setup. Projetados para quem exige silêncio visual e máxima performance.";
+  const defaultOgImage = "/images/og-narvo.jpg";
 
   useEffect(() => {
     setSelectedImage(0);
@@ -386,12 +389,44 @@ export default function Produto() {
     }
     canonical.setAttribute("href", `${window.location.origin}/produto/${productHandle}`);
 
+    const ensureMeta = (selector: string, attr: "property" | "name", value: string) => {
+      let meta = document.head.querySelector(selector) as HTMLMetaElement | null;
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute(attr, value);
+        document.head.appendChild(meta);
+      }
+      return meta;
+    };
+
+    const ogTitle = ensureMeta('meta[property="og:title"]', "property", "og:title");
+    const ogDescription = ensureMeta('meta[property="og:description"]', "property", "og:description");
+    const ogType = ensureMeta('meta[property="og:type"]', "property", "og:type");
+    const ogUrl = ensureMeta('meta[property="og:url"]', "property", "og:url");
+    const ogImage = ensureMeta('meta[property="og:image"]', "property", "og:image");
+    const twitterCard = ensureMeta('meta[name="twitter:card"]', "name", "twitter:card");
+    const twitterTitle = ensureMeta('meta[name="twitter:title"]', "name", "twitter:title");
+    const twitterDescription = ensureMeta('meta[name="twitter:description"]', "name", "twitter:description");
+    const twitterImage = ensureMeta('meta[name="twitter:image"]', "name", "twitter:image");
+
     // JSON-LD Product structured data
     const { images, variants, priceRange } = product.node;
     const image = images.edges[0]?.node?.url;
-    const price = priceRange.minVariantPrice.amount;
-    const currency = priceRange.minVariantPrice.currencyCode || "BRL";
+    const minVariantPrice = priceRange?.minVariantPrice;
+    const price = minVariantPrice?.amount || "0";
+    const currency = minVariantPrice?.currencyCode || "BRL";
     const available = variants.edges.some((v) => v.node.availableForSale);
+    const productUrl = `${window.location.origin}/produto/${productHandle}`;
+
+    ogTitle.setAttribute("content", seoTitle);
+    ogDescription.setAttribute("content", seoDesc);
+    ogType.setAttribute("content", "product");
+    ogUrl.setAttribute("content", productUrl);
+    ogImage.setAttribute("content", image || defaultOgImage);
+    twitterCard.setAttribute("content", "summary_large_image");
+    twitterTitle.setAttribute("content", seoTitle);
+    twitterDescription.setAttribute("content", seoDesc);
+    twitterImage.setAttribute("content", image || defaultOgImage);
 
     const jsonLd = {
       "@context": "https://schema.org",
@@ -399,14 +434,14 @@ export default function Produto() {
       name: seoTitle,
       description: seoDesc,
       image: image || undefined,
-      url: `${window.location.origin}/produto/${productHandle}`,
+      url: productUrl,
       brand: { "@type": "Brand", name: "Narvo" },
       offers: {
         "@type": "Offer",
         price,
         priceCurrency: currency,
         availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        url: `${window.location.origin}/produto/${productHandle}`
+        url: productUrl
       }
     };
 
@@ -448,9 +483,18 @@ export default function Produto() {
     }
 
     return () => {
-      document.title = "Narvo";
-      metaDesc?.setAttribute("content", "");
+      document.title = defaultTitle;
+      metaDesc?.setAttribute("content", defaultDescription);
       canonical?.setAttribute("href", window.location.origin);
+      ogTitle.setAttribute("content", defaultTitle);
+      ogDescription.setAttribute("content", defaultDescription);
+      ogType.setAttribute("content", "website");
+      ogUrl.setAttribute("content", window.location.origin);
+      ogImage.setAttribute("content", defaultOgImage);
+      twitterCard.setAttribute("content", "summary_large_image");
+      twitterTitle.setAttribute("content", defaultTitle);
+      twitterDescription.setAttribute("content", defaultDescription);
+      twitterImage.setAttribute("content", defaultOgImage);
       scriptTag?.remove();
       document.querySelector('script[data-narvo-faq-jsonld]')?.remove();
     };

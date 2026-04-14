@@ -5,7 +5,7 @@ export function WhatsAppBanner() {
   return (
     <section className="px-6 md:px-10 py-8">
       <div className="max-w-[1400px] mx-auto">
-        <div className="bg-card-elevated rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+        <div className="bg-card-elevated rounded-2xl px-8 py-6 flex min-h-[172px] flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
             {/* Avatar stack */}
             <div className="flex -space-x-3 flex-shrink-0 justify-center">
@@ -19,6 +19,8 @@ export function WhatsAppBanner() {
                   key={i}
                   src={src}
                   alt=""
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full border-2 border-card-elevated object-cover"
                   loading="lazy"
                 />
