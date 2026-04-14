@@ -12,9 +12,9 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  const shopifyAccessToken = Deno.env.get("SHOPIFY_ACCESS_TOKEN");
+  const shopifyAccessToken = Deno.env.get("SHOPIFY_ACCESS_TOKEN") || Deno.env.get("SHOPIFY_ADMIN_TOKEN");
   if (!shopifyAccessToken) {
-    return jsonResponse({ error: "SHOPIFY_ACCESS_TOKEN not configured" }, 500);
+    return jsonResponse({ error: "Shopify admin token not configured" }, 500);
   }
 
   try {
