@@ -159,9 +159,7 @@ Deno.serve(async (req) => {
                             url
                             mimeType
                           }
-                          previewImage {
-                            url
-                          }
+                          preview { image { url } }
                         }
                       }
                     }
