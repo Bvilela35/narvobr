@@ -14,12 +14,17 @@ const columnTwo = [
   { label: "Trocas e Devoluções", href: "/trocas" },
 ];
 
+const columnTools = [
+  { label: "Calcule o seu foco", href: "/calculadora", external: false },
+  { label: "Ferramentas de produtividade", href: "https://narvosfocus.com", external: true },
+];
+
 export function Footer() {
   return (
     <footer className="border-t border-border">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-16 md:py-24">
         {/* Main grid: left CTA + right nav columns */}
-        <div className="grid md:grid-cols-[1fr_1fr_1fr] gap-16 md:gap-10 mb-20">
+        <div className="grid md:grid-cols-[1fr_1fr_1fr_1fr] gap-16 md:gap-10 mb-20">
           {/* Left — Social + Newsletter */}
           <div className="space-y-8">
             <div>
@@ -86,6 +91,36 @@ export function Footer() {
                   >
                     {link.label}
                   </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Ferramentas */}
+          <div>
+            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+              Ferramentas
+            </h4>
+            <ul className="space-y-4">
+              {columnTools.map((link) => (
+                <li key={link.label}>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
