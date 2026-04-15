@@ -1,43 +1,38 @@
 
 
-## Product Highlights inside "Detalhes" Section
+## Plan: Seção "Essenciais" + 2 novas páginas
 
-### Overview
-Replace the placeholder "Detalhes" section on the PDP with the dynamic highlights component that consumes `custom.highlight_de_produto` metafield (list of metaobject references) from Shopify. Renders up to 5 entries with Z-pattern alternating layout on desktop and stacked centered layout on mobile.
+Inspirada no layout Apple da imagem de referência — dois blocos lado a lado com fundo `#f8f8f8`, títulos centralizados, descrição curta e link de ação.
 
-### Files to modify/create
+### 1. Nova página: `/nossa-historia` (Nossa História)
 
-**1. `src/lib/shopify.ts`** — Add metafield to GraphQL query + parse highlights
+Página editorial contando a história da Narvo. Layout minimalista com seções de texto, alinhado ao manifesto "Engenharia do Silêncio". Conteúdo placeholder editável posteriormente. Helmet SEO incluído.
 
-- Add to `ShopifyProduct` interface: `highlights?: Array<{ titulo: string; descricao: string; midiaUrl: string; tipoMidia: 'image' | 'video'; videoSources?: ShopifyVideoSource[] }>`
-- Add to `PRODUCT_BY_HANDLE_QUERY`:
-  ```graphql
-  highlightsMeta: metafield(namespace: "custom", key: "highlight_de_produto") {
-    references(first: 5) {
-      edges {
-        node {
-          ... on Metaobject {
-            fields { key value reference { ... on MediaImage { image { url altText } } ... on Video { sources { url mimeType } previewImage { url } } } }
-          }
-        }
-      }
-    }
-  }
-  ```
-- Parse metaobject fields in `fetchProductByHandle` — extract `titulo`, `descricao`, and media from each entry's `fields` array. Clean up `highlightsMeta` from raw object.
+### 2. Nova página: `/materiais` (Materiais & Design)
 
-**2. `src/components/ProductHighlights.tsx`** — New component
+Página editorial sobre materiais, qualidade e design dos produtos Narvo. Foco em vocabulário proprietário (aço, polímero, densidade, fosco). Layout similar à página de história. Helmet SEO incluído.
 
-- Props: `highlights` array
-- Returns `null` if empty
-- Desktop (md+): Two-column grid per entry. Index 0, 2, 4 → media left, text right. Index 1, 3 → text left, media right.
-- Mobile: Stacked — title → description → media, all centered
-- Media: `rounded-2xl`, supports image and auto-play muted video
-- Typography: Title ~28-36px bold, description ~16px muted, generous spacing between entries
+### 3. Novo componente: `EssentialsSection`
 
-**3. `src/pages/Produto.tsx`** — Replace "Detalhes" placeholder (lines 1032-1038)
+Seção com fundo branco, dois blocos `#f8f8f8` lado a lado (grid 2 colunas no desktop, stack no mobile), cada um com:
+- Título em bold (ex: "Nossa História", "Materiais & Design")
+- Descrição curta centralizada
+- Link azul "Saiba mais >"
+- Sem imagens inicialmente (pode adicionar depois)
 
-- Extract `highlights` from `product.node`
-- Import `ProductHighlights`
-- Inside `secao-detalhes`, render `<ProductHighlights highlights={highlights} />` instead of the placeholder text. If no highlights, keep the existing placeholder.
+Posicionamento: acima do `<BlogSection />` no `Index.tsx`.
+
+### 4. Rotas no App.tsx
+
+Registrar `/nossa-historia` e `/materiais` como rotas lazy-loaded.
+
+### Arquivos criados/editados
+
+| Arquivo | Ação |
+|---------|------|
+| `src/components/EssentialsSection.tsx` | Criar — seção 2 blocos |
+| `src/pages/NossaHistoria.tsx` | Criar — página história |
+| `src/pages/MateriaisDesign.tsx` | Criar — página materiais |
+| `src/pages/Index.tsx` | Editar — inserir `<EssentialsSection />` acima de `<BlogSection />` |
+| `src/App.tsx` | Editar — adicionar 2 rotas |
 
