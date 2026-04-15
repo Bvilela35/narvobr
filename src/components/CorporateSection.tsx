@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const logos = [
   { name: "Netflix", img: "/images/netflix-logo.png", className: "h-7 md:h-10" },
@@ -25,14 +26,12 @@ export function CorporateSection() {
             <p className="text-sm md:text-base text-muted-foreground mt-3 leading-relaxed">
               Soluções personalizadas para diferentes ambientes.
             </p>
-            <a
-              href="https://wa.me/5500000000000"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/corporativo"
               className="inline-block mt-6 px-6 py-2.5 rounded border border-border text-sm font-medium hover:bg-accent transition-colors"
             >
               Veja mais
-            </a>
+            </Link>
           </motion.div>
 
           {/* Right – logos grid */}
