@@ -109,8 +109,35 @@ export default function Index() {
       {/* Hero */}
       <HeroBanner />
 
+      {/* Produtos em destaque */}
+      <section className="py-24 px-6 md:px-10 md:py-[53px]">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex items-end justify-between mb-12">
+            <motion.div {...fadeUp}>
+              <h2 className="font-semibold md:text-4xl text-3xl">
+                Produtos. <span className="text-muted-foreground font-extralight text-3xl">Peças essenciais para o seu setup.</span>
+              </h2>
+            </motion.div>
+            <Link to="/colecao" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 flex-shrink-0 ml-4">
+              Ver todos
+            </Link>
+          </div>
 
-
+          {loading ? <div className="flex gap-5 overflow-hidden">
+              {Array.from({
+            length: 4
+          }).map((_, i) => <div key={i} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
+                  <div className="bg-card-elevated rounded-2xl p-6 space-y-4">
+                    <div className="aspect-square bg-accent rounded-xl animate-pulse" />
+                    <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
+                  </div>
+                </div>)}
+            </div> : products.length === 0 ? <div className="py-20 text-center">
+              <p className="text-sm text-muted-foreground">Nada encontrado. Menos, é mais.</p>
+            </div> : <ProductCarousel products={products} />}
+        </div>
+      </section>
 
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
@@ -149,38 +176,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
-      {/* Produtos em destaque */}
-      <section className="py-24 px-6 md:px-10 md:py-[53px]">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <motion.div {...fadeUp}>
-              <h2 className="font-semibold md:text-4xl text-3xl">
-                Produtos. <span className="text-muted-foreground font-extralight text-3xl">Peças essenciais para o seu setup.</span>
-              </h2>
-            </motion.div>
-            <Link to="/colecao" className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 flex-shrink-0 ml-4">
-              Ver todos
-            </Link>
-          </div>
-
-          {loading ? <div className="flex gap-5 overflow-hidden">
-              {Array.from({
-            length: 4
-          }).map((_, i) => <div key={i} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
-                  <div className="bg-card-elevated rounded-2xl p-6 space-y-4">
-                    <div className="aspect-square bg-accent rounded-xl animate-pulse" />
-                    <div className="h-3 bg-accent rounded w-3/4 animate-pulse" />
-                    <div className="h-3 bg-accent rounded w-1/2 animate-pulse" />
-                  </div>
-                </div>)}
-            </div> : products.length === 0 ? <div className="py-20 text-center">
-              <p className="text-sm text-muted-foreground">Nada encontrado. Menos, é mais.</p>
-            </div> : <ProductCarousel products={products} />}
-        </div>
-      </section>
-
-      {/* Antes e Depois */}
       <BeforeAfter />
 
       {/* Diferenciais de Marca */}
