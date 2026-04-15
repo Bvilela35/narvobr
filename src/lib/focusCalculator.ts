@@ -57,6 +57,13 @@ export function calcFocus(inputs: FocusInputs): FocusResult {
 
   const ganho20 = custoAnual * 0.20;
 
+  // Productivity hours
+  const horasPerdidasDia = horasDistracoes + horasOverhead;
+  const horasPerdidasMes = horasPerdidasDia * 22;
+  const horasPerdidasAno = horasPerdidasDia * 264;
+  const diasPerdidasAno = Math.round(horasPerdidasAno / horasDia);
+  const horasRecuperaveisMes = horasPerdidasMes * 0.20;
+
   return {
     custoAnual,
     custoDist,
@@ -68,6 +75,11 @@ export function calcFocus(inputs: FocusInputs): FocusResult {
     horasDistracoes,
     horasOverhead,
     ganho20,
+    horasPerdidasDia,
+    horasPerdidasMes,
+    horasPerdidasAno,
+    diasPerdidasAno,
+    horasRecuperaveisMes,
   };
 }
 
