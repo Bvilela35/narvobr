@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MobileMenu } from "./MobileMenu";
 
 const navLinks = [
-  { label: "Setup", href: "/colecao" },
+  { label: "Setup", href: "/colecao/setup" },
   { label: "Acessórios", href: "/colecao/acessorios" },
   { label: "Corporativo", href: "/corporativo" },
 ];
