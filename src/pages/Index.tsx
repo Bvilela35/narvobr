@@ -151,21 +151,6 @@ export default function Index() {
       {/* Blog */}
       <BlogSection />
 
-      {/* Manifesto */}
-      <section className="py-24 md:py-32 px-6 md:px-10">
-        <div className="max-w-[1400px] mx-auto">
-          <motion.div {...fadeUp} className="max-w-2xl">
-            <h2 className="text-3xl md:text-4xl font-light leading-tight mb-6">
-              Sistema, não enfeite.
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-              Cada peça Narvo foi projetada como parte de um sistema coeso. 
-              Nada é decorativo — tudo tem função, propósito e lugar. 
-              Organização sem esforço. Foco sem distração.
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Vendas Corporativas */}
       <CorporateSection />
