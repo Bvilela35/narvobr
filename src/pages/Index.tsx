@@ -164,7 +164,6 @@ export default function Index() {
               to="/calculadora"
               className="relative z-10 mt-2 inline-flex items-center gap-2 px-8 py-3.5 bg-foreground text-background font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
             >
-            >
               Fazer o teste
             </Link>
           </motion.div>
