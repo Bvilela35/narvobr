@@ -389,10 +389,16 @@ export default function Calculadora() {
                     <p style={{ fontSize: 12, opacity: 0.3 }}>narvo.com.br/calculadora</p>
                   </div>
                 </div>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
+                  </motion.div>
+                ) : (
+                  <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <p className="text-muted-foreground text-sm text-center">Ajuste os valores e clique em <span className="font-bold text-foreground">Calcular meu foco</span></p>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
