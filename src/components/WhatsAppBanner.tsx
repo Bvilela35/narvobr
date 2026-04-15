@@ -31,7 +31,7 @@ export function WhatsAppBanner() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Fale com um de nossos especialistas e tire as suas dúvidas sobre acabamentos, medidas especiais, sugestões de peças e muito mais.
               </p>
-              <p className="text-sm font-medium mt-1">(31) 99394-0473</p>
+              
             </div>
           </div>
           <Button
