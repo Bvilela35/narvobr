@@ -121,7 +121,7 @@ export default function Calculadora() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Quanto custa sua distração?
+              Quanto foco você realmente tem?
             </motion.h1>
             <motion.p
               className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto"
@@ -129,8 +129,7 @@ export default function Calculadora() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
             >
-              Descubra o impacto financeiro real das interrupções no seu dia.
-              Ajuste os valores abaixo para o seu perfil.
+              Descubra quantas horas de produtividade você perde por dia — e o impacto real disso no seu resultado.
             </motion.p>
           </div>
         </section>
