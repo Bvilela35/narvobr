@@ -11,6 +11,7 @@ import { MobileMenu } from "./MobileMenu";
 const navLinks = [
   { label: "Setup", href: "/colecao/setup" },
   { label: "Acessórios", href: "/colecao/acessorios" },
+  { label: "Narvo Focus", href: "https://focus.narvo.com.br/", external: true },
   { label: "Corporativo", href: "/corporativo" },
 ];
 
