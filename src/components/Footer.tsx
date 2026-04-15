@@ -24,7 +24,7 @@ export function Footer() {
     <footer className="border-t border-border">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-16 md:py-24">
         {/* Main grid: left CTA + right nav columns */}
-        <div className="grid md:grid-cols-[1fr_1fr_1fr] gap-16 md:gap-10 mb-20">
+        <div className="grid md:grid-cols-[1fr_1fr_1fr_1fr] gap-16 md:gap-10 mb-20">
           {/* Left — Social + Newsletter */}
           <div className="space-y-8">
             <div>
