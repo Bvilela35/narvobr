@@ -25,6 +25,8 @@ const Privacidade = lazy(() => import("./pages/Privacidade"));
 const TermosDeServico = lazy(() => import("./pages/TermosDeServico"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
 const Corporativo = lazy(() => import("./pages/Corporativo"));
+const NossaHistoria = lazy(() => import("./pages/NossaHistoria"));
+const MateriaisDesign = lazy(() => import("./pages/MateriaisDesign"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -58,6 +60,8 @@ function AppContent() {
           <Route path="/envio" element={<Envio />} />
           <Route path="/privacidade" element={<Privacidade />} />
           <Route path="/corporativo" element={<Corporativo />} />
+          <Route path="/nossa-historia" element={<NossaHistoria />} />
+          <Route path="/materiais" element={<MateriaisDesign />} />
           <Route path="/termos-de-servico" element={<TermosDeServico />} />
           <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="*" element={<NotFound />} />
