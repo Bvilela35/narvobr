@@ -73,6 +73,8 @@ function AnimatedCurrency({ value }: { value: number }) {
 export default function Calculadora() {
   const [inputs, setInputs] = useState<FocusInputs>(DEFAULTS);
   const [showResults, setShowResults] = useState(false);
+  const [customRenda, setCustomRenda] = useState(false);
+  const [customRendaValue, setCustomRendaValue] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
 
   const result = useMemo(() => calcFocus(inputs), [inputs]);
