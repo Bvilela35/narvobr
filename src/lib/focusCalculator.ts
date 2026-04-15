@@ -16,6 +16,12 @@ export interface FocusResult {
   horasDistracoes: number;
   horasOverhead: number;
   ganho20: number;
+  // Productivity-focused metrics
+  horasPerdidasDia: number;
+  horasPerdidasMes: number;
+  horasPerdidasAno: number;
+  diasPerdidasAno: number;
+  horasRecuperaveisMes: number;
 }
 
 export function calcFocus(inputs: FocusInputs): FocusResult {
