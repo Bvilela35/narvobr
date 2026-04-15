@@ -24,6 +24,7 @@ const Envio = lazy(() => import("./pages/Envio"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
 const TermosDeServico = lazy(() => import("./pages/TermosDeServico"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
+const Corporativo = lazy(() => import("./pages/Corporativo"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
