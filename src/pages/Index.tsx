@@ -175,8 +175,6 @@ export default function Index() {
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
 
-      {/* Essenciais */}
-      <EssentialsSection />
 
       {/* Blog */}
       <BlogSection />
