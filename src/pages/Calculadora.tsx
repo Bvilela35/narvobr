@@ -371,9 +371,9 @@ export default function Calculadora() {
                       Calculadora de Foco
                     </p>
                     <p style={{ fontSize: 56, fontWeight: 900, lineHeight: 1 }}>
-                      {formatCurrency(result.custoAnual)}
+                      {result.horasPerdidasDia.toFixed(1)}h/dia
                     </p>
-                    <p style={{ fontSize: 16, opacity: 0.7 }}>perdidos por ano em distração</p>
+                    <p style={{ fontSize: 16, opacity: 0.7 }}>de produtividade perdida — {formatCurrency(result.custoAnual)}/ano</p>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ fontSize: 32, fontWeight: 900 }}>{result.score}/10</span>
                       <span style={{ fontSize: 14, opacity: 0.5 }}>Score de Foco</span>
