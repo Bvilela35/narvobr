@@ -152,6 +152,29 @@ export default function Index() {
       <BlogSection />
 
 
+      {/* Banner Calculadora */}
+      <section className="px-6 md:px-10 py-10 md:py-14">
+        <div className="max-w-[1400px] mx-auto">
+          <motion.div
+            {...fadeUp}
+            className="relative overflow-hidden rounded-2xl bg-foreground text-background px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
+          >
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+              Calcule seu foco.
+            </h2>
+            <p className="text-sm md:text-base opacity-70 max-w-md">
+              Descubra quanto a distração custa no seu dia — e como recuperar o controle.
+            </p>
+            <Link
+              to="/calculadora"
+              className="mt-2 inline-flex items-center gap-2 px-8 py-3.5 bg-background text-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Fazer o teste
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Vendas Corporativas */}
       <CorporateSection />
 
