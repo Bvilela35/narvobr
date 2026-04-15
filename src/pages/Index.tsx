@@ -149,7 +149,7 @@ export default function Index() {
               className="flex flex-col items-center text-center gap-4"
             >
               <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-black">
-                Calculadora de Foco
+                Você se sente produtivo?
               </h2>
               <p className="text-sm md:text-base text-black/60 mt-1">
                 Descubra quantas horas você perde com distrações e como isso diminui sua produtividade.
