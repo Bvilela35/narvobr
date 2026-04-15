@@ -250,7 +250,7 @@ export default function Calculadora() {
               onClick={() => setShowResults(true)}
               className="w-full py-4 bg-foreground text-background font-bold text-base rounded-xl hover:opacity-90 transition-opacity"
             >
-              Calcular meu custo
+              Calcular meu foco
             </button>
           </motion.div>
         </section>
