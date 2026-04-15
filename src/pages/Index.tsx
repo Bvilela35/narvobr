@@ -141,28 +141,21 @@ export default function Index() {
       </section>
 
       {/* Banner Calculadora */}
-      <section className="px-6 md:px-10 py-10 md:py-14">
-        <div className="max-w-[1400px] mx-auto">
+      <section className="py-16 md:py-24" style={{ backgroundColor: "#f0f0f0" }}>
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <motion.div
             {...fadeUp}
-            className="relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
-            style={{ backgroundColor: "#f8f8f8" }}
+            className="flex flex-col items-center text-center gap-4"
           >
-            {/* Background decorative elements */}
-            <span className="absolute top-6 left-8 text-6xl md:text-8xl opacity-[0.08] select-none pointer-events-none rotate-[-15deg]">🎯</span>
-            <span className="absolute bottom-8 right-10 text-7xl md:text-9xl opacity-[0.08] select-none pointer-events-none rotate-[10deg]">⏱</span>
-            <span className="absolute top-10 right-20 text-5xl md:text-7xl opacity-[0.07] select-none pointer-events-none rotate-[20deg]">🧠</span>
-            <span className="absolute bottom-12 left-16 text-4xl md:text-6xl opacity-[0.07] select-none pointer-events-none rotate-[-8deg]">⚡</span>
-
-            <h2 className="relative z-10 text-3xl md:text-5xl font-black tracking-tight leading-tight text-foreground">
-              Quantas horas você perde por dia?
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-foreground">
+              Calculadora de Foco
             </h2>
-            <p className="relative z-10 text-sm md:text-base text-muted-foreground max-w-md">
-              Calcule suas horas perdidas em interrupções e veja como um ambiente Narvo pode devolver seu foco.
+            <p className="text-sm md:text-base text-muted-foreground mt-1">
+              Descubra quantas horas você perde por dia.
             </p>
             <Link
               to="/calculadora"
-              className="relative z-10 mt-2 inline-flex items-center gap-2 px-8 py-3.5 bg-foreground text-background font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+              className="mt-3 inline-flex items-center gap-2 px-7 py-2.5 border border-foreground text-foreground font-medium text-sm rounded-full hover:bg-foreground hover:text-background transition-all duration-300"
             >
               Fazer o teste
             </Link>
