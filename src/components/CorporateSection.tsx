@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const logos = [
-  { name: "Netflix", img: "/images/netflix-logo.png", className: "h-7 md:h-10" },
-  { name: "LinkedIn", img: "/images/linkedin-logo.png", className: "h-5 md:h-7" },
-  { name: "Amazon", img: "/images/amazon-logo.png", className: "h-9 md:h-14" },
+  { name: "Netflix", img: "/optimized/home/netflix-logo-320.png", className: "h-7 md:h-10", width: 320, height: 135 },
+  { name: "LinkedIn", img: "/optimized/home/linkedin-logo-320.png", className: "h-5 md:h-7", width: 320, height: 80 },
+  { name: "Amazon", img: "/optimized/home/amazon-logo-320.png", className: "h-9 md:h-14", width: 320, height: 141 },
 ];
 
 export function CorporateSection() {
@@ -44,7 +44,15 @@ export function CorporateSection() {
           >
             {logos.map((l) => (
               <div key={l.name} className="flex items-center justify-center hover:opacity-70 transition-opacity">
-                <img src={l.img} alt={l.name} className={`${l.className} w-auto object-contain`} />
+                <img
+                  src={l.img}
+                  alt={l.name}
+                  width={l.width}
+                  height={l.height}
+                  loading="lazy"
+                  decoding="async"
+                  className={`${l.className} w-auto object-contain`}
+                />
               </div>
             ))}
           </motion.div>

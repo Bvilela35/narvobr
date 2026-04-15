@@ -73,9 +73,13 @@ export function BeforeAfter() {
             onPointerUp={onPointerUp}>
 
             <img
-              src="/assets/after-desk.jpg"
+              src="/optimized/home/after-desk-1280.jpg"
               alt="Mesa organizada com acessórios Narvo"
               className="absolute inset-0 w-full h-full object-cover"
+              width={1280}
+              height={720}
+              loading="lazy"
+              decoding="async"
               draggable={false} />
 
             <div
@@ -83,10 +87,14 @@ export function BeforeAfter() {
               style={{ width: `${position}%` }}>
 
               <img
-                src="/assets/before-desk.jpg"
+                src="/optimized/home/before-desk-1280.jpg"
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ width: `${containerWidth || 9999}px`, maxWidth: "none" }}
+                width={1280}
+                height={720}
+                loading="lazy"
+                decoding="async"
                 draggable={false} />
 
             </div>

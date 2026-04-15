@@ -17,10 +17,11 @@ export const shopifyKeys = {
 };
 
 // Hooks
-export function useProducts(first = 20, query?: string) {
+export function useProducts(first = 20, query?: string, enabled = true) {
   return useQuery({
     queryKey: shopifyKeys.products(first, query),
     queryFn: () => fetchProducts(first, query),
+    enabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
