@@ -110,8 +110,6 @@ export default function Index() {
       <HeroBanner />
 
 
-      {/* Categorias */}
-      <CategoryCarousel />
 
 
       {/* Por que Narvo */}
