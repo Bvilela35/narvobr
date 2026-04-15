@@ -208,7 +208,7 @@ export default function Index() {
       <CorporateSection />
 
       {/* Depoimentos */}
-      <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
+      <section className="py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <ReviewsSection />
         </div>
