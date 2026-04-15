@@ -161,7 +161,7 @@ export default function Index() {
                 Calculadora de Foco
               </h2>
               <p className="text-sm md:text-base text-white/70 mt-1">
-                Descubra quantas horas você perde por dia.
+                Descubra quantas horas você perde com distrações e como isso diminui sua produtividade.
               </p>
               <Link
                 to="/calculadora"
