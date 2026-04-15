@@ -6,8 +6,8 @@ import { useEffect } from "react";
 const menuLinks = [
   { label: "Setup", href: "/colecao/setup" },
   { label: "Acessórios", href: "/colecao/acessorios" },
-  { label: "Narvo Focus", href: "https://focus.narvo.com.br/", external: true },
   { label: "Corporativo", href: "/corporativo" },
+  { label: "Ferramentas", href: "https://focus.narvo.com.br/", external: true },
 ];
 
 interface MobileMenuProps {
