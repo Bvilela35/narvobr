@@ -134,137 +134,139 @@ export default function Calculadora() {
           </div>
         </section>
 
-        {/* Sliders */}
-        <section className="px-4 pb-8">
-          <motion.div
-            className="max-w-2xl mx-auto space-y-8 bg-card rounded-2xl p-6 md:p-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-          >
-            {/* Renda */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <label className="text-sm font-semibold text-foreground">Renda mensal</label>
-                <span className="text-sm font-bold text-foreground">{formatCurrency(inputs.rendaMensal)}</span>
-              </div>
-              {!customRenda ? (
-                <>
-                  <Slider
-                    value={[Math.min(inputs.rendaMensal, 20000)]}
-                    onValueChange={([v]) => update("rendaMensal", v)}
-                    min={1500} max={20000} step={500}
-                    className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>R$ 1.500</span>
+        {/* Main content — side by side on desktop */}
+        <section className="px-4 pb-20">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
+            {/* Left — Sliders */}
+            <motion.div
+              className="md:w-1/2 md:sticky md:top-32 md:self-start space-y-8 rounded-2xl p-6 md:p-10"
+              style={{ backgroundColor: "#f8f8f8" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              {/* Renda */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-baseline">
+                  <label className="text-sm font-semibold text-foreground">Renda mensal</label>
+                  <span className="text-sm font-bold text-foreground">{formatCurrency(inputs.rendaMensal)}</span>
+                </div>
+                {!customRenda ? (
+                  <>
+                    <Slider
+                      value={[Math.min(inputs.rendaMensal, 20000)]}
+                      onValueChange={([v]) => update("rendaMensal", v)}
+                      min={1500} max={20000} step={500}
+                      className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>R$ 1.500</span>
+                      <button
+                        onClick={() => { setCustomRenda(true); setCustomRendaValue(String(inputs.rendaMensal)); }}
+                        className="text-foreground font-semibold underline underline-offset-2"
+                      >
+                        +R$ 20.000
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={customRendaValue}
+                      onChange={(e) => {
+                        setCustomRendaValue(e.target.value);
+                        const v = Number(e.target.value);
+                        if (v >= 1500) update("rendaMensal", v);
+                      }}
+                      placeholder="Ex: 35000"
+                      min={1500}
+                      className="flex-1 bg-secondary text-foreground rounded-lg px-4 py-2.5 text-sm font-medium border border-border focus:outline-none focus:ring-1 focus:ring-foreground"
+                    />
                     <button
-                      onClick={() => { setCustomRenda(true); setCustomRendaValue(String(inputs.rendaMensal)); }}
-                      className="text-foreground font-semibold underline underline-offset-2"
+                      onClick={() => {
+                        setCustomRenda(false);
+                        if (inputs.rendaMensal > 20000) update("rendaMensal", 20000);
+                      }}
+                      className="px-3 py-2.5 text-xs font-semibold text-muted-foreground border border-border rounded-lg hover:bg-secondary transition-colors"
                     >
-                      +R$ 20.000
+                      Slider
                     </button>
                   </div>
-                </>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={customRendaValue}
-                    onChange={(e) => {
-                      setCustomRendaValue(e.target.value);
-                      const v = Number(e.target.value);
-                      if (v >= 1500) update("rendaMensal", v);
-                    }}
-                    placeholder="Ex: 35000"
-                    min={1500}
-                    className="flex-1 bg-secondary text-foreground rounded-lg px-4 py-2.5 text-sm font-medium border border-border focus:outline-none focus:ring-1 focus:ring-foreground"
-                  />
-                  <button
-                    onClick={() => {
-                      setCustomRenda(false);
-                      if (inputs.rendaMensal > 20000) update("rendaMensal", 20000);
-                    }}
-                    className="px-3 py-2.5 text-xs font-semibold text-muted-foreground border border-border rounded-lg hover:bg-secondary transition-colors"
-                  >
-                    Slider
-                  </button>
+                )}
+              </div>
+
+              {/* Horas */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-baseline">
+                  <label className="text-sm font-semibold text-foreground">Horas de trabalho / dia</label>
+                  <span className="text-sm font-bold text-foreground">{inputs.horasDia}h</span>
                 </div>
-              )}
-            </div>
+                <Slider
+                  value={[inputs.horasDia]}
+                  onValueChange={([v]) => update("horasDia", v)}
+                  min={4} max={14} step={1}
+                  className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>4h</span><span>14h</span>
+                </div>
+              </div>
 
-            {/* Horas */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <label className="text-sm font-semibold text-foreground">Horas de trabalho / dia</label>
-                <span className="text-sm font-bold text-foreground">{inputs.horasDia}h</span>
+              {/* % Baixo Valor */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-baseline">
+                  <label className="text-sm font-semibold text-foreground">Tempo em tarefas de baixo valor</label>
+                  <span className="text-sm font-bold text-foreground">{inputs.pctBaixoValor}%</span>
+                </div>
+                <Slider
+                  value={[inputs.pctBaixoValor]}
+                  onValueChange={([v]) => update("pctBaixoValor", v)}
+                  min={10} max={80} step={5}
+                  className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>10%</span><span>80%</span>
+                </div>
               </div>
-              <Slider
-                value={[inputs.horasDia]}
-                onValueChange={([v]) => update("horasDia", v)}
-                min={4} max={14} step={1}
-                className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>4h</span><span>14h</span>
-              </div>
-            </div>
 
-            {/* % Baixo Valor */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <label className="text-sm font-semibold text-foreground">Tempo em tarefas de baixo valor</label>
-                <span className="text-sm font-bold text-foreground">{inputs.pctBaixoValor}%</span>
+              {/* Interrupções */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-baseline">
+                  <label className="text-sm font-semibold text-foreground">Interrupções por dia</label>
+                  <span className="text-sm font-bold text-foreground">{inputs.interrupcoes}</span>
+                </div>
+                <Slider
+                  value={[inputs.interrupcoes]}
+                  onValueChange={([v]) => update("interrupcoes", v)}
+                  min={0} max={30} step={1}
+                  className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>0</span><span>30</span>
+                </div>
               </div>
-              <Slider
-                value={[inputs.pctBaixoValor]}
-                onValueChange={([v]) => update("pctBaixoValor", v)}
-                min={10} max={80} step={5}
-                className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>10%</span><span>80%</span>
-              </div>
-            </div>
 
-            {/* Interrupções */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <label className="text-sm font-semibold text-foreground">Interrupções por dia</label>
-                <span className="text-sm font-bold text-foreground">{inputs.interrupcoes}</span>
-              </div>
-              <Slider
-                value={[inputs.interrupcoes]}
-                onValueChange={([v]) => update("interrupcoes", v)}
-                min={0} max={30} step={1}
-                className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>0</span><span>30</span>
-              </div>
-            </div>
+              {/* CTA calcular */}
+              <button
+                onClick={() => setShowResults(true)}
+                className="w-full py-4 bg-foreground text-background font-bold text-base rounded-xl hover:opacity-90 transition-opacity"
+              >
+                Calcular meu foco
+              </button>
+            </motion.div>
 
-            {/* CTA calcular */}
-            <button
-              onClick={() => setShowResults(true)}
-              className="w-full py-4 bg-foreground text-background font-bold text-base rounded-xl hover:opacity-90 transition-opacity"
-            >
-              Calcular meu foco
-            </button>
-          </motion.div>
-        </section>
-
-        {/* Resultado */}
-        <AnimatePresence>
-          {showResults && (
-            <motion.section
-              className="px-4 pb-20"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="max-w-2xl mx-auto space-y-8">
+            {/* Right — Results */}
+            <div className="md:w-1/2">
+              <AnimatePresence>
+                {showResults ? (
+                  <motion.div
+                    className="space-y-8"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 30 }}
+                    transition={{ duration: 0.5 }}
+                  >
                 {/* Horas perdidas — destaque principal */}
                 <div className="text-center space-y-2 py-8">
                   <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
@@ -387,10 +389,16 @@ export default function Calculadora() {
                     <p style={{ fontSize: 12, opacity: 0.3 }}>narvo.com.br/calculadora</p>
                   </div>
                 </div>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
+                  </motion.div>
+                ) : (
+                  <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <p className="text-muted-foreground text-sm text-center">Ajuste os valores e clique em <span className="font-bold text-foreground">Calcular meu foco</span></p>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
