@@ -276,7 +276,7 @@ export default function Calculadora() {
                 {/* CTAs */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Link
-                    to={getCollectionByScore(result.score)}
+                    to="/colecao"
                     className="flex items-center justify-center gap-2 py-3.5 bg-foreground text-background font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
                   >
                     Ver produtos <ArrowRight size={16} />
