@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const logos = [
   { name: "Netflix", img: "/images/netflix-logo.png", className: "h-7 md:h-10" },
