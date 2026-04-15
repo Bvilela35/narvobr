@@ -145,17 +145,24 @@ export default function Index() {
         <div className="max-w-[1400px] mx-auto">
           <motion.div
             {...fadeUp}
-            className="relative overflow-hidden rounded-2xl bg-foreground text-background px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
+            className="relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
+            style={{ backgroundColor: "#f8f8f8" }}
           >
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+            {/* Background decorative elements */}
+            <span className="absolute top-6 left-8 text-6xl md:text-8xl opacity-[0.06] select-none pointer-events-none rotate-[-15deg]">🎯</span>
+            <span className="absolute bottom-8 right-10 text-7xl md:text-9xl opacity-[0.06] select-none pointer-events-none rotate-[10deg]">⏱</span>
+            <span className="absolute top-10 right-20 text-5xl md:text-7xl opacity-[0.05] select-none pointer-events-none rotate-[20deg]">🧠</span>
+            <span className="absolute bottom-12 left-16 text-4xl md:text-6xl opacity-[0.05] select-none pointer-events-none rotate-[-8deg]">⚡</span>
+
+            <h2 className="relative z-10 text-3xl md:text-5xl font-black tracking-tight leading-tight text-foreground">
               Quantas horas você perde por dia?
             </h2>
-            <p className="text-sm md:text-base opacity-70 max-w-md">
+            <p className="relative z-10 text-sm md:text-base text-muted-foreground max-w-md">
               Descubra quanto a distração custa no seu dia — e como recuperar o controle.
             </p>
             <Link
               to="/calculadora"
-              className="mt-2 inline-flex items-center gap-2 px-8 py-3.5 bg-background text-foreground font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+              className="relative z-10 mt-2 inline-flex items-center gap-2 px-8 py-3.5 bg-foreground text-background font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
             >
               Fazer o teste
             </Link>
