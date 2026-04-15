@@ -7,7 +7,7 @@ import { calcFocus, getCollectionByScore, type FocusInputs } from "@/lib/focusCa
 import { ArrowRight, RotateCcw, Download } from "lucide-react";
 
 const DEFAULTS: FocusInputs = {
-  rendaMensal: 3000,
+  rendaMensal: 1500,
   horasDia: 9,
   pctBaixoValor: 30,
   interrupcoes: 5,
@@ -150,11 +150,11 @@ export default function Calculadora() {
               <Slider
                 value={[inputs.rendaMensal]}
                 onValueChange={([v]) => update("rendaMensal", v)}
-                min={3000} max={60000} step={1000}
+                min={1500} max={60000} step={500}
                 className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>R$ 3.000</span><span>R$ 60.000</span>
+                <span>R$ 1.500</span><span>R$ 60.000</span>
               </div>
             </div>
 
