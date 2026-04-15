@@ -1,38 +1,67 @@
 
 
-## Plan: Seção "Essenciais" + 2 novas páginas
+# Página "Quanto Custa Sua Distração?" — Calculadora de Foco
 
-Inspirada no layout Apple da imagem de referência — dois blocos lado a lado com fundo `#f8f8f8`, títulos centralizados, descrição curta e link de ação.
+## Resumo
 
-### 1. Nova página: `/nossa-historia` (Nossa História)
+Criar uma página interativa de calculadora de custo de distração em `/calculadora`, seguindo a estética Narvo (minimalista, industrial, Apple-like). A página terá 4 sliders de input, motor de cálculo baseado na pesquisa de Gloria Mark, output visual com breakdown em barras, e 3 CTAs de conversão.
 
-Página editorial contando a história da Narvo. Layout minimalista com seções de texto, alinhado ao manifesto "Engenharia do Silêncio". Conteúdo placeholder editável posteriormente. Helmet SEO incluído.
+## Estrutura da Página
 
-### 2. Nova página: `/materiais` (Materiais & Design)
+A página opera em 2 estados: **input** (sliders + cálculo em tempo real) e **resultado** (output completo com CTAs). Transição animada via Framer Motion.
 
-Página editorial sobre materiais, qualidade e design dos produtos Narvo. Foco em vocabulário proprietário (aço, polímero, densidade, fosco). Layout similar à página de história. Helmet SEO incluído.
+### Camada 1 — Inputs (4 sliders)
 
-### 3. Novo componente: `EssentialsSection`
+| Slider | Range | Default (ICP) | Formato |
+|--------|-------|---------------|---------|
+| Renda mensal | R$ 3.000–60.000 | R$ 18.000 | R$ X.XXX |
+| Horas de trabalho/dia | 4–14h | 9h | Xh |
+| % tempo em tarefas de baixo valor | 10–80% | 30% | XX% |
+| Interrupções por dia | 0–30 | 8 | X interrupções |
 
-Seção com fundo branco, dois blocos `#f8f8f8` lado a lado (grid 2 colunas no desktop, stack no mobile), cada um com:
-- Título em bold (ex: "Nossa História", "Materiais & Design")
-- Descrição curta centralizada
-- Link azul "Saiba mais >"
-- Sem imagens inicialmente (pode adicionar depois)
+Sliders com estilo Narvo (track escuro, thumb minimalista). Valores pré-preenchidos para gerar impacto imediato.
 
-Posicionamento: acima do `<BlogSection />` no `Index.tsx`.
+### Camada 2 — Motor de Cálculo
 
-### 4. Rotas no App.tsx
+Fórmula defensável:
+```text
+custoHora = rendaMensal / (horasDia × 22)
+custoDist = interrupções × (23/60) × 5 × 48 × custoHora
+custoBaixo = horasDia × (pctBaixoValor/100) × 0.30 × custoHora × 12 × 22
+custoAnual = custoDist + custoBaixo
+```
 
-Registrar `/nossa-historia` e `/materiais` como rotas lazy-loaded.
+Score de foco (0–10) derivado dos inputs com rótulos: Crítico (<4), Regular (4–6), Bom (6–8), Alto Desempenho (>8).
 
-### Arquivos criados/editados
+Footnote: "Baseado em pesquisa da UC Irvine (Gloria Mark, 2008)."
 
-| Arquivo | Ação |
-|---------|------|
-| `src/components/EssentialsSection.tsx` | Criar — seção 2 blocos |
-| `src/pages/NossaHistoria.tsx` | Criar — página história |
-| `src/pages/MateriaisDesign.tsx` | Criar — página materiais |
-| `src/pages/Index.tsx` | Editar — inserir `<EssentialsSection />` acima de `<BlogSection />` |
-| `src/App.tsx` | Editar — adicionar 2 rotas |
+### Camada 3 — Output Visual
+
+1. **Número grande** — custo anual formatado em R$, animação countUp
+2. **Breakdown em 3 barras** — Vermelho (distrações), Âmbar (overhead/baixo valor), Verde (foco profundo)
+3. **Ganho potencial** — "+20% de foco recupera R$ X.XXX/ano"
+4. **Score de foco** com rótulo qualitativo
+
+### Camada 4 — CTAs (3 saídas paralelas)
+
+1. **Ver produtos recomendados** — Link para `/colecao` segmentado por score
+2. **Recalcular** — Reset dos sliders
+3. **Compartilhar resultado** — Gera card visual (fundo escuro, tipografia Narvo, número + score) para download via html2canvas
+
+## Arquivos a Criar/Editar
+
+1. **`src/pages/Calculadora.tsx`** — Página completa com sliders, cálculo, output e CTAs
+2. **`src/lib/focusCalculator.ts`** — Lógica de cálculo isolada (fórmula + score)
+3. **`src/App.tsx`** — Adicionar rota `/calculadora`
+
+## Detalhes Técnicos
+
+- Sliders usam o componente `@radix-ui/react-slider` existente, estilizado com cores Narvo
+- Cálculo reativo via `useMemo` — atualiza em tempo real conforme sliders mudam
+- Animação countUp no número grande com Framer Motion
+- Barras de breakdown com largura proporcional animada
+- Card de compartilhamento gerado client-side com `html2canvas` (instalar dependência)
+- Sem dependência de backend — tudo client-side
+- Framer Motion para transições entre estados (input → resultado)
+- Responsivo: sliders empilhados no mobile, layout lado a lado no desktop
 
