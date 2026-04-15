@@ -266,13 +266,37 @@ export default function Calculadora() {
               transition={{ duration: 0.5 }}
             >
               <div className="max-w-2xl mx-auto space-y-8">
-                {/* Número grande */}
+                {/* Horas perdidas — destaque principal */}
                 <div className="text-center space-y-2 py-8">
                   <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
-                    Você perde por ano
+                    Você perde por dia
                   </p>
-                  <AnimatedCurrency value={result.custoAnual} />
-                  <p className="text-sm text-muted-foreground mt-2">em distração e tarefas de baixo valor</p>
+                  <motion.span
+                    key={result.horasPerdidasDia.toFixed(1)}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="block text-5xl md:text-7xl font-black text-foreground tracking-tight"
+                  >
+                    {result.horasPerdidasDia.toFixed(1)}h
+                  </motion.span>
+                  <p className="text-sm text-muted-foreground mt-2">de produtividade real</p>
+                </div>
+
+                {/* Métricas de produtividade */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
+                    <p className="text-2xl md:text-3xl font-black text-foreground">{Math.round(result.horasPerdidasMes)}h</p>
+                    <p className="text-xs text-muted-foreground">perdidas/mês</p>
+                  </div>
+                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
+                    <p className="text-2xl md:text-3xl font-black text-foreground">{result.diasPerdidasAno}</p>
+                    <p className="text-xs text-muted-foreground">dias/ano</p>
+                  </div>
+                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
+                    <p className="text-2xl md:text-3xl font-black text-emerald-600">+{result.horasRecuperaveisMes.toFixed(0)}h</p>
+                    <p className="text-xs text-muted-foreground">recuperáveis/mês</p>
+                  </div>
                 </div>
 
                 {/* Breakdown */}
@@ -298,11 +322,12 @@ export default function Calculadora() {
                   />
                 </div>
 
-                {/* Ganho + Score */}
+                {/* Impacto financeiro + Score */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-card rounded-2xl p-6 text-center space-y-2">
-                    <p className="text-sm text-muted-foreground">Com +20% de foco, você recupera</p>
-                    <p className="text-3xl font-black text-emerald-600">{formatCurrency(result.ganho20)}<span className="text-base font-medium text-muted-foreground">/ano</span></p>
+                  <div className="bg-card rounded-2xl p-6 space-y-3">
+                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">Impacto financeiro</h3>
+                    <p className="text-3xl font-black text-red-500">{formatCurrency(result.custoAnual)}<span className="text-base font-medium text-muted-foreground">/ano</span></p>
+                    <p className="text-xs text-muted-foreground">Com +20% de foco, você recupera <span className="font-bold text-emerald-600">{formatCurrency(result.ganho20)}/ano</span></p>
                   </div>
                   <div className="bg-card rounded-2xl p-6 flex items-center justify-center">
                     <ScoreIndicator score={result.score} label={result.scoreLabel} />
