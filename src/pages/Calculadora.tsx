@@ -10,7 +10,7 @@ const DEFAULTS: FocusInputs = {
   rendaMensal: 1500,
   horasDia: 9,
   pctBaixoValor: 30,
-  interrupcoes: 5,
+  interrupcoes: 8,
 };
 
 function formatCurrency(v: number) {
