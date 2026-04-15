@@ -24,6 +24,7 @@ const Envio = lazy(() => import("./pages/Envio"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
 const TermosDeServico = lazy(() => import("./pages/TermosDeServico"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
+const Corporativo = lazy(() => import("./pages/Corporativo"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -56,6 +57,7 @@ function AppContent() {
           <Route path="/trocas" element={<Trocas />} />
           <Route path="/envio" element={<Envio />} />
           <Route path="/privacidade" element={<Privacidade />} />
+          <Route path="/corporativo" element={<Corporativo />} />
           <Route path="/termos-de-servico" element={<TermosDeServico />} />
           <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="*" element={<NotFound />} />

@@ -9,11 +9,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MobileMenu } from "./MobileMenu";
 
 const navLinks = [
-  { label: "Construir Setup", href: "/colecao" },
-  { label: "InSight", href: "/colecao/narvo-insight" },
-  { label: "OutSight", href: "/colecao/narvo-outsight" },
-  { label: "Acessórios", href: "/colecao" },
-  { label: "Decoração", href: "/colecao" },
+  { label: "Setup", href: "/colecao" },
+  { label: "Acessórios", href: "/colecao/acessorios" },
+  { label: "Corporativo", href: "/corporativo" },
 ];
 
 
