@@ -107,8 +107,8 @@ export default function Calculadora() {
   return (
     <>
       <Helmet>
-        <title>Quanto Custa Sua Distração? | Narvo</title>
-        <meta name="description" content="Calcule o custo real da distração no seu ambiente de trabalho. Descubra quanto você perde por ano e como recuperar seu foco." />
+        <title>Calculadora de Foco | Narvo</title>
+        <meta name="description" content="Descubra quantas horas de produtividade você perde por dia e o impacto financeiro da distração no seu trabalho." />
       </Helmet>
 
       <div className="min-h-screen bg-background">
