@@ -14,6 +14,11 @@ const columnTwo = [
   { label: "Trocas e Devoluções", href: "/trocas" },
 ];
 
+const columnTools = [
+  { label: "Calcule o seu foco", href: "/calculadora", external: false },
+  { label: "Ferramentas de produtividade", href: "https://narvosfocus.com", external: true },
+];
+
 export function Footer() {
   return (
     <footer className="border-t border-border">
