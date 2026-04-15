@@ -8,7 +8,7 @@ const logos = [
 
 export function CorporateSection() {
   return (
-    <section className="py-20 md:py-28 px-6 md:px-10">
+    <section className="py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
         <div className="bg-card-elevated rounded-2xl p-10 md:p-14 flex flex-col md:flex-row md:items-center gap-10 md:gap-16">
           {/* Left */}
