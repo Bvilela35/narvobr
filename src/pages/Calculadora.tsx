@@ -272,18 +272,18 @@ export default function Calculadora() {
                 </div>
 
                 {/* Métricas de produtividade */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
-                    <p className="text-2xl md:text-3xl font-black text-foreground">{Math.round(result.horasPerdidasMes)}h</p>
-                    <p className="text-xs text-muted-foreground">perdidas/mês</p>
+                <div className="grid grid-cols-3 gap-2 md:gap-3">
+                  <div className="bg-card rounded-2xl p-3 md:p-5 text-center space-y-1">
+                    <p className="text-xl md:text-3xl font-black text-foreground">{Math.round(result.horasPerdidasMes)}h</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground leading-tight">perdidas/mês</p>
                   </div>
-                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
-                    <p className="text-2xl md:text-3xl font-black text-foreground">{result.diasPerdidasAno}</p>
-                    <p className="text-xs text-muted-foreground">dias/ano</p>
+                  <div className="bg-card rounded-2xl p-3 md:p-5 text-center space-y-1">
+                    <p className="text-xl md:text-3xl font-black text-foreground">{result.diasPerdidasAno}</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground leading-tight">dias/ano</p>
                   </div>
-                  <div className="bg-card rounded-2xl p-5 text-center space-y-1">
-                    <p className="text-2xl md:text-3xl font-black text-emerald-600">+{result.horasRecuperaveisMes.toFixed(0)}h</p>
-                    <p className="text-xs text-muted-foreground">recuperáveis/mês</p>
+                  <div className="bg-card rounded-2xl p-3 md:p-5 text-center space-y-1 min-w-0">
+                    <p className="text-xl md:text-3xl font-black text-emerald-600 truncate">+{result.horasRecuperaveisMes.toFixed(0)}h</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground leading-tight">recuperáveis /mês</p>
                   </div>
                 </div>
 
