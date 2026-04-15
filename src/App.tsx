@@ -28,6 +28,7 @@ const Corporativo = lazy(() => import("./pages/Corporativo"));
 const NossaHistoria = lazy(() => import("./pages/NossaHistoria"));
 const MateriaisDesign = lazy(() => import("./pages/MateriaisDesign"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
+const Calculadora = lazy(() => import("./pages/Calculadora"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -64,6 +65,7 @@ function AppContent() {
           <Route path="/materiais" element={<MateriaisDesign />} />
           <Route path="/termos-de-servico" element={<TermosDeServico />} />
           <Route path="/diagnostico" element={<Diagnostico />} />
+          <Route path="/calculadora" element={<Calculadora />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
