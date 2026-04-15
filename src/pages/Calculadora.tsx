@@ -280,6 +280,9 @@ export default function Calculadora() {
                     {result.horasPerdidasDia.toFixed(1)}h
                   </motion.span>
                   <p className="text-sm text-muted-foreground mt-2">de produtividade real</p>
+                  <p className="text-xs text-muted-foreground mt-4 max-w-md mx-auto leading-relaxed">
+                    Cada interrupção consome em média <span className="font-bold text-foreground">23 minutos</span> para retomar o foco profundo. Com {inputs.interrupcoes} interrupções por dia, são <span className="font-bold text-foreground">{Math.round(inputs.interrupcoes * 23)} minutos</span> perdidos antes mesmo de começar a produzir de verdade.
+                  </p>
                 </div>
 
                 {/* Métricas de produtividade */}
