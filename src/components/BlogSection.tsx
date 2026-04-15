@@ -20,6 +20,51 @@ function formatDate(dateStr: string) {
   });
 }
 
+function ArticleCard({ article, i }: { article: any; i: number }) {
+  const tag = article.tags?.[0] || "Journal";
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: i * 0.12 }}
+      className="group cursor-pointer h-full"
+    >
+      <Link to={`/journal/${article.handle}`}>
+        <div className="bg-card-elevated rounded-2xl overflow-hidden h-full flex flex-col transition-colors hover:bg-accent/50">
+          {article.image && (
+            <div className="aspect-[4/3] overflow-hidden">
+              <img
+                src={article.image.url}
+                alt={article.image.altText || article.title}
+                width={800}
+                height={600}
+                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )}
+          <div className="p-6 flex flex-col flex-1">
+            <span className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
+              {tag}
+            </span>
+            <h3 className="text-base font-medium mt-3 mb-3 leading-snug group-hover:opacity-70 transition-opacity">
+              {article.title}
+            </h3>
+            <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
+              <span className="text-xs text-muted-foreground">
+                {formatDate(article.publishedAt)}
+              </span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
+
 export function BlogSection() {
   const { data: articles = [] } = useBlogArticles("blog", 3);
   const scrollRef = useRef<HTMLDivElement>(null);
