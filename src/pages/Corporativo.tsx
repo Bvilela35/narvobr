@@ -102,7 +102,7 @@ export default function Corporativo() {
             Envie uma mensagem e receba uma proposta personalizada para o seu projeto.
           </p>
           <a
-            href="https://wa.me/5500000000000"
+            href="https://wa.me/5531993940473"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
