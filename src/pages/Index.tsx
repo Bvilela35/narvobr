@@ -165,6 +165,15 @@ export default function Index() {
 
       <BeforeAfter />
 
+      {/* Diferenciais de Marca */}
+      <BrandDifferentials />
+
+      {/* Essenciais */}
+      <EssentialsSection />
+
+      {/* Blog */}
+      <BlogSection />
+
       {/* Vendas Corporativas */}
       <CorporateSection />
 
