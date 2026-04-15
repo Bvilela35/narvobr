@@ -111,7 +111,7 @@ export default function Index() {
       <HeroBanner />
 
       {/* Produtos em destaque */}
-      <section className="py-24 px-6 md:px-10 md:py-[53px]">
+      <section className="py-14 px-6 md:px-10 md:py-[53px]">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex items-end justify-between mb-12">
             <motion.div {...fadeUp}>
@@ -156,7 +156,7 @@ export default function Index() {
       <CorporateSection />
 
       {/* Depoimentos */}
-      <section className="py-24 md:py-32 px-6 md:px-10">
+      <section className="py-16 md:py-20 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <ReviewsSection />
         </div>
