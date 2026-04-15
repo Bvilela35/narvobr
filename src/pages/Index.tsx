@@ -148,7 +148,7 @@ export default function Index() {
             className="relative overflow-hidden rounded-2xl bg-foreground text-background px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
           >
             <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-              Calcule seu foco.
+              Quantas horas você perde por dia?
             </h2>
             <p className="text-sm md:text-base opacity-70 max-w-md">
               Descubra quanto a distração custa no seu dia — e como recuperar o controle.
