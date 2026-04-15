@@ -267,7 +267,7 @@ export default function Produto() {
 
   useEffect(() => {
     setLoadRelatedProducts(false);
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return undefined;
 
     const startLoading = () => setLoadRelatedProducts(true);
 
