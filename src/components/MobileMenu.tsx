@@ -57,13 +57,25 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + i * 0.06, duration: 0.4, ease: "easeOut" }}
               >
-                <Link
-                  to={link.href}
-                  onClick={onClose}
-                  className="block text-4xl font-semibold tracking-tight text-foreground py-3 transition-opacity hover:opacity-50"
-                >
-                  {link.label}
-                </Link>
+                {link.external ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={onClose}
+                    className="block text-4xl font-semibold tracking-tight text-foreground py-3 transition-opacity hover:opacity-50"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    to={link.href}
+                    onClick={onClose}
+                    className="block text-4xl font-semibold tracking-tight text-foreground py-3 transition-opacity hover:opacity-50"
+                  >
+                    {link.label}
+                  </Link>
+                )}
               </motion.div>
             ))}
           </nav>
