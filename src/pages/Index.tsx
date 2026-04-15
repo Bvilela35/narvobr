@@ -113,8 +113,6 @@ export default function Index() {
       {/* Categorias */}
       <CategoryCarousel />
 
-      {/* The System: InSight & OutSight */}
-      <TheSystemSection />
 
       {/* Por que Narvo */}
       <section className="px-6 md:px-10 py-[13px] md:py-[33px]">
