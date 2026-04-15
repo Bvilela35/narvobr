@@ -7,10 +7,10 @@ import { calcFocus, getCollectionByScore, type FocusInputs } from "@/lib/focusCa
 import { ArrowRight, RotateCcw, Download } from "lucide-react";
 
 const DEFAULTS: FocusInputs = {
-  rendaMensal: 18000,
+  rendaMensal: 3000,
   horasDia: 9,
   pctBaixoValor: 30,
-  interrupcoes: 8,
+  interrupcoes: 5,
 };
 
 function formatCurrency(v: number) {
