@@ -142,30 +142,21 @@ export default function Index() {
 
       {/* Banner Calculadora */}
       <section className="mx-3 md:mx-6 my-4">
-        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] rounded-2xl overflow-hidden flex items-center justify-center">
-          <img
-            src="/assets/calculadora-banner.jpg"
-            alt="Setup minimalista com dispositivos"
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-            width={1920}
-            height={1080}
-          />
-          <div className="absolute inset-0 bg-black/20" />
+        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] rounded-2xl overflow-hidden flex items-center justify-center bg-[#f8f8f8]">
           <div className="relative z-10 px-6 md:px-10">
             <motion.div
               {...fadeUp}
               className="flex flex-col items-center text-center gap-4"
             >
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-white">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-black">
                 Calculadora de Foco
               </h2>
-              <p className="text-sm md:text-base text-white/70 mt-1">
+              <p className="text-sm md:text-base text-black/60 mt-1">
                 Descubra quantas horas você perde com distrações e como isso diminui sua produtividade.
               </p>
               <Link
                 to="/calculadora"
-                className="mt-3 inline-flex items-center gap-2 px-7 py-2.5 border border-white text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300"
+                className="mt-3 inline-flex items-center gap-2 px-7 py-2.5 border border-black text-black font-medium text-sm rounded-full hover:bg-black hover:text-white transition-all duration-300"
               >
                 Fazer o teste
               </Link>
