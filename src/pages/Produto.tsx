@@ -284,8 +284,8 @@ export default function Produto() {
       };
     }
 
-    const timeoutId = window.setTimeout(startLoading, 1500);
-    return () => window.clearTimeout(timeoutId);
+    const timeoutId = globalThis.setTimeout(startLoading, 1500);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [handle]);
 
   // Preload LCP image as soon as product data arrives
