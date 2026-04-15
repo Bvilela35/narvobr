@@ -25,7 +25,7 @@ export function BlogSection() {
   if (articles.length === 0) return null;
 
   return (
-    <section className="py-24 md:py-32 px-6 md:px-10 border-t border-border">
+    <section className="py-24 md:py-32 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-end justify-between mb-16">
           <motion.div {...fadeUp}>

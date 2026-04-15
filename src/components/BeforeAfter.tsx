@@ -48,7 +48,7 @@ export function BeforeAfter() {
   }, []);
 
   return (
-    <section className="py-24 px-6 md:px-10 border-t border-border md:py-[29px]">
+    <section className="py-24 px-6 md:px-10 md:py-[29px]">
       <div className="max-w-[1400px] mx-auto">
         <motion.div {...fadeUp} className="mb-16">
           <p className="md:text-3xl font-semibold text-3xl">
