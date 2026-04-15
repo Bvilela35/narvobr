@@ -213,22 +213,6 @@ export default function Calculadora() {
                 </div>
               </div>
 
-              {/* % Baixo Valor */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-baseline">
-                  <label className="text-sm font-semibold text-foreground">Tempo em tarefas de baixo valor</label>
-                  <span className="text-sm font-bold text-foreground">{inputs.pctBaixoValor}%</span>
-                </div>
-                <Slider
-                  value={[inputs.pctBaixoValor]}
-                  onValueChange={([v]) => update("pctBaixoValor", v)}
-                  min={10} max={80} step={5}
-                  className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>10%</span><span>80%</span>
-                </div>
-              </div>
 
               {/* Interrupções */}
               <div className="space-y-3">
