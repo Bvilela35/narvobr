@@ -9,8 +9,7 @@ import { formatInstallmentText } from "@/lib/installments";
 import { optimizeShopifyImage } from "@/lib/shopify";
 
 const EMPTY_CART_SUGGESTIONS = [
-  { label: "InSight", href: "/colecao/narvo-insight", icon: "🖥️" },
-  { label: "OutSight", href: "/colecao/narvo-outsight", icon: "💼" },
+  { label: "Setup", href: "/colecao/setup", icon: "🖥️" },
   { label: "Acessórios", href: "/colecao/acessorios", icon: "🎨" },
 ];
 
