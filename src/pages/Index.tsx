@@ -146,7 +146,7 @@ export default function Index() {
           <motion.div
             {...fadeUp}
             className="relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-20 flex flex-col items-center text-center gap-6"
-            style={{ backgroundColor: "#b6e36e" }}
+            style={{ backgroundColor: "#143e32" }}
           >
             {/* Background decorative elements */}
             <span className="absolute top-6 left-8 text-6xl md:text-8xl opacity-[0.08] select-none pointer-events-none rotate-[-15deg]">🎯</span>
@@ -154,16 +154,16 @@ export default function Index() {
             <span className="absolute top-10 right-20 text-5xl md:text-7xl opacity-[0.07] select-none pointer-events-none rotate-[20deg]">🧠</span>
             <span className="absolute bottom-12 left-16 text-4xl md:text-6xl opacity-[0.07] select-none pointer-events-none rotate-[-8deg]">⚡</span>
 
-            <h2 className="relative z-10 text-3xl md:text-5xl font-black tracking-tight leading-tight" style={{ color: "#143e32" }}>
+            <h2 className="relative z-10 text-3xl md:text-5xl font-black tracking-tight leading-tight" style={{ color: "#ffffff" }}>
               Quantas horas você perde por dia?
             </h2>
-            <p className="relative z-10 text-sm md:text-base max-w-md" style={{ color: "#143e32", opacity: 0.75 }}>
+            <p className="relative z-10 text-sm md:text-base max-w-md" style={{ color: "#ffffff", opacity: 0.75 }}>
               Calcule suas horas perdidas em interrupções e veja como um ambiente Narvo pode devolver seu foco.
             </p>
             <Link
               to="/calculadora"
               className="relative z-10 mt-2 inline-flex items-center gap-2 px-8 py-3.5 font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: "#143e32", color: "#ffffff" }}
+              style={{ backgroundColor: "#b6e36e", color: "#143e32" }}
             >
               Fazer o teste
             </Link>
