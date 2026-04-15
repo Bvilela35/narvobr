@@ -94,6 +94,8 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+
           {/* Ferramentas */}
           <div>
             <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
