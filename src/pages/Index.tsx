@@ -158,7 +158,7 @@ export default function Index() {
               Quantas horas você perde por dia?
             </h2>
             <p className="relative z-10 text-sm md:text-base text-muted-foreground max-w-md">
-              Descubra quanto a distração custa no seu dia — e como recuperar o controle.
+              Calcule suas horas perdidas em interrupções e veja como um ambiente Narvo pode devolver seu foco.
             </p>
             <Link
               to="/calculadora"
