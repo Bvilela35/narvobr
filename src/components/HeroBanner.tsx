@@ -13,19 +13,8 @@ export function HeroBanner() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
     return (
-    <section ref={sectionRef} className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-2xl">
-      <motion.img
-        src="/assets/hero-banner.jpg"
-        alt="Setup minimalista com acessórios Narvo"
-        className="absolute inset-0 w-full h-[120%] object-cover"
-        loading="eager"
-        fetchPriority="high"
-        width={1920}
-        height={1080}
-        decoding="async"
-        style={{ y }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+    <section ref={sectionRef} className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-2xl bg-black">
+      <div className="absolute inset-0" />
 
       <div className="absolute inset-0 z-10 px-6 md:px-10 flex items-center justify-center">
         <div className="max-w-[1400px] mx-auto flex flex-col items-center text-center">
