@@ -149,15 +149,49 @@ export default function Calculadora() {
                 <label className="text-sm font-semibold text-foreground">Renda mensal</label>
                 <span className="text-sm font-bold text-foreground">{formatCurrency(inputs.rendaMensal)}</span>
               </div>
-              <Slider
-                value={[inputs.rendaMensal]}
-                onValueChange={([v]) => update("rendaMensal", v)}
-                min={1500} max={60000} step={500}
-                className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>R$ 1.500</span><span>R$ 60.000</span>
-              </div>
+              {!customRenda ? (
+                <>
+                  <Slider
+                    value={[Math.min(inputs.rendaMensal, 20000)]}
+                    onValueChange={([v]) => update("rendaMensal", v)}
+                    min={1500} max={20000} step={500}
+                    className="[&_[role=slider]]:bg-foreground [&_[role=slider]]:border-foreground [&_[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-foreground"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>R$ 1.500</span>
+                    <button
+                      onClick={() => { setCustomRenda(true); setCustomRendaValue(String(inputs.rendaMensal)); }}
+                      className="text-foreground font-semibold underline underline-offset-2"
+                    >
+                      +R$ 20.000
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={customRendaValue}
+                    onChange={(e) => {
+                      setCustomRendaValue(e.target.value);
+                      const v = Number(e.target.value);
+                      if (v >= 1500) update("rendaMensal", v);
+                    }}
+                    placeholder="Ex: 35000"
+                    min={1500}
+                    className="flex-1 bg-secondary text-foreground rounded-lg px-4 py-2.5 text-sm font-medium border border-border focus:outline-none focus:ring-1 focus:ring-foreground"
+                  />
+                  <button
+                    onClick={() => {
+                      setCustomRenda(false);
+                      if (inputs.rendaMensal > 20000) update("rendaMensal", 20000);
+                    }}
+                    className="px-3 py-2.5 text-xs font-semibold text-muted-foreground border border-border rounded-lg hover:bg-secondary transition-colors"
+                  >
+                    Slider
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Horas */}
