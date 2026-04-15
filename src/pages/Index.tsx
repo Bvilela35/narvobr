@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { HeroBanner } from "@/components/HeroBanner";
 import { BrandDifferentials } from "@/components/BrandDifferentials";
 import { BlogSection } from "@/components/BlogSection";
+import { EssentialsSection } from "@/components/EssentialsSection";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { CorporateSection } from "@/components/CorporateSection";
 import { TheSystemSection } from "@/components/TheSystemSection";
@@ -180,6 +181,9 @@ export default function Index() {
 
       {/* Diferenciais de Marca */}
       <BrandDifferentials />
+
+      {/* Essenciais */}
+      <EssentialsSection />
 
       {/* Blog */}
       <BlogSection />
