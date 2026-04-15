@@ -109,8 +109,6 @@ export default function Index() {
       {/* Hero */}
       <HeroBanner />
 
-      {/* Manifesto Statement */}
-      <ManifestoStatement />
 
       {/* Categorias */}
       <CategoryCarousel />
