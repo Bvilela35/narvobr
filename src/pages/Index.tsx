@@ -140,18 +140,6 @@ export default function Index() {
         </div>
       </section>
 
-      <BeforeAfter />
-
-      {/* Diferenciais de Marca */}
-      <BrandDifferentials />
-
-      {/* Essenciais */}
-      <EssentialsSection />
-
-      {/* Blog */}
-      <BlogSection />
-
-
       {/* Banner Calculadora */}
       <section className="px-6 md:px-10 py-10 md:py-14">
         <div className="max-w-[1400px] mx-auto">
@@ -174,6 +162,17 @@ export default function Index() {
           </motion.div>
         </div>
       </section>
+
+      <BeforeAfter />
+
+      {/* Diferenciais de Marca */}
+      <BrandDifferentials />
+
+      {/* Essenciais */}
+      <EssentialsSection />
+
+      {/* Blog */}
+      <BlogSection />
 
       {/* Vendas Corporativas */}
       <CorporateSection />
