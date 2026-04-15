@@ -66,7 +66,7 @@ export default function Carrinho() {
           finalUrl = url.toString();
         } catch { /* keep original */ }
       }
-      window.open(finalUrl, "_blank");
+      window.location.href = finalUrl;
     }
   };
 
