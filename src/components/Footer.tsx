@@ -94,6 +94,34 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+          {/* Ferramentas */}
+          <div>
+            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+              Ferramentas
+            </h4>
+            <ul className="space-y-4">
+              {columnTools.map((link) => (
+                <li key={link.label}>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
