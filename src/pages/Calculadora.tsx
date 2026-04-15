@@ -297,12 +297,6 @@ export default function Calculadora() {
                     color="bg-red-500"
                   />
                   <BreakdownBar
-                    label="Tarefas de baixo valor"
-                    hours={result.horasOverhead}
-                    total={inputs.horasDia}
-                    color="bg-amber-500"
-                  />
-                  <BreakdownBar
                     label="Foco profundo"
                     hours={result.horasFocoProfundo}
                     total={inputs.horasDia}
