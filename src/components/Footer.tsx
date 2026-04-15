@@ -68,7 +68,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    className="text-base md:text-lg font-bold opacity-80 hover:opacity-100 transition-opacity"
                   >
                     {link.label}
                   </Link>
@@ -87,7 +87,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                    className="text-base md:text-lg font-bold opacity-80 hover:opacity-100 transition-opacity"
                   >
                     {link.label}
                   </Link>
@@ -109,14 +109,14 @@ export function Footer() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                      className="text-base md:text-lg font-bold opacity-80 hover:opacity-100 transition-opacity"
                     >
                       {link.label}
                     </a>
                   ) : (
                     <Link
                       to={link.href}
-                      className="text-xl md:text-2xl font-black opacity-80 hover:opacity-100 transition-opacity"
+                      className="text-base md:text-lg font-bold opacity-80 hover:opacity-100 transition-opacity"
                     >
                       {link.label}
                     </Link>
