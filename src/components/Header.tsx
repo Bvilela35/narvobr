@@ -11,6 +11,7 @@ import { MobileMenu } from "./MobileMenu";
 const navLinks = [
   { label: "Setup", href: "/colecao/setup" },
   { label: "Acessórios", href: "/colecao/acessorios" },
+  { label: "Narvo Focus", href: "https://focus.narvo.com.br/", external: true },
   { label: "Corporativo", href: "/corporativo" },
 ];
 
@@ -104,16 +105,28 @@ export function Header({ onCartOpen }: HeaderProps) {
 
           <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) =>
-            <Link
-              key={link.label}
-              to={link.href}
-              className={cn(
-                "text-sm tracking-wide transition-opacity hover:opacity-60",
-                location.pathname === link.href ? "opacity-100" : "opacity-70"
-              )}>
-
-                {link.label}
-              </Link>
+              link.external ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm tracking-wide transition-opacity hover:opacity-60 opacity-70"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className={cn(
+                    "text-sm tracking-wide transition-opacity hover:opacity-60",
+                    location.pathname === link.href ? "opacity-100" : "opacity-70"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              )
             )}
           </nav>
 
