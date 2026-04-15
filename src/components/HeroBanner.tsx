@@ -35,9 +35,9 @@ export function HeroBanner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            O ambiente onde você trabalha
+            Seu setup.
             <br />
-            não é decoração.
+            Sem concessões.
           </motion.h1>
 
           <motion.div
