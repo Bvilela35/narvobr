@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
 
   const shopifyAccessToken = Deno.env.get("SHOPIFY_ACCESS_TOKEN") || Deno.env.get("SHOPIFY_ADMIN_TOKEN");
   if (!shopifyAccessToken) {
-    return jsonResponse({ error: "Shopify admin token not configured" }, 500);
+    return emptyJournalResponse(req, "Shopify admin token not configured");
   }
 
   try {
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("shopify-journal error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return emptyJournalResponse(req, "Internal server error");
   }
 });
 
@@ -167,5 +167,18 @@ function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function emptyJournalResponse(req: Request, error: string) {
+  const url = new URL(req.url);
+  const blogHandle = url.searchParams.get("blog") || "blog";
+  const articleHandle = url.searchParams.get("article");
+
+  return jsonResponse({
+    error,
+    articles: [],
+    article: articleHandle ? null : undefined,
+    blog: { handle: blogHandle, title: null },
   });
 }

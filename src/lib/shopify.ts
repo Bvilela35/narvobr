@@ -996,7 +996,32 @@ async function fetchJournalSnapshot(): Promise<ShopifyArticle[]> {
   }
 }
 
+function normalizeSnapshotArticle(article: any, blogHandle = "blog"): ShopifyArticle {
+  return {
+    id: article.id,
+    title: article.title,
+    handle: article.handle,
+    excerpt: article.excerpt || null,
+    contentHtml: article.contentHtml || article.content || "",
+    publishedAt: article.publishedAt,
+    tags: Array.isArray(article.tags) ? article.tags : [],
+    image: article.image || null,
+    authorV2: article.authorV2 || (article.author?.name ? { name: article.author.name } : null),
+    seo: article.seo || null,
+    blog: article.blog || { handle: blogHandle },
+  };
+}
+
 export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
+  const snapshot = await fetchJournalSnapshot();
+  const snapshotArticles = snapshot
+    .filter((article) => article.blog?.handle ? article.blog.handle === blogHandle : true)
+    .map((article) => normalizeSnapshotArticle(article, blogHandle));
+
+  if (snapshotArticles.length > 0) {
+    return snapshotArticles.slice(0, first);
+  }
+
   try {
     const response = await fetch(
       `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&first=${first}`
@@ -1009,49 +1034,38 @@ export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promis
       }
     }
   } catch {
-    // Falls back to static snapshot below.
+    // Falls back to an empty state below.
   }
 
-  const snapshot = await fetchJournalSnapshot();
-  return snapshot.slice(0, first);
+  return [];
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
-  let article: any = null;
+  const snapshot = await fetchJournalSnapshot();
+  const snapshotArticle = snapshot.find((item) => item.handle === articleHandle);
+  if (snapshotArticle) {
+    return normalizeSnapshotArticle(snapshotArticle, blogHandle);
+  }
+
   try {
     const response = await fetch(
       `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
     );
     if (response.ok) {
       const data = await response.json();
-      article = data?.article
+      const article = data?.article
         ?? data?.articles?.find((e: any) => e?.handle === articleHandle)
         ?? data?.data?.blog?.articles?.edges?.find((e: any) => e?.node?.handle === articleHandle)?.node
         ?? data?.data?.blog?.articles?.edges?.[0]?.node
         ?? null;
+
+      if (article) {
+        return normalizeSnapshotArticle(article, blogHandle);
+      }
     }
   } catch {
-    // Falls back to static snapshot below.
+    // Falls back to null below.
   }
 
-  if (!article) {
-    const snapshot = await fetchJournalSnapshot();
-    article = snapshot.find((item) => item.handle === articleHandle) ?? null;
-  }
-
-  if (!article) return null;
-
-  return {
-    id: article.id,
-    title: article.title,
-    handle: article.handle,
-    excerpt: article.excerpt || null,
-    contentHtml: article.contentHtml || article.content || "",
-    publishedAt: article.publishedAt,
-    tags: article.tags || [],
-    image: article.image || null,
-    authorV2: article.author?.name ? { name: article.author.name } : null,
-    seo: null,
-    blog: { handle: blogHandle },
-  };
+  return null;
 }
