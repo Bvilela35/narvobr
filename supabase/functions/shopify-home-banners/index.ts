@@ -63,13 +63,11 @@ Deno.serve(async (req) => {
                       width
                       height
                     }
-                    preview {
-                      image {
-                        url
-                        altText
-                        width
-                        height
-                      }
+                    previewImage {
+                      url
+                      altText
+                      width
+                      height
                     }
                   }
                   ... on GenericFile {
@@ -126,7 +124,7 @@ function normalizeBanner(metaobject: any): BannerHomeEntry | null {
   const fields = Array.isArray(metaobject?.fields) ? metaobject.fields : [];
   const fieldMap = new Map(fields.map((field: any) => [field.key, field]));
 
-  const fileField = fieldMap.get("arquivo") || fieldMap.get("file");
+  const fileField = fieldMap.get("arquivo") || fieldMap.get("foto_video") || fieldMap.get("file");
   const titleField = fieldMap.get("titulo") || fieldMap.get("title");
   const ctaField = fieldMap.get("cta_botao") || fieldMap.get("cta") || fieldMap.get("cta_label");
   const linkField = fieldMap.get("link") || fieldMap.get("url");
@@ -168,11 +166,11 @@ function normalizeMedia(field: any): BannerMedia | null {
     return {
       type: "video",
       url: source.url,
-      altText: reference.preview?.image?.altText || null,
-      width: source.width ?? reference.preview?.image?.width ?? null,
-      height: source.height ?? reference.preview?.image?.height ?? null,
+      altText: reference.previewImage?.altText || null,
+      width: source.width ?? reference.previewImage?.width ?? null,
+      height: source.height ?? reference.previewImage?.height ?? null,
       mimeType: source.mimeType || "video/mp4",
-      posterUrl: reference.preview?.image?.url || null,
+      posterUrl: reference.previewImage?.url || null,
     };
   }
 
