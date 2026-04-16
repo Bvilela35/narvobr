@@ -8,6 +8,7 @@ const SUPABASE_FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v
 const PRODUCT_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-product`;
 const COLLECTION_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-collection`;
 const PRODUCTS_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-products`;
+const HOME_BANNERS_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-home-banners`;
 const USE_EDGE_CATALOG = false;
 
 export interface ShopifyVideoSource {
@@ -20,6 +21,22 @@ export interface ShopifyVideo {
   alt: string | null;
   sources: ShopifyVideoSource[];
   previewImage?: { url: string } | null;
+}
+
+export interface HomeBanner {
+  id: string;
+  title: string;
+  ctaLabel: string;
+  link: string;
+  media: {
+    type: "image" | "video";
+    url: string;
+    altText: string | null;
+    width?: number | null;
+    height?: number | null;
+    mimeType?: string | null;
+    posterUrl?: string | null;
+  };
 }
 
 export function optimizeShopifyImage(url: string | undefined, width = 800): string {
@@ -138,6 +155,24 @@ async function fetchEdgeJson(url: string) {
   } catch {
     return null;
   }
+}
+
+export async function fetchHomeBanners(): Promise<HomeBanner[]> {
+  const data = await fetchEdgeJson(HOME_BANNERS_EDGE_FUNCTION_URL);
+  const banners = Array.isArray(data?.banners) ? data.banners : [];
+
+  return banners.filter((banner: any): banner is HomeBanner => {
+    return Boolean(
+      banner &&
+      typeof banner.id === "string" &&
+      typeof banner.title === "string" &&
+      typeof banner.ctaLabel === "string" &&
+      typeof banner.link === "string" &&
+      banner.media &&
+      (banner.media.type === "image" || banner.media.type === "video") &&
+      typeof banner.media.url === "string"
+    );
+  });
 }
 
 function isProductEdgeList(value: unknown): value is ShopifyProduct[] {

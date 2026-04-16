@@ -1,15 +1,18 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import {
+  fetchHomeBanners,
   fetchProducts,
   fetchProductByHandle,
   fetchCollectionByHandle,
   fetchProductRecommendations,
+  HomeBanner,
   ShopifyProduct,
 } from "@/lib/shopify";
 
 // Query keys
 export const shopifyKeys = {
+  homeBanners: () => ["shopify", "home-banners"] as const,
   products: (first: number, query?: string) => ["shopify", "products", first, query] as const,
   product: (handle: string) => ["shopify", "product", handle] as const,
   collection: (handle: string, first: number) => ["shopify", "collection", handle, first] as const,
@@ -17,6 +20,16 @@ export const shopifyKeys = {
 };
 
 // Hooks
+export function useHomeBanners() {
+  return useQuery<HomeBanner[]>({
+    queryKey: shopifyKeys.homeBanners(),
+    queryFn: fetchHomeBanners,
+    staleTime: 60 * 60 * 1000,
+    gcTime: 6 * 60 * 60 * 1000,
+    retry: 1,
+  });
+}
+
 export function useProducts(first = 20, query?: string, enabled = true) {
   return useQuery({
     queryKey: shopifyKeys.products(first, query),
