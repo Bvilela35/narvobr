@@ -98,26 +98,8 @@ function ProductCarousel({ products }: { products: ShopifyProduct[] }) {
 }
 
 export default function Index() {
-  const [shouldLoadProducts, setShouldLoadProducts] = useState(false);
-  const { data: products = [], isLoading: loading } = useProducts(8, undefined, shouldLoadProducts);
-  const isProductsLoading = !shouldLoadProducts || loading;
-
-  useEffect(() => {
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-
-    const enableProducts = () => setShouldLoadProducts(true);
-
-    if (idleWindow.requestIdleCallback) {
-      const idleId = idleWindow.requestIdleCallback(enableProducts, { timeout: 1200 });
-      return () => idleWindow.cancelIdleCallback?.(idleId);
-    }
-
-    const timeoutId = window.setTimeout(enableProducts, 300);
-    return () => window.clearTimeout(timeoutId);
-  }, []);
+  const { data: products = [], isLoading: loading } = useProducts(8);
+  const isProductsLoading = loading;
 
   return (
     <>

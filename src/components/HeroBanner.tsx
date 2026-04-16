@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { HomeBanner, optimizeShopifyImage } from "@/lib/shopify";
 import { useHomeBanners } from "@/hooks/useShopify";
 
+const HOME_BANNERS_CACHE_KEY = "narvo-home-banners-v1";
+const INTERNAL_HOSTS = new Set(["narvo.com.br", "www.narvo.com.br", "narvobr.lovable.app"]);
+
 const FALLBACK_BANNER: HomeBanner = {
   id: "fallback-home-banner",
   title: "Seu setup.\nSem concessoes.",
@@ -36,10 +39,65 @@ function isExternalLink(link: string) {
   return /^https?:\/\//i.test(link);
 }
 
+function readCachedBanners(): HomeBanner[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const rawValue = window.localStorage.getItem(HOME_BANNERS_CACHE_KEY);
+    if (!rawValue) return [];
+
+    const parsed = JSON.parse(rawValue);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCachedBanners(banners: HomeBanner[]) {
+  if (typeof window === "undefined" || banners.length === 0) return;
+
+  try {
+    window.localStorage.setItem(HOME_BANNERS_CACHE_KEY, JSON.stringify(banners));
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
+function resolveBannerLink(link: string) {
+  if (!isExternalLink(link)) {
+    return { type: "internal" as const, href: link };
+  }
+
+  try {
+    const parsedUrl = new URL(link);
+    if (INTERNAL_HOSTS.has(parsedUrl.hostname)) {
+      return {
+        type: "internal" as const,
+        href: `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}` || "/",
+      };
+    }
+  } catch {
+    return { type: "external" as const, href: link };
+  }
+
+  return { type: "external" as const, href: link };
+}
+
 export function HeroBanner() {
   const { data: remoteBanners = [] } = useHomeBanners();
-  const banners = remoteBanners.length > 0 ? remoteBanners : [FALLBACK_BANNER];
+  const [cachedBanners, setCachedBanners] = useState<HomeBanner[]>(() => readCachedBanners());
+  const banners = remoteBanners.length > 0
+    ? remoteBanners
+    : cachedBanners.length > 0
+      ? cachedBanners
+      : [FALLBACK_BANNER];
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (remoteBanners.length === 0) return;
+    setCachedBanners(remoteBanners);
+    writeCachedBanners(remoteBanners);
+  }, [remoteBanners]);
 
   useEffect(() => {
     setCurrentIndex((index) => Math.min(index, banners.length - 1));
@@ -57,6 +115,7 @@ export function HeroBanner() {
 
   const activeBanner = banners[currentIndex] ?? FALLBACK_BANNER;
   const titleLines = useMemo(() => normalizeBannerTitle(activeBanner.title), [activeBanner.title]);
+  const bannerLink = useMemo(() => resolveBannerLink(activeBanner.link), [activeBanner.link]);
 
   useEffect(() => {
     if (activeBanner.media.type !== "image") return;
@@ -139,12 +198,12 @@ export function HeroBanner() {
 
           <div className="mt-8">
             <Button asChild className="h-12 px-10 rounded-full text-sm font-medium tracking-wide bg-white text-black hover:bg-black hover:text-white transition-colors duration-500 ease-in-out border border-transparent hover:border-white/30">
-              {isExternalLink(activeBanner.link) ? (
-                <a href={activeBanner.link} target="_blank" rel="noreferrer">
+              {bannerLink.type === "external" ? (
+                <a href={bannerLink.href} rel="noreferrer">
                   {activeBanner.ctaLabel} <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               ) : (
-                <Link to={activeBanner.link}>
+                <Link to={bannerLink.href}>
                   {activeBanner.ctaLabel} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               )}

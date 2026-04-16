@@ -10,7 +10,7 @@ interface DeferredSectionProps {
 export function DeferredSection({
   children,
   minHeight,
-  rootMargin = "320px",
+  rootMargin = "960px",
   className,
 }: DeferredSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
