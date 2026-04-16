@@ -11,22 +11,6 @@
     <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
     <link rel="dns-prefetch" href="https://efxqrr-1y.myshopify.com" />
 
-    <script>
-      if (location.pathname === "/") {
-        const heroPreload = document.createElement("link");
-        heroPreload.rel = "preload";
-        heroPreload.as = "image";
-        heroPreload.href = "/optimized/home/hero-banner-1600.jpg";
-        heroPreload.setAttribute(
-          "imagesrcset",
-          "/optimized/home/hero-banner-960.jpg 960w, /optimized/home/hero-banner-1600.jpg 1600w"
-        );
-        heroPreload.setAttribute("imagesizes", "100vw");
-        heroPreload.fetchPriority = "high";
-        document.head.appendChild(heroPreload);
-      }
-    </script>
-
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" as="style" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" /></noscript>
