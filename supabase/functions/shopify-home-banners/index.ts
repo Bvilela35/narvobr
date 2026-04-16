@@ -63,11 +63,13 @@ Deno.serve(async (req) => {
                       width
                       height
                     }
-                    previewImage {
-                      url
-                      altText
-                      width
-                      height
+                    preview {
+                      image {
+                        url
+                        altText
+                        width
+                        height
+                      }
                     }
                   }
                   ... on GenericFile {
@@ -132,7 +134,7 @@ function normalizeBanner(metaobject: any): BannerHomeEntry | null {
   const media = normalizeMedia(fileField);
   const title = titleField?.value?.trim() || "";
   const ctaLabel = ctaField?.value?.trim() || "";
-  const link = linkField?.value?.trim() || "";
+  const link = normalizeLinkValue(linkField?.value);
 
   if (!media || !title || !ctaLabel || !link) {
     return null;
@@ -145,6 +147,26 @@ function normalizeBanner(metaobject: any): BannerHomeEntry | null {
     link,
     media,
   };
+}
+
+function normalizeLinkValue(value: string | null | undefined): string {
+  const rawValue = value?.trim();
+  if (!rawValue) return "";
+
+  if (!rawValue.startsWith("{")) {
+    return rawValue;
+  }
+
+  try {
+    const parsed = JSON.parse(rawValue);
+    if (typeof parsed?.url === "string") {
+      return parsed.url;
+    }
+  } catch {
+    return rawValue;
+  }
+
+  return rawValue;
 }
 
 function normalizeMedia(field: any): BannerMedia | null {
@@ -166,11 +188,11 @@ function normalizeMedia(field: any): BannerMedia | null {
     return {
       type: "video",
       url: source.url,
-      altText: reference.previewImage?.altText || null,
-      width: source.width ?? reference.previewImage?.width ?? null,
-      height: source.height ?? reference.previewImage?.height ?? null,
+      altText: reference.preview?.image?.altText || null,
+      width: source.width ?? reference.preview?.image?.width ?? null,
+      height: source.height ?? reference.preview?.image?.height ?? null,
       mimeType: source.mimeType || "video/mp4",
-      posterUrl: reference.previewImage?.url || null,
+      posterUrl: reference.preview?.image?.url || null,
     };
   }
 
