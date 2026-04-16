@@ -84,15 +84,13 @@ function resolveBannerLink(link: string) {
 }
 
 export function HeroBanner() {
-  const { data: remoteBanners = [], isLoading } = useHomeBanners();
+  const { data: remoteBanners = [] } = useHomeBanners();
   const [cachedBanners, setCachedBanners] = useState<HomeBanner[]>(() => readCachedBanners());
   const banners = remoteBanners.length > 0
     ? remoteBanners
     : cachedBanners.length > 0
       ? cachedBanners
-      : isLoading
-        ? []
-        : [FALLBACK_BANNER];
+      : [FALLBACK_BANNER];
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -118,7 +116,6 @@ export function HeroBanner() {
   const activeBanner = banners[currentIndex] ?? FALLBACK_BANNER;
   const titleLines = useMemo(() => normalizeBannerTitle(activeBanner.title), [activeBanner.title]);
   const bannerLink = useMemo(() => resolveBannerLink(activeBanner.link), [activeBanner.link]);
-  const shouldRenderMedia = banners.length > 0;
 
   useEffect(() => {
     if (activeBanner.media.type !== "image") return;
@@ -150,7 +147,7 @@ export function HeroBanner() {
 
   return (
     <section className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-2xl bg-black">
-      {shouldRenderMedia && banners.map((banner, index) => {
+      {banners.map((banner, index) => {
         const isActive = index === currentIndex;
         const mediaUrl = resolveBannerImageUrl(banner.media.url);
 
