@@ -70,6 +70,16 @@ export default function Carrinho() {
       return;
     }
 
+    // CRITICAL: narvo.com.br serve a SPA Lovable. O storefront/checkout do Shopify
+    // vive em loja.narvo.com.br. Forçamos o host para evitar que /checkouts/...
+    // caia no router da SPA → 404 → /colecao.
+    const SHOPIFY_CHECKOUT_HOST = "loja.narvo.com.br";
+    if (parsedUrl.hostname !== SHOPIFY_CHECKOUT_HOST) {
+      parsedUrl.hostname = SHOPIFY_CHECKOUT_HOST;
+      parsedUrl.protocol = "https:";
+      parsedUrl.port = "";
+    }
+
     if (discountCode) parsedUrl.searchParams.set("discount", discountCode);
 
     const notes: string[] = [];
