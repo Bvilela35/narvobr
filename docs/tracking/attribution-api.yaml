@@ -1,0 +1,571 @@
+openapi: 3.1.0
+info:
+  title: Narvo Attribution API
+  version: 1.0.0
+  description: |
+    API de atribuição da Narvo. Responsável por capturar first-touch/last-touch,
+    fazer a ponte Lovable→Shopify checkout, receber webhooks da Shopify e distribuir
+    eventos server-side para GA4 MP, Meta CAPI, Google Ads e TikTok.
+
+    Esta API é uma extensão do Growth OS — os dados de `fact_orders` e `tracking_sessions`
+    alimentam o Financial Intelligence Agent e os demais agentes via shared memory.
+
+servers:
+  - url: https://{supabase_project}.supabase.co/functions/v1
+    description: Supabase Edge Functions (produção)
+    variables:
+      supabase_project:
+        default: ynubdqkhhpuzahdpubvf
+
+tags:
+  - name: Attribution
+    description: Captura e consulta de dados de atribuição
+  - name: Webhooks
+    description: Receptores de webhooks da Shopify
+  - name: Internal
+    description: Endpoints internos para debugging e reconciliação
+
+paths:
+
+  /collect-attribution:
+    post:
+      tags: [Attribution]
+      summary: Registra primeiro acesso ou atualiza last-touch
+      description: |
+        Chamado quando o usuário chega no site com UTMs ou click IDs.
+        - Se attribution_id não existe no cookie: cria nova session (first-touch)
+        - Se attribution_id já existe: atualiza last-touch com UTMs atuais
+
+        Deve ser chamado no `useAnalytics` hook do Lovable ao montar a aplicação,
+        passando os UTMs da URL atual e o attribution_id do cookie (se existir).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectAttributionRequest'
+            example:
+              attribution_id: null
+              ga_client_id: "GA1.1.123456789.1713200000"
+              meta_fbp: "fb.1.1713200000.123456789"
+              meta_fbc: "fb.1.1713200000.AbCdEfGhIj"
+              utm_source: "instagram"
+              utm_medium: "cpc"
+              utm_campaign: "mousepad-launch-apr26"
+              utm_content: "video-silicone-01"
+              utm_term: null
+              gclid: null
+              fbclid: "AbCdEfGhIjKlMnOpQrSt"
+              ttclid: null
+              landing_page: "https://narvo.com.br/colecao/mousepads?utm_source=instagram&utm_medium=cpc"
+              referrer: "https://www.instagram.com/"
+      responses:
+        '200':
+          description: Session criada ou atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attribution_id:
+                    type: string
+                    format: uuid
+                    description: ID único da session de atribuição (deve ser salvo em cookie)
+                  is_new_session:
+                    type: boolean
+                    description: true se foi criada nova session (first-touch)
+              example:
+                attribution_id: "550e8400-e29b-41d4-a716-446655440000"
+                is_new_session: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /checkout-bridge:
+    post:
+      tags: [Attribution]
+      summary: Registra bridge antes do redirect para checkout Shopify
+      description: |
+        Chamado **imediatamente antes** do redirect para o checkout da Shopify.
+        Faz três coisas em paralelo:
+        1. Salva snapshot do carrinho + attribution_id em `checkout_links`
+        2. Atualiza cart attributes via Shopify Storefront API (para o webhook `orders/paid` recuperar)
+        3. Registra evento `begin_checkout` no GA4 MP e Meta CAPI
+
+        O frontend deve aguardar o retorno (ou timeout de 1s) antes de redirecionar,
+        garantindo que os dados de atribuição estejam persistidos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutBridgeRequest'
+            example:
+              attribution_id: "550e8400-e29b-41d4-a716-446655440000"
+              cart_id: "gid://shopify/Cart/abc123def456"
+              cart_token: "abc123def456"
+              ga_client_id: "GA1.1.123456789.1713200000"
+              meta_fbp: "fb.1.1713200000.123456789"
+              items:
+                - item_id: "gid://shopify/Product/123"
+                  item_name: "Mousepad Silicone PRO"
+                  item_variant: "Preto / G"
+                  price: 129.90
+                  quantity: 2
+              value: 259.80
+              currency: "BRL"
+              coupon: null
+              last_utm_source: "instagram"
+              last_utm_medium: "cpc"
+              last_utm_campaign: "mousepad-launch-apr26"
+      responses:
+        '200':
+          description: Bridge registrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkout_token:
+                    type: string
+                    description: Token do cart Shopify (confirma que cart attribute foi escrito)
+                  attribution_id:
+                    type: string
+                    format: uuid
+              example:
+                checkout_token: "abc123def456"
+                attribution_id: "550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '504':
+          description: Timeout ao atualizar cart attribute na Shopify (dados salvos localmente)
+
+  /webhooks/shopify/orders-paid:
+    post:
+      tags: [Webhooks]
+      summary: Webhook orders/paid — source of truth de receita
+      description: |
+        Recebe o webhook `orders/paid` da Shopify.
+
+        Fluxo:
+        1. Verifica HMAC da Shopify (`X-Shopify-Hmac-Sha256`)
+        2. Extrai `note_attributes` / `cart.attributes` para recuperar `attribution_id`
+        3. Grava em `fact_orders` (idempotente por `order_id`)
+        4. Dispara eventos server-side: GA4 MP, Meta CAPI, Google Ads, TikTok
+        5. Grava resultado em `event_delivery_log`
+        6. Alimenta Growth OS shared memory (insere em knowledge_base do narvo-agents)
+
+        Deduplicação: `UNIQUE(event_id, platform)` em `event_delivery_log` garante
+        idempotência mesmo se a Shopify enviar o webhook mais de uma vez.
+      parameters:
+        - name: X-Shopify-Hmac-Sha256
+          in: header
+          required: true
+          schema:
+            type: string
+          description: HMAC-SHA256 do body usando o webhook secret
+        - name: X-Shopify-Topic
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [orders/paid]
+        - name: X-Shopify-Shop-Domain
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "efxqrr-1y.myshopify.com"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopifyOrderWebhookPayload'
+      responses:
+        '200':
+          description: Webhook processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                  attribution_id:
+                    type: string
+                    format: uuid
+                    nullable: true
+                  platforms_fired:
+                    type: array
+                    items:
+                      type: string
+                    example: ["ga4", "meta", "google_ads"]
+        '401':
+          description: HMAC inválido
+        '409':
+          description: Order já processada (idempotência)
+
+  /webhooks/shopify/orders-create:
+    post:
+      tags: [Webhooks]
+      summary: Webhook orders/create — registro antecipado
+      description: |
+        Registra o pedido assim que criado (antes do pagamento).
+        Útil para capturar `checkout.token` e já criar o vínculo com `attribution_id`
+        caso o `checkout-bridge` tenha falhado.
+      parameters:
+        - name: X-Shopify-Hmac-Sha256
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-Shopify-Topic
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [orders/create]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopifyOrderWebhookPayload'
+      responses:
+        '200':
+          description: Pedido registrado
+
+  /webhooks/shopify/orders-cancelled:
+    post:
+      tags: [Webhooks]
+      summary: Webhook orders/cancelled — registra cancelamento
+      description: |
+        Atualiza `fact_orders.financial_status = 'cancelled'` e dispara
+        evento `refund` no GA4 MP para reconciliação de receita.
+      parameters:
+        - name: X-Shopify-Hmac-Sha256
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-Shopify-Topic
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [orders/cancelled]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopifyOrderWebhookPayload'
+      responses:
+        '200':
+          description: Cancelamento registrado
+
+  /attribution/{attribution_id}:
+    get:
+      tags: [Internal]
+      summary: Consulta dados de atribuição de uma session
+      description: Endpoint interno para debug e para o Growth OS Financial Agent consultar.
+      parameters:
+        - name: attribution_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: "Bearer <supabase_service_role_key>"
+      responses:
+        '200':
+          description: Dados de atribuição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributionSession'
+        '404':
+          description: Session não encontrada
+
+components:
+  schemas:
+
+    CollectAttributionRequest:
+      type: object
+      required: []
+      properties:
+        attribution_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Se null, cria nova session. Se preenchido, atualiza last-touch.
+        ga_client_id:
+          type: string
+          nullable: true
+          example: "GA1.1.123456789.1713200000"
+        meta_fbp:
+          type: string
+          nullable: true
+        meta_fbc:
+          type: string
+          nullable: true
+        utm_source:
+          type: string
+          nullable: true
+        utm_medium:
+          type: string
+          nullable: true
+        utm_campaign:
+          type: string
+          nullable: true
+        utm_content:
+          type: string
+          nullable: true
+        utm_term:
+          type: string
+          nullable: true
+        gclid:
+          type: string
+          nullable: true
+        fbclid:
+          type: string
+          nullable: true
+        ttclid:
+          type: string
+          nullable: true
+        landing_page:
+          type: string
+          format: uri
+          nullable: true
+        referrer:
+          type: string
+          nullable: true
+
+    CheckoutBridgeRequest:
+      type: object
+      required: [attribution_id, cart_id, items, value, currency]
+      properties:
+        attribution_id:
+          type: string
+          format: uuid
+        cart_id:
+          type: string
+          description: GID do cart na Shopify
+        cart_token:
+          type: string
+          description: Token do cart (parte do URL do checkout)
+        ga_client_id:
+          type: string
+          nullable: true
+        meta_fbp:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        value:
+          type: number
+          format: float
+        currency:
+          type: string
+          enum: [BRL]
+        coupon:
+          type: string
+          nullable: true
+        last_utm_source:
+          type: string
+          nullable: true
+        last_utm_medium:
+          type: string
+          nullable: true
+        last_utm_campaign:
+          type: string
+          nullable: true
+
+    LineItem:
+      type: object
+      properties:
+        item_id:
+          type: string
+          description: GID do produto Shopify
+        item_name:
+          type: string
+        item_variant:
+          type: string
+          nullable: true
+        item_category:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+
+    AttributionTouch:
+      type: object
+      properties:
+        utm_source:
+          type: string
+          nullable: true
+        utm_medium:
+          type: string
+          nullable: true
+        utm_campaign:
+          type: string
+          nullable: true
+        utm_content:
+          type: string
+          nullable: true
+        utm_term:
+          type: string
+          nullable: true
+        landing_page:
+          type: string
+          nullable: true
+        referrer:
+          type: string
+          nullable: true
+        gclid:
+          type: string
+          nullable: true
+        fbclid:
+          type: string
+          nullable: true
+        ttclid:
+          type: string
+          nullable: true
+        touch_at:
+          type: string
+          format: date-time
+
+    AttributionSession:
+      type: object
+      properties:
+        attribution_id:
+          type: string
+          format: uuid
+        ga_client_id:
+          type: string
+          nullable: true
+        meta_fbp:
+          type: string
+          nullable: true
+        meta_fbc:
+          type: string
+          nullable: true
+        first_touch:
+          $ref: '#/components/schemas/AttributionTouch'
+        last_touch:
+          $ref: '#/components/schemas/AttributionTouch'
+        created_at:
+          type: string
+          format: date-time
+
+    ShopifyOrderWebhookPayload:
+      type: object
+      description: Payload padrão de webhook de pedido da Shopify
+      properties:
+        id:
+          type: integer
+          description: Shopify order ID numérico
+        order_number:
+          type: integer
+        name:
+          type: string
+          example: "#1001"
+        email:
+          type: string
+          format: email
+          nullable: true
+        checkout_token:
+          type: string
+          nullable: true
+        financial_status:
+          type: string
+          enum: [paid, pending, refunded, partially_refunded, voided]
+        total_price:
+          type: string
+          description: String decimal (padrão Shopify)
+          example: "259.80"
+        subtotal_price:
+          type: string
+          example: "239.80"
+        total_tax:
+          type: string
+          example: "0.00"
+        total_discounts:
+          type: string
+          example: "20.00"
+        currency:
+          type: string
+          example: "BRL"
+        note_attributes:
+          type: array
+          description: Inclui attribution_id e UTMs passados via cart attributes
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: string
+          example:
+            - name: "_narvo_attribution_id"
+              value: "550e8400-e29b-41d4-a716-446655440000"
+            - name: "_narvo_utm_source"
+              value: "instagram"
+        line_items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              product_id:
+                type: integer
+              variant_id:
+                type: integer
+              title:
+                type: string
+              quantity:
+                type: integer
+              price:
+                type: string
+              sku:
+                type: string
+                nullable: true
+        customer:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+              format: email
+            phone:
+              type: string
+              nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Dados inválidos
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: object

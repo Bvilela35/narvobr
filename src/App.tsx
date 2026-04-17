@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { useCartSync } from "./hooks/useCartSync";
+import { useAnalytics } from "./hooks/useAnalytics";
 import { RoutePrefetcher } from "./components/RoutePrefetcher";
 const Index = lazy(() => import("./pages/Index"));
 const Colecao = lazy(() => import("./pages/Colecao"));
@@ -42,6 +43,7 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   useCartSync();
+  useAnalytics();
   return (
     <Layout>
       <Suspense fallback={null}>

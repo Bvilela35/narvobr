@@ -14,6 +14,7 @@ import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { InstallmentModal } from "@/components/InstallmentModal";
 import ProductHighlights from "@/components/ProductHighlights";
 import { fetchProducts } from "@/lib/shopify";
+import { trackViewItem, trackAddToCart } from "@/lib/analytics";
 import "./Produto.css";
 
 // Lazy load below-fold components
@@ -533,6 +534,19 @@ export default function Produto() {
     };
   }, [product]);
 
+  // view_item — dispara quando o produto carrega (uma vez por product ID)
+  useEffect(() => {
+    if (!product) return;
+    const defaultVariant = product.node.variants.edges[0]?.node;
+    trackViewItem({
+      productId: product.node.id,
+      productTitle: product.node.title,
+      variantId: defaultVariant?.id,
+      variantTitle: defaultVariant?.title,
+      price: parseFloat(defaultVariant?.price.amount ?? '0'),
+    });
+  }, [product?.node?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Initialize CEP result from global store on first render
   useEffect(() => {
     if (!cepInitialized.current && globalCep && globalCep.length === 8) {
@@ -639,6 +653,14 @@ export default function Produto() {
       price: selectedVariant.price,
       quantity: 1,
       selectedOptions: selectedVariant.selectedOptions || []
+    });
+    trackAddToCart({
+      productId: product.node.id,
+      variantId: selectedVariant.id,
+      productTitle: product.node.title,
+      variantTitle: selectedVariant.title,
+      price: parseFloat(selectedVariant.price.amount),
+      quantity: 1,
     });
     navigate(`/produto/${handle}/adicionado`);
   };

@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useCepStore } from "@/stores/cepStore";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackBeginCheckout } from "@/lib/analytics";
 import { formatInstallmentText } from "@/lib/installments";
 import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
 import { optimizeShopifyImage } from "@/lib/shopify";
@@ -16,7 +17,7 @@ const WARRANTY_PRICE = 39.9;
 
 export default function Carrinho() {
   const navigate = useNavigate();
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
+  const { items, cartId, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, discountCode, discountedTotal } = useCartStore();
   const globalCep = useCepStore((s) => s.cep);
   const setGlobalCep = useCepStore((s) => s.setCep);
   const [giftWrap, setGiftWrap] = useState(false);
@@ -48,6 +49,21 @@ export default function Carrinho() {
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
+      // Sprint 1: dispara begin_checkout no dataLayer → GTM → GA4/Meta/Google Ads
+      trackBeginCheckout({
+        cartId,
+        items: items.map((item) => ({
+          productId: item.product.node.id,
+          productTitle: item.product.node.title,
+          variantTitle: item.variantTitle,
+          price: parseFloat(item.price.amount),
+          quantity: item.quantity,
+        })),
+        value: total,
+        coupon: discountCode,
+      });
+      // TODO Sprint 2: chamar POST /checkout-bridge antes do redirect
+
       let finalUrl = checkoutUrl;
       if (discountCode) {
         try {
