@@ -143,7 +143,7 @@ export const useCartStore = create<CartStore>()(
       },
 
       syncCart: async () => {
-        const { cartId, isSyncing, clearCart } = get();
+        const { cartId, isSyncing, clearCart, checkoutUrl: prevCheckoutUrl } = get();
         if (!cartId || isSyncing) return;
         set({ isSyncing: true });
         try {
@@ -155,9 +155,14 @@ export const useCartStore = create<CartStore>()(
           const appliedCodes = cart.discountCodes || [];
           const activeCode = appliedCodes.find((dc: { code: string; applicable: boolean }) => dc.applicable);
           const totalAmount = cart.cost?.totalAmount?.amount || null;
+          // Always refresh checkoutUrl from Shopify (recovers stale/missing URLs)
+          const freshCheckoutUrl = cart.checkoutUrl
+            ? (() => { try { const u = new URL(cart.checkoutUrl); u.searchParams.set('channel', 'online_store'); return u.toString(); } catch { return cart.checkoutUrl; } })()
+            : prevCheckoutUrl;
           set({ 
             discountCode: activeCode?.code || null, 
-            discountedTotal: activeCode ? totalAmount : null 
+            discountedTotal: activeCode ? totalAmount : null,
+            checkoutUrl: freshCheckoutUrl,
           });
         } catch (error) { console.error('Failed to sync cart:', error); }
         finally { set({ isSyncing: false }); }

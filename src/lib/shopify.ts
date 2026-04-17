@@ -838,6 +838,7 @@ const CART_QUERY = `query cart($id: ID!) {
   cart(id: $id) { 
     id 
     totalQuantity 
+    checkoutUrl
     cost {
       totalAmount { amount currencyCode }
       subtotalAmount { amount currencyCode }
