@@ -48,42 +48,51 @@ export default function Carrinho() {
 
   const handleCheckout = () => {
     const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      // Sprint 1: dispara begin_checkout no dataLayer → GTM → GA4/Meta/Google Ads
-      trackBeginCheckout({
-        cartId,
-        items: items.map((item) => ({
-          productId: item.product.node.id,
-          productTitle: item.product.node.title,
-          variantTitle: item.variantTitle,
-          price: parseFloat(item.price.amount),
-          quantity: item.quantity,
-        })),
-        value: total,
-        coupon: discountCode,
-      });
-      // TODO Sprint 2: chamar POST /checkout-bridge antes do redirect
-
-      let finalUrl = checkoutUrl;
-      if (discountCode) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set("discount", discountCode);
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      }
-      const notes: string[] = [];
-      if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
-      if (extendedWarranty) notes.push("🛡️ Garantia estendida");
-      if (notes.length > 0) {
-        try {
-          const url = new URL(finalUrl);
-          url.searchParams.set("note", notes.join(" | "));
-          finalUrl = url.toString();
-        } catch { /* keep original */ }
-      }
-      window.location.href = finalUrl;
+    if (!checkoutUrl) {
+      console.error("[Checkout] checkoutUrl ausente. cartId:", cartId);
+      alert("Não foi possível abrir o checkout. Recarregue a página e tente novamente.");
+      return;
     }
+
+    // Build & validate final URL BEFORE tracking/redirect
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(checkoutUrl);
+    } catch {
+      console.error("[Checkout] checkoutUrl inválido:", checkoutUrl);
+      alert("URL de checkout inválida. Recarregue a página e tente novamente.");
+      return;
+    }
+
+    // Guard: must be absolute http(s) — never let SPA router catch it
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      console.error("[Checkout] protocolo inesperado:", parsedUrl.protocol);
+      return;
+    }
+
+    if (discountCode) parsedUrl.searchParams.set("discount", discountCode);
+
+    const notes: string[] = [];
+    if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");
+    if (extendedWarranty) notes.push("🛡️ Garantia estendida");
+    if (notes.length > 0) parsedUrl.searchParams.set("note", notes.join(" | "));
+
+    // Sprint 1: dispara begin_checkout no dataLayer → GTM → GA4/Meta/Google Ads
+    trackBeginCheckout({
+      cartId,
+      items: items.map((item) => ({
+        productId: item.product.node.id,
+        productTitle: item.product.node.title,
+        variantTitle: item.variantTitle,
+        price: parseFloat(item.price.amount),
+        quantity: item.quantity,
+      })),
+      value: total,
+      coupon: discountCode,
+    });
+
+    // Use window.location.assign to force a full navigation (bypasses SPA router)
+    window.location.assign(parsedUrl.toString());
   };
 
   const formatPrice = (value: number) =>
