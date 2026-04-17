@@ -70,6 +70,16 @@ export default function Carrinho() {
       return;
     }
 
+    // CRITICAL: o domínio narvo.com.br serve a SPA Lovable, não o storefront Shopify.
+    // Se o checkoutUrl vier no domínio customizado, a rota /checkouts/... cai no SPA → 404 → /colecao.
+    // Forçamos o host para o domínio permanente *.myshopify.com para garantir que o checkout do Shopify responda.
+    const SHOPIFY_PERMANENT_HOST = "efxqrr-1y.myshopify.com";
+    if (parsedUrl.hostname !== SHOPIFY_PERMANENT_HOST) {
+      parsedUrl.hostname = SHOPIFY_PERMANENT_HOST;
+      parsedUrl.protocol = "https:";
+      parsedUrl.port = "";
+    }
+
     if (discountCode) parsedUrl.searchParams.set("discount", discountCode);
 
     const notes: string[] = [];
