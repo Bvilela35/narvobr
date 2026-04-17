@@ -20,7 +20,7 @@ declare global {
 
 const STORAGE_KEY = '_narvo_attribution';
 const AID_KEY = '_narvo_aid';
-const COOKIE_DAYS = 90;
+const COOKIE_DAYS = 730; // ~2 anos — sobrevive entre subdomínios (handoff p/ checkout Shopify)
 const SESSION_GAP_MS = 30 * 60 * 1000; // 30 min sem atividade = nova sessão last-touch
 
 const UTM_KEYS = [
@@ -66,11 +66,20 @@ export interface Attribution {
 // ─────────────────────────────────────────────────────────────
 
 function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+/** Gera event_id padronizado: "<event_name>_<timestamp>_<random>" */
+function makeEventId(eventName: string): string {
+  const rand = Math.random().toString(36).slice(2, 6);
+  return `${eventName}_${Date.now()}_${rand}`;
 }
 
 /** Extrai o ID numérico de um GID do Shopify: gid://shopify/Product/123 → "123" */
@@ -250,8 +259,8 @@ function dlPush(payload: Record<string, unknown>): void {
 export function trackPageViewed(path: string): void {
   const attribution = getAttribution();
   dlPush({
-    event: 'page_viewed',
-    event_id: `pv_${Date.now()}`,
+    event: 'page_view',
+    event_id: makeEventId('page_view'),
     page_path: path,
     page_location: typeof window !== 'undefined' ? window.location.href : '',
     attribution_id: attribution?.attribution_id ?? null,
@@ -273,7 +282,7 @@ export function trackViewItem(params: TrackViewItemParams): void {
 
   dlPush({
     event: 'view_item',
-    event_id: `vi_${itemId}_${Date.now()}`,
+    event_id: makeEventId('view_item'),
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -310,7 +319,7 @@ export function trackAddToCart(params: TrackAddToCartParams): void {
 
   dlPush({
     event: 'add_to_cart',
-    event_id: `atc_${variantNumId}_${Date.now()}`,
+    event_id: makeEventId('add_to_cart'),
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -345,11 +354,11 @@ export function trackBeginCheckout(params: {
 }): void {
   const { cartId, items, value, coupon } = params;
   const attribution = getAttribution();
-  const cartShortId = cartId ? gidToNumericId(cartId) : String(Date.now());
+  void cartId; // mantido na assinatura para compat
 
   dlPush({
     event: 'begin_checkout',
-    event_id: `bc_${cartShortId}`,
+    event_id: makeEventId('begin_checkout'),
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -359,6 +368,53 @@ export function trackBeginCheckout(params: {
         item_id: gidToNumericId(item.productId),
         item_name: item.productTitle,
         item_variant: item.variantTitle,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    },
+  });
+}
+
+export interface TrackPurchaseItem {
+  productId: string;
+  productTitle: string;
+  variantId?: string;
+  variantTitle?: string;
+  price: number;
+  quantity: number;
+}
+
+/**
+ * GA4 standard `purchase` event. Disparar na página de confirmação do pedido.
+ * `transaction_id` é obrigatório para deduplicação no GA4.
+ */
+export function trackPurchase(params: {
+  transactionId: string;
+  items: TrackPurchaseItem[];
+  value: number;
+  tax?: number;
+  shipping?: number;
+  coupon?: string | null;
+}): void {
+  const { transactionId, items, value, tax, shipping, coupon } = params;
+  const attribution = getAttribution();
+
+  dlPush({
+    event: 'purchase',
+    event_id: makeEventId('purchase'),
+    attribution_id: attribution?.attribution_id ?? null,
+    ecommerce: {
+      transaction_id: transactionId,
+      currency: 'BRL',
+      value,
+      tax: tax ?? undefined,
+      shipping: shipping ?? undefined,
+      coupon: coupon ?? undefined,
+      items: items.map((item) => ({
+        item_id: gidToNumericId(item.productId),
+        item_name: item.productTitle,
+        item_variant: item.variantTitle,
+        item_variant_id: item.variantId ? gidToNumericId(item.variantId) : undefined,
         price: item.price,
         quantity: item.quantity,
       })),
