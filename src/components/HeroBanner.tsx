@@ -47,8 +47,8 @@ function getBannerImageSet(url: string) {
 
   if (url.includes("hero-banner-")) {
     return {
-      src: "/optimized/home/hero-banner-960.jpg",
-      srcSet: "/optimized/home/hero-banner-960.jpg 960w, /optimized/home/hero-banner-1600.jpg 1600w",
+      src: "/optimized/home/hero-banner-720.jpg",
+      srcSet: "/optimized/home/hero-banner-720.jpg 720w, /optimized/home/hero-banner-960.jpg 960w, /optimized/home/hero-banner-1600.jpg 1600w",
       sizes: "(max-width: 768px) 100vw, 94vw",
     };
   }

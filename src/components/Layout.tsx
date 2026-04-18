@@ -10,12 +10,32 @@ const LeadCapturePopup = lazy(() =>
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
+  const [enableLeadCapture, setEnableLeadCapture] = useState(false);
 
   useEffect(() => {
     const handler = () => setCartOpen(true);
     window.addEventListener("narvo:open-cart", handler);
     return () => window.removeEventListener("narvo:open-cart", handler);
   }, []);
+
+  useEffect(() => {
+    if (enableLeadCapture) return;
+
+    const activate = () => setEnableLeadCapture(true);
+    const timerId = window.setTimeout(activate, 12000);
+    const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "touchstart", "scroll"];
+
+    events.forEach((eventName) => {
+      window.addEventListener(eventName, activate, { once: true, passive: true });
+    });
+
+    return () => {
+      window.clearTimeout(timerId);
+      events.forEach((eventName) => {
+        window.removeEventListener(eventName, activate);
+      });
+    };
+  }, [enableLeadCapture]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -24,9 +44,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <WhatsAppBanner />
       <TrustPillars />
       <Footer />
-      <Suspense fallback={null}>
-        <LeadCapturePopup />
-      </Suspense>
+      {enableLeadCapture && (
+        <Suspense fallback={null}>
+          <LeadCapturePopup />
+        </Suspense>
+      )}
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </div>
   );
