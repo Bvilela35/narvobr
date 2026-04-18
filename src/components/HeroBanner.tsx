@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,10 +16,10 @@ const FALLBACK_BANNER: HomeBanner = {
   link: "/colecao",
   media: {
     type: "image",
-    url: "/optimized/home/hero-banner-1600.jpg",
+    url: "/optimized/home/hero-banner-960.jpg",
     altText: "Setup minimalista com acessorios Narvo",
-    width: 1920,
-    height: 1080,
+    width: 960,
+    height: 540,
     mimeType: "image/jpeg",
   },
 };
@@ -29,10 +30,34 @@ function normalizeBannerTitle(title: string) {
 
 function resolveBannerImageUrl(url: string) {
   if (url.includes("cdn.shopify.com")) {
-    return optimizeShopifyImage(url, 1800);
+    return optimizeShopifyImage(url, 1600);
   }
 
   return url;
+}
+
+function getBannerImageSet(url: string) {
+  if (url.includes("cdn.shopify.com")) {
+    return {
+      src: optimizeShopifyImage(url, 1280),
+      srcSet: `${optimizeShopifyImage(url, 768)} 768w, ${optimizeShopifyImage(url, 1280)} 1280w, ${optimizeShopifyImage(url, 1600)} 1600w`,
+      sizes: "(max-width: 768px) 100vw, 94vw",
+    };
+  }
+
+  if (url.includes("hero-banner-")) {
+    return {
+      src: "/optimized/home/hero-banner-960.jpg",
+      srcSet: "/optimized/home/hero-banner-960.jpg 960w, /optimized/home/hero-banner-1600.jpg 1600w",
+      sizes: "(max-width: 768px) 100vw, 94vw",
+    };
+  }
+
+  return {
+    src: url,
+    srcSet: undefined,
+    sizes: undefined,
+  };
 }
 
 function isExternalLink(link: string) {
@@ -117,20 +142,10 @@ export function HeroBanner() {
   const titleLines = useMemo(() => normalizeBannerTitle(activeBanner.title), [activeBanner.title]);
   const bannerLink = useMemo(() => resolveBannerLink(activeBanner.link), [activeBanner.link]);
 
-  useEffect(() => {
-    if (activeBanner.media.type !== "image") return;
-
-    const preload = document.createElement("link");
-    preload.rel = "preload";
-    preload.as = "image";
-    preload.href = resolveBannerImageUrl(activeBanner.media.url);
-    preload.fetchPriority = "high";
-    document.head.appendChild(preload);
-
-    return () => {
-      preload.remove();
-    };
-  }, [activeBanner.id, activeBanner.media.type, activeBanner.media.url]);
+  const activeImage = activeBanner.media.type === "image"
+    ? getBannerImageSet(activeBanner.media.url)
+    : null;
+  const nextBanner = banners.length > 1 ? banners[(currentIndex + 1) % banners.length] : null;
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
@@ -147,42 +162,53 @@ export function HeroBanner() {
 
   return (
     <section className="relative min-h-[150vw] md:min-h-[85vh] flex items-end overflow-hidden mx-3 md:mx-6 mt-3 md:mt-4 rounded-2xl bg-black">
-      {banners.map((banner, index) => {
-        const isActive = index === currentIndex;
-        const mediaUrl = resolveBannerImageUrl(banner.media.url);
+      {activeBanner.media.type === "video" ? (
+        <video
+          key={activeBanner.id}
+          className="absolute inset-0 w-full h-full object-cover"
+          src={resolveBannerImageUrl(activeBanner.media.url)}
+          poster={activeBanner.media.posterUrl || undefined}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+      ) : (
+        <img
+          key={activeBanner.id}
+          src={activeImage?.src}
+          srcSet={activeImage?.srcSet}
+          sizes={activeImage?.sizes}
+          alt={activeBanner.media.altText || activeBanner.title}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          width={activeBanner.media.width || 1600}
+          height={activeBanner.media.height || 900}
+          decoding="async"
+        />
+      )}
 
-        return (
-          <div
-            key={banner.id}
-            className={`absolute inset-0 transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-            aria-hidden={!isActive}
-          >
-            {banner.media.type === "video" ? (
-              <video
-                className="absolute inset-0 w-full h-full object-cover"
-                src={mediaUrl}
-                poster={banner.media.posterUrl || undefined}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload={isActive ? "auto" : "metadata"}
-              />
-            ) : (
-              <img
-                src={mediaUrl}
-                alt={banner.media.altText || banner.title}
-                className="absolute inset-0 w-full h-full object-cover"
-                loading={isActive ? "eager" : "lazy"}
-                fetchPriority={isActive ? "high" : "auto"}
-                width={banner.media.width || 1920}
-                height={banner.media.height || 1080}
-                decoding="async"
-              />
-            )}
-          </div>
-        );
-      })}
+      <Helmet>
+        {activeBanner.media.type === "image" && activeImage && (
+          <link
+            rel="preload"
+            as="image"
+            href={activeImage.src}
+            imageSrcSet={activeImage.srcSet}
+            imageSizes={activeImage.sizes}
+            fetchPriority="high"
+          />
+        )}
+        {nextBanner?.media.type === "image" && (
+          <link
+            rel="prefetch"
+            as="image"
+            href={getBannerImageSet(nextBanner.media.url).src}
+          />
+        )}
+      </Helmet>
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 

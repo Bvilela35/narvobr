@@ -9,6 +9,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { resolveSupabaseUrl } from "@/lib/shopify";
 
 interface Review {
   id: number;
@@ -137,7 +138,7 @@ export function ReviewsSection({ handle }: { handle?: string }) {
       setError(false);
       setUsingStoreFallback(false);
 
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+      const projectUrl = resolveSupabaseUrl();
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       async function doFetch(productHandle?: string): Promise<ReviewsData> {

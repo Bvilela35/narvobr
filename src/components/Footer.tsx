@@ -28,13 +28,14 @@ export function Footer() {
           {/* Left — Social + Newsletter */}
           <div className="space-y-8">
             <div>
-              <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 text-foreground/70">
                 Narvo nas redes
               </h4>
               <a
                 href="https://instagram.com/narvobr"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram da Narvo"
                 className="inline-flex items-center gap-2 opacity-70 hover:opacity-100 transition-opacity"
               >
                 <Instagram className="w-5 h-5" />
@@ -60,7 +61,7 @@ export function Footer() {
 
           {/* Center column */}
           <div>
-            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 text-foreground/70">
               Navegação
             </h4>
             <ul className="space-y-4">
@@ -79,7 +80,7 @@ export function Footer() {
 
           {/* Right column */}
           <div>
-            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 text-foreground/70">
               Políticas
             </h4>
             <ul className="space-y-4">
@@ -98,7 +99,7 @@ export function Footer() {
 
           {/* Ferramentas */}
           <div>
-            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 opacity-50">
+            <h4 className="text-xs font-medium tracking-[0.2em] uppercase mb-5 text-foreground/70">
               Ferramentas
             </h4>
             <ul className="space-y-4">

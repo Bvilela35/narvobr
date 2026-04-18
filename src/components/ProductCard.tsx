@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { optimizeShopifyImage, ShopifyProduct } from "@/lib/shopify";
 import { usePrefetchProduct } from "@/hooks/useShopify";
 import { calcInstallments } from "@/lib/installments";
@@ -45,19 +44,8 @@ export const ProductCard = memo(function ProductCard({ product, disableAnimation
   );
   const colorValues = colorOption?.values ?? [];
 
-  const Wrapper = disableAnimation ? "div" : motion.div;
-  const wrapperProps = disableAnimation
-    ? { className: "h-full" }
-    : {
-        initial: { opacity: 0, y: 20 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-50px" },
-        transition: { duration: 0.6, ease: "easeOut" },
-        className: "h-full",
-      };
-
   return (
-    <Wrapper {...(wrapperProps as any)}>
+    <div className="h-full">
       <Link
         to={`/produto/${handle}`}
         className="group block h-full"
@@ -116,6 +104,6 @@ export const ProductCard = memo(function ProductCard({ product, disableAnimation
           </div>
         </div>
       </Link>
-    </Wrapper>
+    </div>
   );
 });

@@ -1,12 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { lazy, Suspense, useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ShoppingBag, Search, X, Loader2, Menu, User } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-
-import { MobileMenu } from "./MobileMenu";
+const MobileMenu = lazy(() => import("./MobileMenu").then((module) => ({ default: module.MobileMenu })));
 
 const navLinks = [
   { label: "Setup", href: "/colecao/setup" },
@@ -177,27 +175,17 @@ export function Header({ onCartOpen }: HeaderProps) {
         </div>
       </header>
 
-      {/* Fullscreen search overlay */}
-      <AnimatePresence>
-        {searchOpen &&
+      {searchOpen &&
         <>
             {/* Glassmorphism backdrop */}
-            <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-xl"
+            <div
+            className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-xl transition-opacity duration-200"
             onClick={closeSearch} />
 
 
             {/* Search content */}
-            <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 top-0 z-[70] max-h-screen overflow-y-auto">
+            <div
+            className="fixed inset-x-0 top-0 z-[70] max-h-screen overflow-y-auto translate-y-0 opacity-100 transition-all duration-200">
 
               {/* Search bar */}
               <div className="bg-background border-b border-border">
@@ -297,12 +285,13 @@ export function Header({ onCartOpen }: HeaderProps) {
                   </div>)
               }
               </div>
-            </motion.div>
+            </div>
           </>
         }
-      </AnimatePresence>
 
-      <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <Suspense fallback={null}>
+        <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      </Suspense>
     </>);
 
 }

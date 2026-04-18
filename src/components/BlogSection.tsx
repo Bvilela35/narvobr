@@ -1,15 +1,7 @@
 import { useRef } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useBlogArticles } from "@/hooks/useBlog";
-
-const fadeUp = {
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.8, ease: "easeOut" as const },
-};
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
@@ -23,13 +15,7 @@ function formatDate(dateStr: string) {
 function ArticleCard({ article, i }: { article: any; i: number }) {
   const tag = article.tags?.[0] || "Journal";
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: i * 0.12 }}
-      className="group cursor-pointer h-full"
-    >
+    <article className="group cursor-pointer h-full">
       <Link to={`/journal/${article.handle}`}>
         <div className="bg-card-elevated rounded-2xl overflow-hidden h-full flex flex-col transition-colors hover:bg-accent/50">
           {article.image && (
@@ -61,7 +47,7 @@ function ArticleCard({ article, i }: { article: any; i: number }) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }
 
@@ -81,7 +67,7 @@ export function BlogSection() {
     <section className="py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-end justify-between mb-16">
-          <motion.div {...fadeUp}>
+          <div>
             <h2 className="text-xs font-medium tracking-[0.3em] uppercase text-muted-foreground mb-4">
               Journal
             </h2>
@@ -91,7 +77,7 @@ export function BlogSection() {
                 Ideias para quem busca clareza.
               </span>
             </p>
-          </motion.div>
+          </div>
           <Link
             to="/journal"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 flex-shrink-0 ml-4"

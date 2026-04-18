@@ -4,7 +4,18 @@ const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'efxqrr-1y.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9645130db6cf2b0f59c6feeb3f76f3b9';
-const SUPABASE_FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const CANONICAL_SUPABASE_URL = "https://uttnlfgoxwgzogtsskbk.supabase.co";
+
+export function resolveSupabaseUrl() {
+  const envUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (typeof envUrl === "string" && envUrl.includes("uttnlfgoxwgzogtsskbk.supabase.co")) {
+    return envUrl;
+  }
+
+  return CANONICAL_SUPABASE_URL;
+}
+
+const SUPABASE_FUNCTIONS_URL = `${resolveSupabaseUrl()}/functions/v1`;
 const PRODUCT_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-product`;
 const COLLECTION_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-collection`;
 const PRODUCTS_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-products`;

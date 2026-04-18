@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { X, User } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 
 const menuLinks = [
@@ -31,14 +30,12 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ clipPath: "circle(0% at calc(100% - 60px) 32px)" }}
-          animate={{ clipPath: "circle(150% at calc(100% - 60px) 32px)" }}
-          exit={{ clipPath: "circle(0% at calc(100% - 60px) 32px)" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        <div
           className="fixed inset-0 z-[80] bg-background flex flex-col"
         >
           {/* Close button */}
@@ -51,11 +48,10 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
           {/* Links */}
           <nav className="flex-1 flex flex-col justify-center px-10 gap-2">
             {menuLinks.map((link, i) => (
-              <motion.div
+              <div
                 key={link.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.06, duration: 0.4, ease: "easeOut" }}
+                className="animate-in fade-in slide-in-from-bottom-3 duration-300"
+                style={{ animationDelay: `${150 + i * 60}ms` }}
               >
                 {link.external ? (
                   <a
@@ -76,16 +72,14 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                     {link.label}
                   </Link>
                 )}
-              </motion.div>
+              </div>
             ))}
           </nav>
 
           {/* Meus Pedidos - bottom right */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.4, ease: "easeOut" }}
-            className="absolute bottom-8 right-8"
+          <div
+            className="absolute bottom-8 right-8 animate-in fade-in slide-in-from-bottom-2 duration-300"
+            style={{ animationDelay: "450ms" }}
           >
             <a
               href="https://efxqrr-1y.myshopify.com/account"
@@ -97,9 +91,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
               <User className="h-5 w-5" strokeWidth={1.5} />
               Meus Pedidos
             </a>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </div>
+        </div>
   );
 }

@@ -98,8 +98,17 @@ function ProductCarousel({ products }: { products: ShopifyProduct[] }) {
 }
 
 export default function Index() {
-  const { data: products = [], isLoading: loading } = useProducts(8);
+  const [enableProducts, setEnableProducts] = useState(false);
+  const { data: products = [], isLoading: loading } = useProducts(8, undefined, enableProducts);
   const isProductsLoading = loading;
+
+  useEffect(() => {
+    const idleHandle = window.setTimeout(() => {
+      setEnableProducts(true);
+    }, 1200);
+
+    return () => window.clearTimeout(idleHandle);
+  }, []);
 
   return (
     <>
@@ -124,7 +133,7 @@ export default function Index() {
             </Link>
           </div>
 
-          {isProductsLoading ? (
+          {!enableProducts || isProductsLoading ? (
             <div className="flex gap-5 overflow-hidden">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="min-w-[260px] md:min-w-[300px] flex-shrink-0">
@@ -167,25 +176,25 @@ export default function Index() {
         </div>
       </section>
 
-      <DeferredSection minHeight={700}>
+      <DeferredSection minHeight={700} rootMargin="280px">
         <Suspense fallback={<SectionPlaceholder minHeight={700} />}>
           <BeforeAfter />
         </Suspense>
       </DeferredSection>
 
-      <DeferredSection minHeight={520}>
+      <DeferredSection minHeight={520} rootMargin="220px">
         <Suspense fallback={<SectionPlaceholder minHeight={520} />}>
           <BrandDifferentials />
         </Suspense>
       </DeferredSection>
 
-      <DeferredSection minHeight={700}>
+      <DeferredSection minHeight={700} rootMargin="220px">
         <Suspense fallback={<SectionPlaceholder minHeight={700} />}>
           <BlogSection />
         </Suspense>
       </DeferredSection>
 
-      <DeferredSection minHeight={420}>
+      <DeferredSection minHeight={420} rootMargin="180px">
         <Suspense fallback={<SectionPlaceholder minHeight={420} />}>
           <CorporateSection />
         </Suspense>
@@ -193,7 +202,7 @@ export default function Index() {
 
       <section className="py-16 md:py-20 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
-          <DeferredSection minHeight={520}>
+          <DeferredSection minHeight={520} rootMargin="140px">
             <Suspense fallback={<SectionPlaceholder minHeight={520} />}>
               <ReviewsSection />
             </Suspense>

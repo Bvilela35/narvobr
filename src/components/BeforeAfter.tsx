@@ -1,12 +1,4 @@
-import { motion } from "framer-motion";
 import { useState, useRef, useCallback, useEffect } from "react";
-
-const fadeUp = {
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.8, ease: "easeOut" as const }
-};
 
 export function BeforeAfter() {
   const [position, setPosition] = useState(60);
@@ -50,20 +42,14 @@ export function BeforeAfter() {
   return (
     <section className="py-14 px-6 md:px-10 md:py-16">
       <div className="max-w-[1400px] mx-auto">
-        <motion.div {...fadeUp} className="mb-16">
+        <div className="mb-16">
           <p className="md:text-3xl font-semibold text-3xl">
             O poder da organização.{" "}
             <span className="font-light text-muted-foreground">
               Menos caos, mais clareza.
             </span>
           </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}>
+        </div>
 
           <div
             ref={containerRef}
@@ -76,6 +62,7 @@ export function BeforeAfter() {
               src="/optimized/home/after-desk-1280.jpg"
               alt="Mesa organizada com acessórios Narvo"
               className="absolute inset-0 w-full h-full object-cover"
+              sizes="(max-width: 768px) 100vw, 94vw"
               width={1280}
               height={720}
               loading="lazy"
@@ -91,6 +78,7 @@ export function BeforeAfter() {
                 alt="Mesa desorganizada"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ width: `${containerWidth || 9999}px`, maxWidth: "none" }}
+                sizes="(max-width: 768px) 100vw, 94vw"
                 width={1280}
                 height={720}
                 loading="lazy"
@@ -120,7 +108,6 @@ export function BeforeAfter() {
               Depois
             </span>
           </div>
-        </motion.div>
       </div>
     </section>);
 

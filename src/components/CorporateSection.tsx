@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const logos = [
@@ -13,13 +12,7 @@ export function CorporateSection() {
       <div className="max-w-[1400px] mx-auto">
         <div className="bg-card-elevated rounded-2xl p-10 md:p-14 flex flex-col md:flex-row md:items-center gap-10 md:gap-16">
           {/* Left */}
-          <motion.div
-            className="md:w-2/5 flex-shrink-0"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
+          <div className="md:w-2/5 flex-shrink-0">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
               Vendas<br />Corporativas
             </h2>
@@ -32,16 +25,10 @@ export function CorporateSection() {
             >
               Veja mais
             </Link>
-          </motion.div>
+          </div>
 
           {/* Right – logos grid */}
-          <motion.div
-            className="flex-1 flex items-center justify-center gap-12 md:gap-16"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
+          <div className="flex-1 flex items-center justify-center gap-12 md:gap-16">
             {logos.map((l) => (
               <div key={l.name} className="flex items-center justify-center hover:opacity-70 transition-opacity">
                 <img
@@ -55,7 +42,7 @@ export function CorporateSection() {
                 />
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

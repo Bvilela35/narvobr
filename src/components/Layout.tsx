@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
 import { WhatsAppBanner } from "./WhatsAppBanner";
 import { TrustPillars } from "./TrustPillars";
-import { LeadCapturePopup } from "./LeadCapturePopup";
+const LeadCapturePopup = lazy(() =>
+  import("./LeadCapturePopup").then((module) => ({ default: module.LeadCapturePopup }))
+);
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
@@ -22,7 +24,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <WhatsAppBanner />
       <TrustPillars />
       <Footer />
-      <LeadCapturePopup />
+      <Suspense fallback={null}>
+        <LeadCapturePopup />
+      </Suspense>
       <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </div>
   );
