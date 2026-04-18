@@ -42,6 +42,8 @@ function getBannerImageSet(url: string) {
       src: optimizeShopifyImage(url, 1280),
       srcSet: `${optimizeShopifyImage(url, 768)} 768w, ${optimizeShopifyImage(url, 1280)} 1280w, ${optimizeShopifyImage(url, 1600)} 1600w`,
       sizes: "(max-width: 768px) 100vw, 94vw",
+      avifSrcSet: undefined,
+      webpSrcSet: undefined,
     };
   }
 
@@ -50,6 +52,8 @@ function getBannerImageSet(url: string) {
       src: "/optimized/home/hero-banner-720.jpg",
       srcSet: "/optimized/home/hero-banner-720.jpg 720w, /optimized/home/hero-banner-960.jpg 960w, /optimized/home/hero-banner-1600.jpg 1600w",
       sizes: "(max-width: 768px) 100vw, 94vw",
+      avifSrcSet: "/optimized/home/hero-banner-720.avif 720w, /optimized/home/hero-banner-1600.avif 1600w",
+      webpSrcSet: "/optimized/home/hero-banner-720.webp 720w, /optimized/home/hero-banner-1600.webp 1600w",
     };
   }
 
@@ -57,6 +61,8 @@ function getBannerImageSet(url: string) {
     src: url,
     srcSet: undefined,
     sizes: undefined,
+    avifSrcSet: undefined,
+    webpSrcSet: undefined,
   };
 }
 
@@ -175,31 +181,60 @@ export function HeroBanner() {
           preload="metadata"
         />
       ) : (
-        <img
-          key={activeBanner.id}
-          src={activeImage?.src}
-          srcSet={activeImage?.srcSet}
-          sizes={activeImage?.sizes}
-          alt={activeBanner.media.altText || activeBanner.title}
-          className="absolute inset-0 w-full h-full object-cover"
-          loading="eager"
-          fetchPriority="high"
-          width={activeBanner.media.width || 1600}
-          height={activeBanner.media.height || 900}
-          decoding="async"
-        />
+        <picture key={activeBanner.id}>
+          {activeImage?.avifSrcSet && (
+            <source
+              type="image/avif"
+              srcSet={activeImage.avifSrcSet}
+              sizes={activeImage.sizes}
+            />
+          )}
+          {activeImage?.webpSrcSet && (
+            <source
+              type="image/webp"
+              srcSet={activeImage.webpSrcSet}
+              sizes={activeImage.sizes}
+            />
+          )}
+          <img
+            src={activeImage?.src}
+            srcSet={activeImage?.srcSet}
+            sizes={activeImage?.sizes}
+            alt={activeBanner.media.altText || activeBanner.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+            width={activeBanner.media.width || 1600}
+            height={activeBanner.media.height || 900}
+            decoding="async"
+          />
+        </picture>
       )}
 
       <Helmet>
         {activeBanner.media.type === "image" && activeImage && (
-          <link
-            rel="preload"
-            as="image"
-            href={activeImage.src}
-            imageSrcSet={activeImage.srcSet}
-            imageSizes={activeImage.sizes}
-            fetchPriority="high"
-          />
+          <>
+            {activeImage.avifSrcSet ? (
+              <link
+                rel="preload"
+                as="image"
+                href="/optimized/home/hero-banner-720.avif"
+                type="image/avif"
+                imageSrcSet={activeImage.avifSrcSet}
+                imageSizes={activeImage.sizes}
+                fetchPriority="high"
+              />
+            ) : (
+              <link
+                rel="preload"
+                as="image"
+                href={activeImage.src}
+                imageSrcSet={activeImage.srcSet}
+                imageSizes={activeImage.sizes}
+                fetchPriority="high"
+              />
+            )}
+          </>
         )}
         {nextBanner?.media.type === "image" && (
           <link
