@@ -55,7 +55,7 @@ export default function Artigo() {
   const plainExcerpt = article.excerpt || article.contentHtml.replace(/<[^>]*>/g, "").slice(0, 155);
   const seoTitle = article.seo?.title || `${article.title} — Narvo Journal`;
   const seoDescription = article.seo?.description || plainExcerpt;
-  const canonicalUrl = `https://narvobr.lovable.app/journal/${article.handle}`;
+  const canonicalUrl = `https://narvo.com.br/journal/${article.handle}`;
 
   // Related articles (exclude current)
   const related = allArticles
@@ -76,7 +76,7 @@ export default function Artigo() {
     publisher: {
       "@type": "Organization",
       name: "Narvo",
-      url: "https://narvobr.lovable.app",
+      url: "https://narvo.com.br",
     },
     mainEntityOfPage: {
       "@type": "WebPage",

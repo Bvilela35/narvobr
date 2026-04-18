@@ -116,7 +116,7 @@ export default function Carrinho() {
         <Helmet>
           <title>Carrinho | Narvo</title>
           <meta name="robots" content="noindex,nofollow" />
-          <link rel="canonical" href="https://narvobr.lovable.app/carrinho" />
+          <link rel="canonical" href="https://narvo.com.br/carrinho" />
         </Helmet>
         <div className="min-h-[60vh] flex flex-col items-center justify-center px-6">
           <h1 className="text-3xl font-bold mb-3">Seu carrinho está vazio.</h1>
@@ -134,7 +134,7 @@ export default function Carrinho() {
       <Helmet>
         <title>Carrinho | Narvo</title>
         <meta name="robots" content="noindex,nofollow" />
-        <link rel="canonical" href="https://narvobr.lovable.app/carrinho" />
+        <link rel="canonical" href="https://narvo.com.br/carrinho" />
       </Helmet>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
       {/* Back */}

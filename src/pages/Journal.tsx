@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useBlogArticles } from "@/hooks/useBlog";
 import type { ShopifyArticle } from "@/lib/shopify";
 
-const SITE_URL = "https://narvobr.lovable.app";
+const SITE_URL = "https://narvo.com.br";
 
 function stripHtml(html: string) {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();

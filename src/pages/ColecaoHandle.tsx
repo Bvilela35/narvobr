@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { ProductCard } from "@/components/ProductCard";
 import { useCollectionByHandle } from "@/hooks/useShopify";
 
-const SITE_URL = "https://narvobr.lovable.app";
+const SITE_URL = "https://narvo.com.br";
 
 export default function ColecaoHandle() {
   const { handle } = useParams<{ handle: string }>();

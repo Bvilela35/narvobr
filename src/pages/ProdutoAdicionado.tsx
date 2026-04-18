@@ -40,7 +40,7 @@ export default function ProdutoAdicionado() {
         <Helmet>
           <title>Produto adicionado | Narvo</title>
           <meta name="robots" content="noindex,nofollow" />
-          <link rel="canonical" href={`https://narvobr.lovable.app/produto/${handle}`} />
+          <link rel="canonical" href={`https://narvo.com.br/produto/${handle}`} />
         </Helmet>
         <div className="min-h-[60vh] flex items-center justify-center">
           <Loader2 className="h-5 w-5 animate-spin opacity-30" />
@@ -56,7 +56,7 @@ export default function ProdutoAdicionado() {
       <Helmet>
         <title>Produto adicionado | Narvo</title>
         <meta name="robots" content="noindex,nofollow" />
-        <link rel="canonical" href={`https://narvobr.lovable.app/produto/${handle}`} />
+        <link rel="canonical" href={`https://narvo.com.br/produto/${handle}`} />
       </Helmet>
       <section className="added-page">
       <style>{`

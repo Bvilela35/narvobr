@@ -4,7 +4,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { FundamentosNarvo } from "@/components/FundamentosNarvo";
 import { useProducts } from "@/hooks/useShopify";
 
-const SITE_URL = "https://narvobr.lovable.app";
+const SITE_URL = "https://narvo.com.br";
 
 export default function Colecao() {
   const { data: products = [], isLoading: loading } = useProducts(20);

@@ -17,7 +17,7 @@ export default function NossaHistoria() {
           name="description"
           content="Conheça a origem da Narvo — uma obsessão por ordem, materiais sólidos e a Engenharia do Silêncio."
         />
-        <link rel="canonical" href="https://narvobr.lovable.app/nossa-historia" />
+        <link rel="canonical" href="https://narvo.com.br/nossa-historia" />
       </Helmet>
 
       <section className="pt-32 pb-20 px-6 md:px-10">

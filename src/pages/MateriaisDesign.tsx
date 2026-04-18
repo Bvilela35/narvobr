@@ -36,7 +36,7 @@ export default function MateriaisDesign() {
           name="description"
           content="Aço, polímero, feltro. Conheça os materiais e o processo de design por trás de cada peça Narvo."
         />
-        <link rel="canonical" href="https://narvobr.lovable.app/materiais" />
+        <link rel="canonical" href="https://narvo.com.br/materiais" />
       </Helmet>
 
       <section className="pt-32 pb-20 px-6 md:px-10">
