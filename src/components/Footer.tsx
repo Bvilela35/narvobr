@@ -16,7 +16,7 @@ const columnTwo = [
 
 const columnTools = [
   { label: "Calcule o seu foco", href: "/calculadora", external: false },
-  { label: "Ferramentas de produtividade", href: "https://narvosfocus.com", external: true },
+  { label: "Ferramentas de produtividade", href: "https://focus.narvo.com.br/", external: true },
 ];
 
 export function Footer() {
