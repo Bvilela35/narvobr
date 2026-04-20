@@ -160,7 +160,7 @@ function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: st
   const questionId = `faq-question-${index}`;
   const answerId = `faq-answer-${index}`;
   return (
-    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`} itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+    <div className={`pdp__faq-item${open ? ' pdp__faq-item--open' : ''}`}>
       <h3 style={{ margin: 0, fontSize: 'inherit', fontWeight: 'inherit' }}>
         <button
           className="pdp__faq-question"
@@ -169,7 +169,7 @@ function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: st
           aria-controls={answerId}
           id={questionId}>
           
-          <span itemProp="name">{item.pergunta}</span>
+          <span>{item.pergunta}</span>
           <svg className={`pdp__faq-chevron${open ? ' pdp__faq-chevron--open' : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -179,10 +179,7 @@ function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: st
       <div
         id={answerId}
         role="region"
-        aria-labelledby={questionId}
-        itemScope
-        itemProp="acceptedAnswer"
-        itemType="https://schema.org/Answer">
+        aria-labelledby={questionId}>
         
           <AnimatePresence initial={false}>
             {open &&
@@ -193,7 +190,7 @@ function FaqItem({ item, isLast, index }: {item: {pergunta: string;resposta?: st
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}>
             
-                <p className="pdp__faq-answer" itemProp="text">{item.resposta}</p>
+                <p className="pdp__faq-answer">{item.resposta}</p>
               </motion.div>
           }
           </AnimatePresence>
