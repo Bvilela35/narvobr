@@ -26,6 +26,7 @@ const PRODUCTS_QUERY = `
           title
           description
           handle
+          productType
           seo {
             title
             description
@@ -470,6 +471,44 @@ function buildRedirectHtml(targetUrl) {
 </html>`;
 }
 
+function inferMerchantTaxonomy(product) {
+  const handle = String(product?.handle || "").toLowerCase();
+  const title = String(product?.title || "").toLowerCase();
+
+  if (handle.includes("ndot") || title.includes("porta-copos")) {
+    return {
+      productType: "Acessórios de setup > Mesa > Porta-copos",
+      googleProductCategory: "Home & Garden > Kitchen & Dining > Barware > Coasters",
+    };
+  }
+
+  if (handle.includes("n-field") || title.includes("suporte de monitor")) {
+    return {
+      productType: "Acessórios de setup > Ergonomia > Suporte de monitor",
+      googleProductCategory: "Furniture > Desks & Office Tables > Desk Riser Units",
+    };
+  }
+
+  if (handle.includes("n-spine") || title.includes("organizador") || title.includes("cabos")) {
+    return {
+      productType: "Acessórios de setup > Organização de cabos > Canaleta",
+      googleProductCategory: "Electronics > Electronics Accessories > Cable Management",
+    };
+  }
+
+  if (handle.includes("n-tie")) {
+    return {
+      productType: "Acessórios de setup > Organização de cabos > Abraçadeiras",
+      googleProductCategory: "Electronics > Electronics Accessories > Cable Management",
+    };
+  }
+
+  return {
+    productType: product?.productType || "Acessórios de setup",
+    googleProductCategory: "Office Supplies",
+  };
+}
+
 function buildMerchantItem(product, variant) {
   const baseTitle = product.seo?.title || product.title;
   const variantSuffix = variant?.title && variant.title !== "Default Title" ? ` - ${variant.title}` : "";
@@ -489,6 +528,7 @@ function buildMerchantItem(product, variant) {
   const colorOption = selectedOptions.find((option) => /^(color|cor)$/i.test(option?.name || ""));
   const priceAmount = formatSchemaPrice(variant?.price?.amount);
   const currency = variant?.price?.currencyCode || "BRL";
+  const taxonomy = inferMerchantTaxonomy(product);
 
   const fields = [
     ["g:id", itemId],
@@ -501,6 +541,8 @@ function buildMerchantItem(product, variant) {
     ["g:price", `${priceAmount} ${currency}`],
     ["g:condition", "new"],
     ["g:brand", "Narvo"],
+    ["g:google_product_category", taxonomy.googleProductCategory],
+    ["g:product_type", taxonomy.productType],
     ["g:item_group_id", product.handle],
     ["g:mpn", variant?.sku || undefined],
     ["g:gtin", normalizedBarcode || undefined],
