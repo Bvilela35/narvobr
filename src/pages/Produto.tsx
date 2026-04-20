@@ -109,20 +109,22 @@ function buildBreadcrumbJsonLd(productUrl: string, productName: string) {
 }
 
 function buildVideoJsonLd(
-  videos: Array<{ alt: string | null; createdAt?: string | null; previewImage?: { url: string } | null; sources: Array<{ url: string; mimeType: string }> }>,
+  videos: Array<{ alt: string | null; previewImage?: { url: string } | null; sources: Array<{ url: string; mimeType: string }> }>,
   productUrl: string,
   productName: string,
-  description: string
+  description: string,
+  uploadDateValue?: string
 ) {
+  const uploadDate =
+    typeof uploadDateValue === "string" && !Number.isNaN(Date.parse(uploadDateValue))
+      ? new Date(uploadDateValue).toISOString()
+      : null;
+
   return videos
     .map((video, index) => {
       const source = video.sources.find((item) => item.url);
       const thumbnailUrl = video.previewImage?.url;
-      if (!source?.url || !thumbnailUrl) return null;
-      const uploadDate =
-        typeof video.createdAt === "string" && !Number.isNaN(Date.parse(video.createdAt))
-          ? new Date(video.createdAt).toISOString()
-          : null;
+      if (!source?.url || !thumbnailUrl || !uploadDate) return null;
 
       return {
         "@context": "https://schema.org/",
@@ -533,6 +535,7 @@ export default function Produto() {
   const options = rawOptions || [];
   const bulletPoints = product.node.bulletPoints || [];
   const videoStories = product.node.videoStories || [];
+  const videoUploadDate = product.node.videoUploadDate;
 
   const hasHighlights = !!(highlights && highlights.length > 0);
   const hasDescricao = !!(tituloDescricao || descricaoCompleta || fotoDescricao || hasHighlights);
@@ -677,7 +680,7 @@ export default function Produto() {
         };
   const faqJsonLd = FAQ_SCHEMA_TEST_HANDLES.has(productHandle) ? buildFaqJsonLd(faq || []) : null;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
-  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription);
+  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription, videoUploadDate);
 
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;

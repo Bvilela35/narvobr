@@ -60,6 +60,9 @@ const PRODUCTS_QUERY = `
           }
         }
       }
+      videoUploadDateMeta: metafield(namespace: "custom", key: "video_upload_date") {
+        value
+      }
       variants(first: 50) {
         edges {
           node {
@@ -173,16 +176,17 @@ function buildBreadcrumbJsonLd(productUrl, productName) {
   };
 }
 
-function buildVideoJsonLd(videos, productUrl, productName, description) {
+function buildVideoJsonLd(videos, productUrl, productName, description, uploadDateValue) {
+  const uploadDate =
+    typeof uploadDateValue === "string" && !Number.isNaN(Date.parse(uploadDateValue))
+      ? new Date(uploadDateValue).toISOString()
+      : null;
+
   return (Array.isArray(videos) ? videos : [])
     .map((video, index) => {
       const source = Array.isArray(video?.sources) ? video.sources.find((item) => item?.url) : null;
       const thumbnailUrl = video?.previewImage?.url;
-      if (!source?.url || !thumbnailUrl) return null;
-      const uploadDate =
-        typeof video?.createdAt === "string" && !Number.isNaN(Date.parse(video.createdAt))
-          ? new Date(video.createdAt).toISOString()
-          : null;
+      if (!source?.url || !thumbnailUrl || !uploadDate) return null;
 
       return {
         "@context": "https://schema.org/",
@@ -341,6 +345,7 @@ function buildProductMetadata(product) {
   const videoStories = (product.videoStoriesMeta?.references?.edges || [])
     .map((edge) => edge?.node)
     .filter((node) => Array.isArray(node?.sources) && node.sources.length > 0);
+  const videoUploadDate = product.videoUploadDateMeta?.value || null;
   const primaryImageUrl = imageUrls[0] || `${SITE_URL}/images/og-narvo.jpg`;
   const productUrl = `${SITE_URL}/produto/${product.handle}`;
   const priceValidUntil = getPriceValidUntil();
@@ -368,7 +373,7 @@ function buildProductMetadata(product) {
           url: productUrl,
         };
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
-  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription);
+  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription, videoUploadDate);
   let faqJsonLd = null;
   if (FAQ_SCHEMA_TEST_HANDLES.has(product.handle)) {
     try {

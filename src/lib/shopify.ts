@@ -30,7 +30,6 @@ export interface ShopifyVideoSource {
 export interface ShopifyVideo {
   mediaContentType: string;
   alt: string | null;
-  createdAt?: string | null;
   sources: ShopifyVideoSource[];
   previewImage?: { url: string } | null;
 }
@@ -111,6 +110,7 @@ export interface ShopifyProduct {
       values: string[];
     }>;
     videoStories?: ShopifyVideo[];
+    videoUploadDate?: string;
     bulletPoints?: string[];
     tituloDescricao?: string;
     descricaoCompleta?: string;
@@ -214,6 +214,7 @@ function normalizeProductResponse(product: any): ShopifyProduct | null {
   const videoStories: ShopifyVideo[] = videoEdges
     .map((e: { node: ShopifyVideo }) => e.node)
     .filter((v: ShopifyVideo) => v.sources && v.sources.length > 0);
+  const videoUploadDate = product.videoUploadDateMeta?.value || undefined;
 
   // Parse bullet points metafield (JSON list of strings)
   let bulletPoints: string[] = [];
@@ -299,6 +300,7 @@ function normalizeProductResponse(product: any): ShopifyProduct | null {
 
   const {
     videoStoriesMeta,
+    videoUploadDateMeta,
     bulletPointsMeta,
     tituloDescricaoMeta,
     descricaoCompletaMeta,
@@ -317,6 +319,7 @@ function normalizeProductResponse(product: any): ShopifyProduct | null {
     node: {
       ...cleanProduct,
       videoStories,
+      videoUploadDate,
       bulletPoints,
       tituloDescricao,
       descricaoCompleta,
@@ -454,6 +457,9 @@ const PRODUCT_BY_HANDLE_QUERY = `
             }
           }
         }
+      }
+      videoUploadDateMeta: metafield(namespace: "custom", key: "video_upload_date") {
+        value
       }
       bulletPointsMeta: metafield(namespace: "custom", key: "bullet_points") {
         value
