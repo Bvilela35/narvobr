@@ -199,7 +199,9 @@ async function fetchAllProducts() {
 }
 
 async function fetchJudgeMeReviews(handle) {
-  const apiToken = process.env.JUDGEME_API_TOKEN;
+  const apiToken =
+    process.env.JUDGEME_PRIVATE_API_TOKEN ||
+    process.env.JUDGEME_API_TOKEN;
   if (!apiToken || !handle) return null;
 
   const params = new URLSearchParams({
