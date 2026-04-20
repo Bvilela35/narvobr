@@ -1167,7 +1167,7 @@ export default function Produto() {
 
       {/* Seção: FAQ */}
       {hasFaq &&
-      <section id="secao-faq" className="pdp__content-section" itemScope itemType="https://schema.org/FAQPage">
+      <section id="secao-faq" className="pdp__content-section">
           <div className="pdp__content-section-inner">
             <div className="pdp__faq-layout">
               <div className="pdp__faq-header">
