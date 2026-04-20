@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const ROOT = "/Users/bernardosanches/narvobr";
+const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist");
 const DIST_INDEX = path.join(DIST_DIR, "index.html");
 const SITE_URL = "https://narvo.com.br";
