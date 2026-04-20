@@ -57,6 +57,11 @@ function mapGtinFields(barcode: string | null | undefined) {
   return { gtin14: normalized };
 }
 
+function formatSchemaPrice(value: string | number | undefined): string {
+  const amount = typeof value === "number" ? value : Number(value || 0);
+  return amount.toFixed(2);
+}
+
 // Shopify CDN image optimizer — request appropriately sized images
 function optimizeShopifyImage(url: string | undefined, width = 800): string {
   if (!url) return '';
@@ -571,7 +576,7 @@ export default function Produto() {
         "@type": "Offer",
         url: productUrl,
         priceCurrency: variant.price.currencyCode || "BRL",
-        price: variant.price.amount || "0",
+        price: formatSchemaPrice(variant.price.amount),
         availability: variant.availableForSale ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
         itemCondition: "https://schema.org/NewCondition",
         priceValidUntil,
