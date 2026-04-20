@@ -71,6 +71,10 @@ const PRODUCTS_QUERY = `
                 sku
                 barcode
                 availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
                 image {
                   url
                 }
@@ -466,6 +470,80 @@ function buildRedirectHtml(targetUrl) {
 </html>`;
 }
 
+function buildMerchantItem(product, variant) {
+  const baseTitle = product.seo?.title || product.title;
+  const variantSuffix = variant?.title && variant.title !== "Default Title" ? ` - ${variant.title}` : "";
+  const title = `${baseTitle}${variantSuffix}`;
+  const description = stripHtml(product.seo?.description || product.description || "");
+  const productUrl = `${SITE_URL}/produto/${product.handle}`;
+  const imageUrls = (product.images?.edges || [])
+    .map((edge) => edge?.node?.url)
+    .filter((url, index, array) => Boolean(url) && array.indexOf(url) === index);
+  const primaryImage = variant?.image?.url || imageUrls[0] || `${SITE_URL}/images/og-narvo.jpg`;
+  const additionalImages = imageUrls.filter((url) => url !== primaryImage).slice(0, 10);
+  const normalizedBarcode = normalizeBarcode(variant?.barcode);
+  const variantId = String(variant?.id || "").split("/").pop() || product.handle;
+  const itemId = variant?.sku || `${product.handle}-${variantId}`;
+  const selectedOptions = Array.isArray(variant?.selectedOptions) ? variant.selectedOptions : [];
+  const sizeOption = selectedOptions.find((option) => /^(size|tamanho)$/i.test(option?.name || ""));
+  const colorOption = selectedOptions.find((option) => /^(color|cor)$/i.test(option?.name || ""));
+  const priceAmount = formatSchemaPrice(variant?.price?.amount);
+  const currency = variant?.price?.currencyCode || "BRL";
+
+  const fields = [
+    ["g:id", itemId],
+    ["title", title],
+    ["description", description],
+    ["link", productUrl],
+    ["g:image_link", primaryImage],
+    ...additionalImages.map((url) => ["g:additional_image_link", url]),
+    ["g:availability", variant?.availableForSale ? "in_stock" : "out_of_stock"],
+    ["g:price", `${priceAmount} ${currency}`],
+    ["g:condition", "new"],
+    ["g:brand", "Narvo"],
+    ["g:item_group_id", product.handle],
+    ["g:mpn", variant?.sku || undefined],
+    ["g:gtin", normalizedBarcode || undefined],
+    ["g:size", sizeOption?.value || undefined],
+    ["g:color", colorOption?.value || undefined],
+  ];
+
+  if (!normalizedBarcode && !variant?.sku) {
+    fields.push(["g:identifier_exists", "false"]);
+  }
+
+  const xmlFields = fields
+    .filter(([, value]) => value !== undefined && value !== null && value !== "")
+    .map(([tag, value]) => `      <${tag}>${escapeHtml(String(value))}</${tag}>`)
+    .join("\n");
+
+  return `    <item>
+${xmlFields}
+    </item>`;
+}
+
+function buildMerchantFeed(products) {
+  const items = products.flatMap((product) => {
+    const variants = (product.variants?.edges || []).map((edge) => edge?.node).filter(Boolean);
+    if (variants.length === 0) {
+      return [];
+    }
+
+    return variants.map((variant) => buildMerchantItem(product, variant));
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Narvo Product Feed</title>
+    <link>${SITE_URL}</link>
+    <description>Feed de produtos da Narvo para Google Merchant Center.</description>
+${items.join("\n")}
+  </channel>
+</rss>
+`;
+}
+
 async function writeHtmlFile(filePath, html) {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, html, "utf8");
@@ -478,6 +556,7 @@ async function main() {
   ]);
 
   await writeFile(path.join(DIST_DIR, "products-manifest.json"), JSON.stringify(products.map((product) => product.handle), null, 2));
+  await writeFile(path.join(DIST_DIR, "feed.xml"), buildMerchantFeed(products), "utf8");
 
   for (const product of products) {
     const metadata = buildProductMetadata(product);
