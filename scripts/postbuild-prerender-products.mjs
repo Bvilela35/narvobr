@@ -9,6 +9,8 @@ const SHOPIFY_API_VERSION = "2025-07";
 const SHOPIFY_STORE_PERMANENT_DOMAIN = "efxqrr-1y.myshopify.com";
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = "9645130db6cf2b0f59c6feeb3f76f3b9";
+const JUDGEME_API_URL = "https://judge.me/api/v1/reviews";
+const JUDGEME_SHOP_DOMAIN = "efxqrr-1y.myshopify.com";
 const FAQ_SCHEMA_TEST_HANDLES = new Set(["n-field"]);
 
 const PRODUCTS_QUERY = `
@@ -196,6 +198,68 @@ async function fetchAllProducts() {
   return products;
 }
 
+async function fetchJudgeMeReviews(handle) {
+  const apiToken = process.env.JUDGEME_API_TOKEN;
+  if (!apiToken || !handle) return null;
+
+  const params = new URLSearchParams({
+    api_token: apiToken,
+    shop_domain: JUDGEME_SHOP_DOMAIN,
+    handle,
+    per_page: "20",
+    page: "1",
+  });
+
+  const response = await fetch(`${JUDGEME_API_URL}?${params.toString()}`);
+  if (!response.ok) {
+    console.warn(`Judge.me reviews unavailable for ${handle}: ${response.status}`);
+    return null;
+  }
+
+  const data = await response.json();
+  const reviews = Array.isArray(data?.reviews) ? data.reviews : [];
+  const filtered = reviews.filter((review) => review?.product_handle === handle && review?.rating);
+
+  if (filtered.length === 0) return null;
+
+  const averageRating = filtered.reduce((sum, review) => sum + Number(review.rating || 0), 0) / filtered.length;
+
+  const reviewSchema = filtered
+    .slice(0, 5)
+    .map((review) => {
+      const authorName = review?.reviewer?.name || "Cliente verificado";
+      const body = stripHtml(review?.body || "");
+      const title = stripHtml(review?.title || "");
+      const createdAt = review?.created_at ? new Date(review.created_at).toISOString().slice(0, 10) : undefined;
+
+      return {
+        "@type": "Review",
+        author: {
+          "@type": "Person",
+          name: authorName,
+        },
+        datePublished: createdAt,
+        name: title || undefined,
+        reviewBody: body || undefined,
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: String(review.rating),
+          bestRating: "5",
+          worstRating: "1",
+        },
+      };
+    });
+
+  return {
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: averageRating.toFixed(1),
+      reviewCount: String(filtered.length),
+    },
+    review: reviewSchema,
+  };
+}
+
 function buildVariantSchema(product, variant, imageUrls, seoTitle, seoDescription, productUrl, priceValidUntil) {
   const variantName = variant.title && variant.title !== "Default Title"
     ? `${seoTitle} - ${variant.title}`
@@ -277,6 +341,16 @@ function buildProductMetadata(product) {
   };
 }
 
+function mergeReviewSchema(productJsonLd, reviewSchema) {
+  if (!reviewSchema) return productJsonLd;
+
+  return {
+    ...productJsonLd,
+    aggregateRating: reviewSchema.aggregateRating,
+    review: reviewSchema.review,
+  };
+}
+
 function injectHead(html, metadata) {
   const {
     seoTitle,
@@ -350,6 +424,8 @@ async function main() {
 
   for (const product of products) {
     const metadata = buildProductMetadata(product);
+    const reviewSchema = await fetchJudgeMeReviews(product.handle);
+    metadata.productJsonLd = mergeReviewSchema(metadata.productJsonLd, reviewSchema);
     const productHtml = injectHead(template, metadata);
 
     await writeHtmlFile(path.join(DIST_DIR, "produto", product.handle, "index.html"), productHtml);
