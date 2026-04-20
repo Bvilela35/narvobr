@@ -600,22 +600,6 @@ export default function Produto() {
           url: productUrl,
         };
 
-  const validFaqItems = (faq || []).filter((item) => item.pergunta && item.resposta);
-  const faqJsonLd = validFaqItems.length > 0
-    ? {
-        "@context": "https://schema.org/",
-        "@type": "FAQPage",
-        mainEntity: validFaqItems.map((item) => ({
-          "@type": "Question",
-          name: item.pergunta,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.resposta,
-          },
-        })),
-      }
-    : null;
-
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;
 
@@ -636,7 +620,6 @@ export default function Produto() {
         <meta name="twitter:image" content={primaryImageUrl} />
         {primaryImageUrl && <link rel="preload" as="image" href={optimizeShopifyImage(primaryImageUrl, 800)} />}
         <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
-        {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
       </Helmet>
       <section className="pdp">
         <div className="pdp__container">

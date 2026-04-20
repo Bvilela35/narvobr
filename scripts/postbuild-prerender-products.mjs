@@ -208,35 +208,12 @@ function buildProductMetadata(product) {
           url: productUrl,
         };
 
-  let faqJsonLd = null;
-  try {
-    const parsed = JSON.parse(product.faqMeta?.value || "[]");
-    const validItems = Array.isArray(parsed) ? parsed.filter((item) => item?.pergunta && item?.resposta) : [];
-    if (validItems.length > 0) {
-      faqJsonLd = {
-        "@context": "https://schema.org/",
-        "@type": "FAQPage",
-        mainEntity: validItems.map((item) => ({
-          "@type": "Question",
-          name: item.pergunta,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.resposta,
-          },
-        })),
-      };
-    }
-  } catch {
-    faqJsonLd = null;
-  }
-
   return {
     seoTitle,
     seoDescription,
     primaryImageUrl,
     productUrl,
     productJsonLd,
-    faqJsonLd,
   };
 }
 
@@ -247,7 +224,6 @@ function injectHead(html, metadata) {
     primaryImageUrl,
     productUrl,
     productJsonLd,
-    faqJsonLd,
   } = metadata;
 
   const headInjection = `
@@ -265,7 +241,6 @@ function injectHead(html, metadata) {
     <meta name="twitter:image" content="${escapeHtml(primaryImageUrl)}" />
     <link rel="preload" as="image" href="${escapeHtml(primaryImageUrl)}" />
     <script type="application/ld+json">${JSON.stringify(productJsonLd)}</script>
-    ${faqJsonLd ? `<script type="application/ld+json">${JSON.stringify(faqJsonLd)}</script>` : ""}
   `;
 
   return html
