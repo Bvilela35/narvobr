@@ -179,6 +179,10 @@ function buildVideoJsonLd(videos, productUrl, productName, description) {
       const source = Array.isArray(video?.sources) ? video.sources.find((item) => item?.url) : null;
       const thumbnailUrl = video?.previewImage?.url;
       if (!source?.url || !thumbnailUrl) return null;
+      const uploadDate =
+        typeof video?.createdAt === "string" && !Number.isNaN(Date.parse(video.createdAt))
+          ? new Date(video.createdAt).toISOString()
+          : null;
 
       return {
         "@context": "https://schema.org/",
@@ -188,6 +192,7 @@ function buildVideoJsonLd(videos, productUrl, productName, description) {
         thumbnailUrl: [thumbnailUrl],
         contentUrl: source.url,
         embedUrl: productUrl,
+        ...(uploadDate ? { uploadDate } : {}),
       };
     })
     .filter(Boolean);

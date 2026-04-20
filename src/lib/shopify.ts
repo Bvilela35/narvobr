@@ -30,6 +30,7 @@ export interface ShopifyVideoSource {
 export interface ShopifyVideo {
   mediaContentType: string;
   alt: string | null;
+  createdAt?: string | null;
   sources: ShopifyVideoSource[];
   previewImage?: { url: string } | null;
 }

@@ -109,7 +109,7 @@ function buildBreadcrumbJsonLd(productUrl: string, productName: string) {
 }
 
 function buildVideoJsonLd(
-  videos: Array<{ alt: string | null; previewImage?: { url: string } | null; sources: Array<{ url: string; mimeType: string }> }>,
+  videos: Array<{ alt: string | null; createdAt?: string | null; previewImage?: { url: string } | null; sources: Array<{ url: string; mimeType: string }> }>,
   productUrl: string,
   productName: string,
   description: string
@@ -119,6 +119,10 @@ function buildVideoJsonLd(
       const source = video.sources.find((item) => item.url);
       const thumbnailUrl = video.previewImage?.url;
       if (!source?.url || !thumbnailUrl) return null;
+      const uploadDate =
+        typeof video.createdAt === "string" && !Number.isNaN(Date.parse(video.createdAt))
+          ? new Date(video.createdAt).toISOString()
+          : null;
 
       return {
         "@context": "https://schema.org/",
@@ -128,6 +132,7 @@ function buildVideoJsonLd(
         thumbnailUrl: [thumbnailUrl],
         contentUrl: source.url,
         embedUrl: productUrl,
+        ...(uploadDate ? { uploadDate } : {}),
       };
     })
     .filter(Boolean);
