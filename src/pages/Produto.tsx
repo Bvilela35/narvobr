@@ -30,6 +30,7 @@ function formatPrice(amount: string) {
 
 const CANONICAL_SITE_URL = "https://narvo.com.br";
 const DEFAULT_OG_IMAGE = `${CANONICAL_SITE_URL}/images/og-narvo.jpg`;
+const FAQ_SCHEMA_TEST_HANDLES = new Set(["n-field"]);
 
 function stripHtml(value: string | undefined | null): string {
   if (!value) return "";
@@ -60,6 +61,24 @@ function mapGtinFields(barcode: string | null | undefined) {
 function formatSchemaPrice(value: string | number | undefined): string {
   const amount = typeof value === "number" ? value : Number(value || 0);
   return amount.toFixed(2);
+}
+
+function buildFaqJsonLd(items: Array<{ pergunta: string; resposta?: string }>) {
+  const validItems = items.filter((item) => item.pergunta && item.resposta);
+  if (validItems.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org/",
+    "@type": "FAQPage",
+    mainEntity: validItems.map((item) => ({
+      "@type": "Question",
+      name: item.pergunta,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.resposta,
+      },
+    })),
+  };
 }
 
 // Shopify CDN image optimizer — request appropriately sized images
@@ -599,6 +618,7 @@ export default function Produto() {
           ...buildVariantSchema(selectedVariant || defaultVariant || variantNodes[0]),
           url: productUrl,
         };
+  const faqJsonLd = FAQ_SCHEMA_TEST_HANDLES.has(productHandle) ? buildFaqJsonLd(faq || []) : null;
 
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;
@@ -620,6 +640,7 @@ export default function Produto() {
         <meta name="twitter:image" content={primaryImageUrl} />
         {primaryImageUrl && <link rel="preload" as="image" href={optimizeShopifyImage(primaryImageUrl, 800)} />}
         <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+        {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
       </Helmet>
       <section className="pdp">
         <div className="pdp__container">

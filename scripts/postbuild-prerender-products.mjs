@@ -9,6 +9,7 @@ const SHOPIFY_API_VERSION = "2025-07";
 const SHOPIFY_STORE_PERMANENT_DOMAIN = "efxqrr-1y.myshopify.com";
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = "9645130db6cf2b0f59c6feeb3f76f3b9";
+const FAQ_SCHEMA_TEST_HANDLES = new Set(["n-field"]);
 
 const PRODUCTS_QUERY = `
   query GetPublishedProducts($first: Int!, $after: String) {
@@ -103,6 +104,26 @@ function getPriceValidUntil(daysFromNow = 30) {
   const date = new Date();
   date.setDate(date.getDate() + daysFromNow);
   return date.toISOString().slice(0, 10);
+}
+
+function buildFaqJsonLd(items) {
+  const validItems = Array.isArray(items)
+    ? items.filter((item) => item?.pergunta && item?.resposta)
+    : [];
+  if (validItems.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org/",
+    "@type": "FAQPage",
+    mainEntity: validItems.map((item) => ({
+      "@type": "Question",
+      name: item.pergunta,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.resposta,
+      },
+    })),
+  };
 }
 
 async function storefrontApiRequest(query, variables = {}) {
@@ -207,6 +228,15 @@ function buildProductMetadata(product) {
           ...buildVariantSchema(product, variants[0], imageUrls, seoTitle, seoDescription, productUrl, priceValidUntil),
           url: productUrl,
         };
+  let faqJsonLd = null;
+  if (FAQ_SCHEMA_TEST_HANDLES.has(product.handle)) {
+    try {
+      const parsedFaq = JSON.parse(product.faqMeta?.value || "[]");
+      faqJsonLd = buildFaqJsonLd(parsedFaq);
+    } catch {
+      faqJsonLd = null;
+    }
+  }
 
   return {
     seoTitle,
@@ -214,6 +244,7 @@ function buildProductMetadata(product) {
     primaryImageUrl,
     productUrl,
     productJsonLd,
+    faqJsonLd,
   };
 }
 
@@ -224,6 +255,7 @@ function injectHead(html, metadata) {
     primaryImageUrl,
     productUrl,
     productJsonLd,
+    faqJsonLd,
   } = metadata;
 
   const headInjection = `
@@ -241,6 +273,7 @@ function injectHead(html, metadata) {
     <meta name="twitter:image" content="${escapeHtml(primaryImageUrl)}" />
     <link rel="preload" as="image" href="${escapeHtml(primaryImageUrl)}" />
     <script type="application/ld+json">${JSON.stringify(productJsonLd)}</script>
+    ${faqJsonLd ? `<script type="application/ld+json">${JSON.stringify(faqJsonLd)}</script>` : ""}
   `;
 
   return html
