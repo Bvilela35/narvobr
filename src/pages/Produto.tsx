@@ -81,6 +81,33 @@ function buildFaqJsonLd(items: Array<{ pergunta: string; resposta?: string }>) {
   };
 }
 
+function buildBreadcrumbJsonLd(productUrl: string, productName: string) {
+  return {
+    "@context": "https://schema.org/",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: CANONICAL_SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Coleção",
+        item: `${CANONICAL_SITE_URL}/colecao`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: productName,
+        item: productUrl,
+      },
+    ],
+  };
+}
+
 // Shopify CDN image optimizer — request appropriately sized images
 function optimizeShopifyImage(url: string | undefined, width = 800): string {
   if (!url) return '';
@@ -619,6 +646,7 @@ export default function Produto() {
           url: productUrl,
         };
   const faqJsonLd = FAQ_SCHEMA_TEST_HANDLES.has(productHandle) ? buildFaqJsonLd(faq || []) : null;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
 
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;
@@ -640,6 +668,7 @@ export default function Produto() {
         <meta name="twitter:image" content={primaryImageUrl} />
         {primaryImageUrl && <link rel="preload" as="image" href={optimizeShopifyImage(primaryImageUrl, 800)} />}
         <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
         {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
       </Helmet>
       <section className="pdp">

@@ -126,6 +126,33 @@ function buildFaqJsonLd(items) {
   };
 }
 
+function buildBreadcrumbJsonLd(productUrl, productName) {
+  return {
+    "@context": "https://schema.org/",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Coleção",
+        item: `${SITE_URL}/colecao`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: productName,
+        item: productUrl,
+      },
+    ],
+  };
+}
+
 async function storefrontApiRequest(query, variables = {}) {
   const response = await fetch(SHOPIFY_STOREFRONT_URL, {
     method: "POST",
@@ -228,6 +255,7 @@ function buildProductMetadata(product) {
           ...buildVariantSchema(product, variants[0], imageUrls, seoTitle, seoDescription, productUrl, priceValidUntil),
           url: productUrl,
         };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
   let faqJsonLd = null;
   if (FAQ_SCHEMA_TEST_HANDLES.has(product.handle)) {
     try {
@@ -244,6 +272,7 @@ function buildProductMetadata(product) {
     primaryImageUrl,
     productUrl,
     productJsonLd,
+    breadcrumbJsonLd,
     faqJsonLd,
   };
 }
@@ -255,6 +284,7 @@ function injectHead(html, metadata) {
     primaryImageUrl,
     productUrl,
     productJsonLd,
+    breadcrumbJsonLd,
     faqJsonLd,
   } = metadata;
 
@@ -273,6 +303,7 @@ function injectHead(html, metadata) {
     <meta name="twitter:image" content="${escapeHtml(primaryImageUrl)}" />
     <link rel="preload" as="image" href="${escapeHtml(primaryImageUrl)}" />
     <script type="application/ld+json">${JSON.stringify(productJsonLd)}</script>
+    <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLd)}</script>
     ${faqJsonLd ? `<script type="application/ld+json">${JSON.stringify(faqJsonLd)}</script>` : ""}
   `;
 
