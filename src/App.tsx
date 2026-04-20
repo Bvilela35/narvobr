@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { useCartSync } from "./hooks/useCartSync";
@@ -41,6 +41,17 @@ const queryClient = new QueryClient({
   },
 });
 
+function LegacyProductRedirect() {
+  const location = useLocation();
+  const { handle } = useParams<{ handle: string }>();
+
+  if (!handle) {
+    return <Navigate to="/colecao" replace />;
+  }
+
+  return <Navigate to={`/produto/${handle}${location.search}${location.hash}`} replace />;
+}
+
 function AppContent() {
   useCartSync();
   useAnalytics();
@@ -55,6 +66,8 @@ function AppContent() {
 
           <Route path="/produto/:handle/adicionado" element={<ProdutoAdicionado />} />
           <Route path="/produto/:handle" element={<Produto />} />
+          <Route path="/p/:handle" element={<LegacyProductRedirect />} />
+          <Route path="/products/:handle" element={<LegacyProductRedirect />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/journal/:slug" element={<Artigo />} />
           <Route path="/sobre" element={<Sobre />} />

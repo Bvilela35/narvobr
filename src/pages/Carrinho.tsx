@@ -5,7 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useCepStore } from "@/stores/cepStore";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { trackBeginCheckout } from "@/lib/analytics";
+import { getAttribution, trackBeginCheckout } from "@/lib/analytics";
 import { formatInstallmentText } from "@/lib/installments";
 import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
 import { optimizeShopifyImage } from "@/lib/shopify";
@@ -81,6 +81,19 @@ export default function Carrinho() {
     }
 
     if (discountCode) parsedUrl.searchParams.set("discount", discountCode);
+
+    const attribution = getAttribution();
+    if (attribution?.attribution_id) {
+      parsedUrl.searchParams.set("narvo_sid", attribution.attribution_id);
+      parsedUrl.searchParams.set("_narvo_attribution_id", attribution.attribution_id);
+    }
+
+    const lastTouch = attribution?.last_touch;
+    if (lastTouch?.utm_source) parsedUrl.searchParams.set("_narvo_utm_source", lastTouch.utm_source);
+    if (lastTouch?.utm_medium) parsedUrl.searchParams.set("_narvo_utm_medium", lastTouch.utm_medium);
+    if (lastTouch?.utm_campaign) parsedUrl.searchParams.set("_narvo_utm_campaign", lastTouch.utm_campaign);
+    if (lastTouch?.utm_content) parsedUrl.searchParams.set("_narvo_utm_content", lastTouch.utm_content);
+    if (lastTouch?.utm_term) parsedUrl.searchParams.set("_narvo_utm_term", lastTouch.utm_term);
 
     const notes: string[] = [];
     if (giftWrap) notes.push(giftMessage ? `🎁 Presente — Mensagem do cartão: "${giftMessage}"` : "🎁 Embalagem para presente");

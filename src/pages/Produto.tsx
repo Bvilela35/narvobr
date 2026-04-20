@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Truck, Loader2, ArrowLeft, X, ZoomIn, Video, ShieldCheck, Package, Plus, RefreshCw, Star, Sparkles, MapPin } from "lucide-react";
 import { shopifyKeys, useProductByHandle } from "@/hooks/useShopify";
@@ -25,6 +26,35 @@ function formatPrice(amount: string) {
   return value % 1 === 0
     ? `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
     : `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+const CANONICAL_SITE_URL = "https://narvo.com.br";
+const DEFAULT_OG_IMAGE = `${CANONICAL_SITE_URL}/images/og-narvo.jpg`;
+
+function stripHtml(value: string | undefined | null): string {
+  if (!value) return "";
+  return value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function getPriceValidUntil(daysFromNow = 30): string {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromNow);
+  return date.toISOString().slice(0, 10);
+}
+
+function normalizeBarcode(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const digits = value.replace(/\D/g, "");
+  return [8, 12, 13, 14].includes(digits.length) ? digits : null;
+}
+
+function mapGtinFields(barcode: string | null | undefined) {
+  const normalized = normalizeBarcode(barcode);
+  if (!normalized) return {};
+  if (normalized.length === 8) return { gtin8: normalized };
+  if (normalized.length === 12) return { gtin12: normalized };
+  if (normalized.length === 13) return { gtin13: normalized };
+  return { gtin14: normalized };
 }
 
 // Shopify CDN image optimizer — request appropriately sized images
@@ -248,9 +278,6 @@ export default function Produto() {
   const userChangedImage = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
   const isCartLoading = useCartStore((state) => state.isLoading);
-  const defaultTitle = "Narvo — Engenharia do Silêncio";
-  const defaultDescription = "Acessórios premium para seu setup. Projetados para quem exige silêncio visual e máxima performance.";
-  const defaultOgImage = "/images/og-narvo.jpg";
 
   const { data: allProducts = [] } = useQuery({
     queryKey: shopifyKeys.products(4, undefined),
@@ -288,29 +315,6 @@ export default function Produto() {
     const timeoutId = globalThis.setTimeout(startLoading, 1500);
     return () => globalThis.clearTimeout(timeoutId);
   }, [handle]);
-
-  // Preload LCP image as soon as product data arrives
-  useEffect(() => {
-    if (!product) return;
-    const firstImgUrl = product.node.images.edges[0]?.node.url;
-    if (!firstImgUrl) return;
-    const optimizedUrl = optimizeShopifyImage(firstImgUrl, 800);
-    
-    // Inject preload link for LCP
-    const existing = document.querySelector('link[data-pdp-preload]');
-    if (existing) existing.remove();
-    
-    const link = document.createElement('link');
-    link.setAttribute('rel', 'preload');
-    link.setAttribute('as', 'image');
-    link.setAttribute('href', optimizedUrl);
-    link.setAttribute('data-pdp-preload', 'true');
-    // @ts-ignore — fetchpriority is valid HTML but not in TS types
-    link.fetchPriority = 'high';
-    document.head.appendChild(link);
-    
-    return () => { link.remove(); };
-  }, [product]);
 
   // IntersectionObserver for active section tracking
   const SECTION_IDS = [
@@ -399,141 +403,6 @@ export default function Produto() {
     }
   }, [location.state]);
 
-  // SEO: inherit meta title, description and canonical from Shopify
-  useEffect(() => {
-    if (!product) return;
-    const { title, description, seo, handle: productHandle } = product.node;
-    const seoTitle = seo?.title || title;
-    document.title = seoTitle;
-
-    const seoDesc = seo?.description || description || "";
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.setAttribute("name", "description");
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute("content", seoDesc);
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", `${window.location.origin}/produto/${productHandle}`);
-
-    const ensureMeta = (selector: string, attr: "property" | "name", value: string) => {
-      let meta = document.head.querySelector(selector) as HTMLMetaElement | null;
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute(attr, value);
-        document.head.appendChild(meta);
-      }
-      return meta;
-    };
-
-    const ogTitle = ensureMeta('meta[property="og:title"]', "property", "og:title");
-    const ogDescription = ensureMeta('meta[property="og:description"]', "property", "og:description");
-    const ogType = ensureMeta('meta[property="og:type"]', "property", "og:type");
-    const ogUrl = ensureMeta('meta[property="og:url"]', "property", "og:url");
-    const ogImage = ensureMeta('meta[property="og:image"]', "property", "og:image");
-    const twitterCard = ensureMeta('meta[name="twitter:card"]', "name", "twitter:card");
-    const twitterTitle = ensureMeta('meta[name="twitter:title"]', "name", "twitter:title");
-    const twitterDescription = ensureMeta('meta[name="twitter:description"]', "name", "twitter:description");
-    const twitterImage = ensureMeta('meta[name="twitter:image"]', "name", "twitter:image");
-
-    // JSON-LD Product structured data
-    const { images, variants, priceRange } = product.node;
-    const image = images.edges[0]?.node?.url;
-    const minVariantPrice = priceRange?.minVariantPrice;
-    const price = minVariantPrice?.amount || "0";
-    const currency = minVariantPrice?.currencyCode || "BRL";
-    const available = variants.edges.some((v) => v.node.availableForSale);
-    const productUrl = `${window.location.origin}/produto/${productHandle}`;
-
-    ogTitle.setAttribute("content", seoTitle);
-    ogDescription.setAttribute("content", seoDesc);
-    ogType.setAttribute("content", "product");
-    ogUrl.setAttribute("content", productUrl);
-    ogImage.setAttribute("content", image || defaultOgImage);
-    twitterCard.setAttribute("content", "summary_large_image");
-    twitterTitle.setAttribute("content", seoTitle);
-    twitterDescription.setAttribute("content", seoDesc);
-    twitterImage.setAttribute("content", image || defaultOgImage);
-
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      name: seoTitle,
-      description: seoDesc,
-      image: image || undefined,
-      url: productUrl,
-      brand: { "@type": "Brand", name: "Narvo" },
-      offers: {
-        "@type": "Offer",
-        price,
-        priceCurrency: currency,
-        availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        url: productUrl
-      }
-    };
-
-    let scriptTag = document.querySelector('script[data-narvo-jsonld]') as HTMLScriptElement | null;
-    if (!scriptTag) {
-      scriptTag = document.createElement("script");
-      scriptTag.setAttribute("type", "application/ld+json");
-      scriptTag.setAttribute("data-narvo-jsonld", "true");
-      document.head.appendChild(scriptTag);
-    }
-    scriptTag.textContent = JSON.stringify(jsonLd);
-
-    // FAQPage JSON-LD
-    const faqItems = product.node.faq || [];
-    const validFaqItems = faqItems.filter((item: {pergunta: string;resposta?: string;}) => item.pergunta && item.resposta);
-    let faqScriptTag = document.querySelector('script[data-narvo-faq-jsonld]') as HTMLScriptElement | null;
-    if (validFaqItems.length > 0) {
-      const faqJsonLd = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: validFaqItems.map((item: {pergunta: string;resposta?: string;}) => ({
-          "@type": "Question",
-          name: item.pergunta,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.resposta
-          }
-        }))
-      };
-      if (!faqScriptTag) {
-        faqScriptTag = document.createElement("script");
-        faqScriptTag.setAttribute("type", "application/ld+json");
-        faqScriptTag.setAttribute("data-narvo-faq-jsonld", "true");
-        document.head.appendChild(faqScriptTag);
-      }
-      faqScriptTag.textContent = JSON.stringify(faqJsonLd);
-    } else {
-      faqScriptTag?.remove();
-    }
-
-    return () => {
-      document.title = defaultTitle;
-      metaDesc?.setAttribute("content", defaultDescription);
-      canonical?.setAttribute("href", window.location.origin);
-      ogTitle.setAttribute("content", defaultTitle);
-      ogDescription.setAttribute("content", defaultDescription);
-      ogType.setAttribute("content", "website");
-      ogUrl.setAttribute("content", window.location.origin);
-      ogImage.setAttribute("content", defaultOgImage);
-      twitterCard.setAttribute("content", "summary_large_image");
-      twitterTitle.setAttribute("content", defaultTitle);
-      twitterDescription.setAttribute("content", defaultDescription);
-      twitterImage.setAttribute("content", defaultOgImage);
-      scriptTag?.remove();
-      document.querySelector('script[data-narvo-faq-jsonld]')?.remove();
-    };
-  }, [product]);
-
   // view_item — dispara quando o produto carrega (uma vez por product ID)
   useEffect(() => {
     if (!product) return;
@@ -595,7 +464,17 @@ export default function Produto() {
   const imgs = images.edges;
   const totalImages = imgs.length;
   const selectedVariant = variants.edges[selectedVariantIdx]?.node;
+  const defaultVariant = variants.edges[0]?.node;
   const hasOptions = options.length > 0 && options[0].name !== "Title";
+  const productHandle = product.node.handle;
+  const productUrl = `${CANONICAL_SITE_URL}/produto/${productHandle}`;
+  const seoTitle = product.node.seo?.title || title;
+  const seoDescription = stripHtml(product.node.seo?.description || description) || stripHtml(description);
+  const imageUrls = imgs
+    .map((edge) => edge.node.url)
+    .filter((url, index, array) => Boolean(url) && array.indexOf(url) === index);
+  const primaryImageUrl = imageUrls[0] || DEFAULT_OG_IMAGE;
+  const priceValidUntil = getPriceValidUntil();
 
   const canBuy =
   selectedVariant?.availableForSale && (
@@ -671,12 +550,92 @@ export default function Produto() {
   const installmentValue = installmentVal % 1 === 0
     ? installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })
     : installmentVal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const variantNodes = variants.edges.map((edge) => edge.node);
+
+  const buildVariantSchema = (variant: typeof variantNodes[number]) => {
+    const variantName = variant.title && variant.title !== "Default Title"
+      ? `${seoTitle} - ${variant.title}`
+      : seoTitle;
+    const variantImage = variant.image?.url ? [variant.image.url] : imageUrls;
+
+    return {
+      "@type": "Product",
+      name: variantName,
+      description: seoDescription,
+      image: variantImage,
+      sku: variant.sku || undefined,
+      mpn: variant.sku ? undefined : `${productHandle}-${variant.id.split("/").pop()}`,
+      brand: { "@type": "Brand", name: "Narvo" },
+      ...mapGtinFields(variant.barcode),
+      offers: {
+        "@type": "Offer",
+        url: productUrl,
+        priceCurrency: variant.price.currencyCode || "BRL",
+        price: variant.price.amount || "0",
+        availability: variant.availableForSale ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        itemCondition: "https://schema.org/NewCondition",
+        priceValidUntil,
+      },
+    };
+  };
+
+  const productJsonLd =
+    variantNodes.length > 1
+      ? {
+          "@context": "https://schema.org/",
+          "@type": "ProductGroup",
+          name: seoTitle,
+          description: seoDescription,
+          image: imageUrls,
+          url: productUrl,
+          brand: { "@type": "Brand", name: "Narvo" },
+          variesBy: options.map((option) => option.name).filter(Boolean),
+          hasVariant: variantNodes.map(buildVariantSchema),
+        }
+      : {
+          "@context": "https://schema.org/",
+          ...buildVariantSchema(selectedVariant || defaultVariant || variantNodes[0]),
+          url: productUrl,
+        };
+
+  const validFaqItems = (faq || []).filter((item) => item.pergunta && item.resposta);
+  const faqJsonLd = validFaqItems.length > 0
+    ? {
+        "@context": "https://schema.org/",
+        "@type": "FAQPage",
+        mainEntity: validFaqItems.map((item) => ({
+          "@type": "Question",
+          name: item.pergunta,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.resposta,
+          },
+        })),
+      }
+    : null;
 
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;
 
   return (
     <>
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={productUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={productUrl} />
+        <meta property="og:image" content={primaryImageUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={primaryImageUrl} />
+        {primaryImageUrl && <link rel="preload" as="image" href={optimizeShopifyImage(primaryImageUrl, 800)} />}
+        <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+        {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
+      </Helmet>
       <section className="pdp">
         <div className="pdp__container">
           <Link to="/colecao" className="pdp__back">

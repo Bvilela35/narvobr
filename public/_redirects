@@ -1,0 +1,2 @@
+/p/:handle /produto/:handle 301
+/products/:handle /produto/:handle 301
