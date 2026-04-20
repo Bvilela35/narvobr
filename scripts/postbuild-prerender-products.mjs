@@ -38,13 +38,31 @@ const PRODUCTS_QUERY = `
               }
             }
           }
-          options {
-            name
-            values
+      options {
+        name
+        values
+      }
+      videoStoriesMeta: metafield(namespace: "custom", key: "video_stories") {
+        references(first: 10) {
+          edges {
+            node {
+              ... on Video {
+                alt
+                sources {
+                  url
+                  mimeType
+                }
+                previewImage {
+                  url
+                }
+              }
+            }
           }
-          variants(first: 50) {
-            edges {
-              node {
+        }
+      }
+      variants(first: 50) {
+        edges {
+          node {
                 id
                 title
                 sku
@@ -153,6 +171,26 @@ function buildBreadcrumbJsonLd(productUrl, productName) {
       },
     ],
   };
+}
+
+function buildVideoJsonLd(videos, productUrl, productName, description) {
+  return (Array.isArray(videos) ? videos : [])
+    .map((video, index) => {
+      const source = Array.isArray(video?.sources) ? video.sources.find((item) => item?.url) : null;
+      const thumbnailUrl = video?.previewImage?.url;
+      if (!source?.url || !thumbnailUrl) return null;
+
+      return {
+        "@context": "https://schema.org/",
+        "@type": "VideoObject",
+        name: video.alt || `${productName} - vídeo ${index + 1}`,
+        description,
+        thumbnailUrl: [thumbnailUrl],
+        contentUrl: source.url,
+        embedUrl: productUrl,
+      };
+    })
+    .filter(Boolean);
 }
 
 async function storefrontApiRequest(query, variables = {}) {
@@ -295,6 +333,9 @@ function buildProductMetadata(product) {
   const imageUrls = (product.images?.edges || [])
     .map((edge) => edge?.node?.url)
     .filter((url, index, array) => Boolean(url) && array.indexOf(url) === index);
+  const videoStories = (product.videoStoriesMeta?.references?.edges || [])
+    .map((edge) => edge?.node)
+    .filter((node) => Array.isArray(node?.sources) && node.sources.length > 0);
   const primaryImageUrl = imageUrls[0] || `${SITE_URL}/images/og-narvo.jpg`;
   const productUrl = `${SITE_URL}/produto/${product.handle}`;
   const priceValidUntil = getPriceValidUntil();
@@ -322,6 +363,7 @@ function buildProductMetadata(product) {
           url: productUrl,
         };
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
+  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription);
   let faqJsonLd = null;
   if (FAQ_SCHEMA_TEST_HANDLES.has(product.handle)) {
     try {
@@ -339,6 +381,7 @@ function buildProductMetadata(product) {
     productUrl,
     productJsonLd,
     breadcrumbJsonLd,
+    videoJsonLd,
     faqJsonLd,
   };
 }
@@ -361,6 +404,7 @@ function injectHead(html, metadata) {
     productUrl,
     productJsonLd,
     breadcrumbJsonLd,
+    videoJsonLd,
     faqJsonLd,
   } = metadata;
 
@@ -380,6 +424,7 @@ function injectHead(html, metadata) {
     <link rel="preload" as="image" href="${escapeHtml(primaryImageUrl)}" />
     <script type="application/ld+json">${JSON.stringify(productJsonLd)}</script>
     <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLd)}</script>
+    ${videoJsonLd.map((item) => `<script type="application/ld+json">${JSON.stringify(item)}</script>`).join("\n    ")}
     ${faqJsonLd ? `<script type="application/ld+json">${JSON.stringify(faqJsonLd)}</script>` : ""}
   `;
 

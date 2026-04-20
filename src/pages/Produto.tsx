@@ -108,6 +108,31 @@ function buildBreadcrumbJsonLd(productUrl: string, productName: string) {
   };
 }
 
+function buildVideoJsonLd(
+  videos: Array<{ alt: string | null; previewImage?: { url: string } | null; sources: Array<{ url: string; mimeType: string }> }>,
+  productUrl: string,
+  productName: string,
+  description: string
+) {
+  return videos
+    .map((video, index) => {
+      const source = video.sources.find((item) => item.url);
+      const thumbnailUrl = video.previewImage?.url;
+      if (!source?.url || !thumbnailUrl) return null;
+
+      return {
+        "@context": "https://schema.org/",
+        "@type": "VideoObject",
+        name: video.alt || `${productName} - vídeo ${index + 1}`,
+        description,
+        thumbnailUrl: [thumbnailUrl],
+        contentUrl: source.url,
+        embedUrl: productUrl,
+      };
+    })
+    .filter(Boolean);
+}
+
 // Shopify CDN image optimizer — request appropriately sized images
 function optimizeShopifyImage(url: string | undefined, width = 800): string {
   if (!url) return '';
@@ -647,6 +672,7 @@ export default function Produto() {
         };
   const faqJsonLd = FAQ_SCHEMA_TEST_HANDLES.has(productHandle) ? buildFaqJsonLd(faq || []) : null;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(productUrl, seoTitle);
+  const videoJsonLd = buildVideoJsonLd(videoStories, productUrl, seoTitle, seoDescription);
 
   // Stable image width — read once during render without introducing another hook
   const galleryImageWidth = typeof window !== 'undefined' && window.innerWidth <= 768 ? 800 : 1200;
@@ -669,6 +695,11 @@ export default function Produto() {
         {primaryImageUrl && <link rel="preload" as="image" href={optimizeShopifyImage(primaryImageUrl, 800)} />}
         <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {videoJsonLd.map((item, index) => (
+          <script key={`video-jsonld-${index}`} type="application/ld+json">
+            {JSON.stringify(item)}
+          </script>
+        ))}
         {faqJsonLd && <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>}
       </Helmet>
       <section className="pdp">
