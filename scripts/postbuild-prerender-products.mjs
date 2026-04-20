@@ -4,6 +4,7 @@ import path from "node:path";
 const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist");
 const DIST_INDEX = path.join(DIST_DIR, "index.html");
+const PUBLIC_JOURNAL_JSON = path.join(ROOT, "public", "journal.json");
 const SITE_URL = "https://narvo.com.br";
 const SHOPIFY_API_VERSION = "2025-07";
 const SHOPIFY_STORE_PERMANENT_DOMAIN = "efxqrr-1y.myshopify.com";
@@ -134,6 +135,25 @@ function getPriceValidUntil(daysFromNow = 30) {
   return date.toISOString().slice(0, 10);
 }
 
+function formatDatePtBr(dateStr) {
+  try {
+    return new Date(dateStr).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+function estimateReadTime(html = "") {
+  const text = stripHtml(html);
+  const words = text ? text.split(/\s+/).length : 0;
+  return Math.max(1, Math.round(words / 200));
+}
+
 function buildFaqJsonLd(items) {
   const validItems = Array.isArray(items)
     ? items.filter((item) => item?.pergunta && item?.resposta)
@@ -248,6 +268,16 @@ async function fetchAllProducts() {
   }
 
   return products;
+}
+
+async function loadJournalArticles() {
+  try {
+    const raw = await readFile(PUBLIC_JOURNAL_JSON, "utf8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed?.articles) ? parsed.articles : [];
+  } catch {
+    return [];
+  }
 }
 
 async function fetchJudgeMeReviews(handle) {
@@ -455,6 +485,193 @@ function injectHead(html, metadata) {
     .replace("</head>", `${headInjection}\n  </head>`);
 }
 
+function injectRootContent(html, rootMarkup) {
+  return html.replace('<div id="root"></div>', `<div id="root">${rootMarkup}</div>`);
+}
+
+function buildJournalListingJsonLd(articles) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Journal Narvo: ergonomia, foco e setups intencionais",
+    url: `${SITE_URL}/journal`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: articles.map((article, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_URL}/journal/${article.handle}`,
+        name: article.title,
+      })),
+    },
+  };
+}
+
+function buildArticleBreadcrumbJsonLd(article) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Journal", item: `${SITE_URL}/journal` },
+      { "@type": "ListItem", position: 3, name: article.title, item: `${SITE_URL}/journal/${article.handle}` },
+    ],
+  };
+}
+
+function buildJournalHead(html, articles) {
+  const featured = articles[0] || null;
+  const title = "Journal Narvo: ergonomia, foco e setups intencionais";
+  const description = featured?.excerpt
+    ? stripHtml(featured.excerpt).slice(0, 160)
+    : "Artigos sobre ergonomia, produtividade, organizacao e clareza no ambiente de trabalho.";
+  const canonicalUrl = `${SITE_URL}/journal`;
+  const headInjection = `
+    <title>${escapeHtml(title)}</title>
+    <meta name="description" content="${escapeHtml(description)}" />
+    <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="${escapeHtml(title)}" />
+    <meta property="og:description" content="${escapeHtml(description)}" />
+    <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
+    ${featured?.image?.url ? `<meta property="og:image" content="${escapeHtml(featured.image.url)}" />` : ""}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(title)}" />
+    <meta name="twitter:description" content="${escapeHtml(description)}" />
+    ${featured?.image?.url ? `<meta name="twitter:image" content="${escapeHtml(featured.image.url)}" />` : ""}
+    <script type="application/ld+json">${JSON.stringify(buildJournalListingJsonLd(articles))}</script>
+  `;
+
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/i, "")
+    .replace(/<meta name="description"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:title"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:description"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:type"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:image"[\s\S]*?>/i, "")
+    .replace(/<meta name="twitter:card"[\s\S]*?>/i, "")
+    .replace(/<meta name="twitter:image"[\s\S]*?>/i, "")
+    .replace("</head>", `${headInjection}\n  </head>`);
+}
+
+function buildJournalRootMarkup(articles) {
+  const cards = articles
+    .map((article) => {
+      const excerpt = stripHtml(article.excerpt || "").slice(0, 180);
+      return `
+        <article>
+          <a href="/journal/${escapeHtml(article.handle)}">
+            <h2>${escapeHtml(article.title)}</h2>
+          </a>
+          <p>${escapeHtml(excerpt)}</p>
+          <time datetime="${escapeHtml(article.publishedAt)}">${escapeHtml(formatDatePtBr(article.publishedAt))}</time>
+        </article>
+      `;
+    })
+    .join("\n");
+
+  return `
+    <main>
+      <section>
+        <header>
+          <h1>Journal. Ideias para quem busca clareza.</h1>
+          <p>Artigos sobre ergonomia, produtividade, organizacao e setups intencionais.</p>
+        </header>
+        ${cards}
+      </section>
+    </main>
+  `;
+}
+
+function buildArticleHead(html, article) {
+  const authorName = article.authorV2?.name || "Narvo";
+  const plainExcerpt = article.excerpt ? stripHtml(article.excerpt) : stripHtml(article.contentHtml).slice(0, 155);
+  const seoTitle = article.seo?.title || `${article.title} — Narvo Journal`;
+  const seoDescription = article.seo?.description || plainExcerpt;
+  const canonicalUrl = `${SITE_URL}/journal/${article.handle}`;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.title,
+    description: seoDescription,
+    image: article.image?.url ? [article.image.url] : undefined,
+    datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Narvo",
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/optimized/narvo-logo-224.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+  };
+  const breadcrumbJsonLd = buildArticleBreadcrumbJsonLd(article);
+  const headInjection = `
+    <title>${escapeHtml(seoTitle)}</title>
+    <meta name="description" content="${escapeHtml(seoDescription)}" />
+    <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="${escapeHtml(seoTitle)}" />
+    <meta property="og:description" content="${escapeHtml(seoDescription)}" />
+    <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
+    ${article.image?.url ? `<meta property="og:image" content="${escapeHtml(article.image.url)}" />` : ""}
+    <meta property="article:published_time" content="${escapeHtml(article.publishedAt)}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(seoTitle)}" />
+    <meta name="twitter:description" content="${escapeHtml(seoDescription)}" />
+    ${article.image?.url ? `<meta name="twitter:image" content="${escapeHtml(article.image.url)}" />` : ""}
+    <script type="application/ld+json">${JSON.stringify(articleJsonLd)}</script>
+    <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLd)}</script>
+  `;
+
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/i, "")
+    .replace(/<meta name="description"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:title"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:description"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:type"[\s\S]*?>/i, "")
+    .replace(/<meta property="og:image"[\s\S]*?>/i, "")
+    .replace(/<meta name="twitter:card"[\s\S]*?>/i, "")
+    .replace(/<meta name="twitter:image"[\s\S]*?>/i, "")
+    .replace("</head>", `${headInjection}\n  </head>`);
+}
+
+function buildArticleRootMarkup(article) {
+  const authorName = article.authorV2?.name || "Narvo";
+  const readTime = estimateReadTime(article.contentHtml);
+
+  return `
+    <main>
+      <article>
+        <nav aria-label="Breadcrumb">
+          <a href="/journal">Journal</a>
+        </nav>
+        <header>
+          <p>${escapeHtml(article.tags?.[0] || "Journal")}</p>
+          <h1>${escapeHtml(article.title)}</h1>
+          <p>
+            <time datetime="${escapeHtml(article.publishedAt)}">${escapeHtml(formatDatePtBr(article.publishedAt))}</time>
+            <span> · ${readTime} min de leitura</span>
+          </p>
+          <p>${escapeHtml(authorName)}</p>
+        </header>
+        ${article.image?.url ? `<img src="${escapeHtml(article.image.url)}" alt="${escapeHtml(article.image.altText || article.title)}" />` : ""}
+        <section>${article.contentHtml || ""}</section>
+      </article>
+    </main>
+  `;
+}
+
 function buildRedirectHtml(targetUrl) {
   return `<!doctype html>
 <html lang="pt-BR">
@@ -592,13 +809,24 @@ async function writeHtmlFile(filePath, html) {
 }
 
 async function main() {
-  const [template, products] = await Promise.all([
+  const [template, products, journalArticles] = await Promise.all([
     readFile(DIST_INDEX, "utf8"),
     fetchAllProducts(),
+    loadJournalArticles(),
   ]);
 
   await writeFile(path.join(DIST_DIR, "products-manifest.json"), JSON.stringify(products.map((product) => product.handle), null, 2));
   await writeFile(path.join(DIST_DIR, "feed.xml"), buildMerchantFeed(products), "utf8");
+
+  if (journalArticles.length > 0) {
+    const journalHtml = injectRootContent(buildJournalHead(template, journalArticles), buildJournalRootMarkup(journalArticles));
+    await writeHtmlFile(path.join(DIST_DIR, "journal", "index.html"), journalHtml);
+
+    for (const article of journalArticles) {
+      const articleHtml = injectRootContent(buildArticleHead(template, article), buildArticleRootMarkup(article));
+      await writeHtmlFile(path.join(DIST_DIR, "journal", article.handle, "index.html"), articleHtml);
+    }
+  }
 
   for (const product of products) {
     const metadata = buildProductMetadata(product);
