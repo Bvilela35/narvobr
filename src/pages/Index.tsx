@@ -1,11 +1,31 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroBanner } from "@/components/HeroBanner";
 import { DeferredSection } from "@/components/DeferredSection";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useProducts } from "@/hooks/useShopify";
+
+const SITE_URL = "https://narvo.com.br";
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  name: "Narvo",
+  alternateName: "Narvo — Engenharia do Silêncio",
+  url: SITE_URL,
+  logo: {
+    "@type": "ImageObject",
+    url: `${SITE_URL}/optimized/narvo-logo-224.png`,
+    width: 224,
+    height: 224,
+  },
+  image: `${SITE_URL}/optimized/narvo-logo-224.png`,
+  sameAs: [
+    "https://instagram.com/narvobr",
+  ],
+};
 
 const BeforeAfter = lazy(() =>
   import("@/components/BeforeAfter").then((module) => ({ default: module.BeforeAfter }))
@@ -112,6 +132,10 @@ export default function Index() {
 
   return (
     <>
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(ORGANIZATION_JSON_LD)}</script>
+      </Helmet>
+
       <HeroBanner />
 
       <section className="py-14 px-6 md:px-10 md:py-[53px]">
