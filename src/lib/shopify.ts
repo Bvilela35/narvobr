@@ -1072,16 +1072,13 @@ function normalizeSnapshotArticle(article: any, blogHandle = "blog"): ShopifyArt
   };
 }
 
-export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
-  const snapshot = await fetchJournalSnapshot();
-  const snapshotArticles = snapshot
-    .filter((article) => article.blog?.handle ? article.blog.handle === blogHandle : true)
+function normalizeJournalApiArticles(rawArticles: any[], blogHandle = "blog"): ShopifyArticle[] {
+  return rawArticles
+    .filter((article) => article && typeof article === "object")
     .map((article) => normalizeSnapshotArticle(article, blogHandle));
+}
 
-  if (snapshotArticles.length > 0) {
-    return snapshotArticles.slice(0, first);
-  }
-
+export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promise<ShopifyArticle[]> {
   try {
     const response = await fetch(
       `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&first=${first}`
@@ -1090,23 +1087,21 @@ export async function fetchBlogArticles(blogHandle = "blog", first = 10): Promis
       const data = await response.json();
       const articles = data?.articles ?? data?.data?.blog?.articles?.edges?.map((e: any) => e.node) ?? [];
       if (Array.isArray(articles) && articles.length > 0) {
-        return articles;
+        return normalizeJournalApiArticles(articles, blogHandle).slice(0, first);
       }
     }
   } catch {
-    // Falls back to an empty state below.
+    // Falls back to snapshot below.
   }
 
-  return [];
+  const snapshot = await fetchJournalSnapshot();
+  return snapshot
+    .filter((article) => article.blog?.handle ? article.blog.handle === blogHandle : true)
+    .map((article) => normalizeSnapshotArticle(article, blogHandle))
+    .slice(0, first);
 }
 
 export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle = "blog"): Promise<ShopifyArticle | null> {
-  const snapshot = await fetchJournalSnapshot();
-  const snapshotArticle = snapshot.find((item) => item.handle === articleHandle);
-  if (snapshotArticle) {
-    return normalizeSnapshotArticle(snapshotArticle, blogHandle);
-  }
-
   try {
     const response = await fetch(
       `${BLOG_EDGE_FUNCTION_URL}?blog=${encodeURIComponent(blogHandle)}&article=${encodeURIComponent(articleHandle)}`
@@ -1124,8 +1119,10 @@ export async function fetchBlogArticleByHandle(articleHandle: string, blogHandle
       }
     }
   } catch {
-    // Falls back to null below.
+    // Falls back to snapshot below.
   }
 
-  return null;
+  const snapshot = await fetchJournalSnapshot();
+  const snapshotArticle = snapshot.find((item) => item.handle === articleHandle);
+  return snapshotArticle ? normalizeSnapshotArticle(snapshotArticle, blogHandle) : null;
 }
