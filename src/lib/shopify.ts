@@ -1043,7 +1043,7 @@ export interface ShopifyArticle {
   blog: { handle: string } | null;
 }
 
-const BLOG_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-journal`;
+const BLOG_EDGE_FUNCTION_URL = `${SUPABASE_FUNCTIONS_URL}/shopify-blog`;
 
 async function fetchJournalSnapshot(): Promise<ShopifyArticle[]> {
   try {
