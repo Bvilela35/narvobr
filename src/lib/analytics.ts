@@ -11,6 +11,7 @@
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];
+    fbq?: (...args: unknown[]) => void;
   }
 }
 
@@ -20,6 +21,8 @@ declare global {
 
 const STORAGE_KEY = '_narvo_attribution';
 const AID_KEY = '_narvo_aid';
+const META_FBP_COOKIE = '_fbp';
+const META_FBC_COOKIE = '_fbc';
 const COOKIE_DAYS = 730; // ~2 anos — sobrevive entre subdomínios (handoff p/ checkout Shopify)
 const SESSION_GAP_MS = 30 * 60 * 1000; // 30 min sem atividade = nova sessão last-touch
 
@@ -59,6 +62,24 @@ export interface Attribution {
   first_touch: AttributionTouch;
   last_touch: AttributionTouch;
   last_seen_at?: string;
+}
+
+type MetaEventName =
+  | 'PageView'
+  | 'ViewContent'
+  | 'AddToCart'
+  | 'InitiateCheckout'
+  | 'AddPaymentInfo'
+  | 'Purchase';
+
+interface MetaServerEventPayload {
+  event_name: MetaEventName;
+  event_id: string;
+  event_time?: number;
+  event_source_url: string;
+  custom_data?: Record<string, unknown>;
+  user_data?: Record<string, unknown>;
+  attribution_data?: Record<string, unknown>;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -108,6 +129,10 @@ function parseTouchFromUrl(): Omit<AttributionTouch, 'touch_at'> {
   return touch;
 }
 
+function buildMetaFbc(fbclid: string): string {
+  return `fb.1.${Date.now()}.${fbclid}`;
+}
+
 function hasTrafficSource(touch: Omit<AttributionTouch, 'touch_at'>): boolean {
   return !!(
     touch.utm_source ||
@@ -137,6 +162,11 @@ function setCookie(name: string, value: string, days: number): void {
     `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/` +
     domainPart +
     '; SameSite=Lax';
+}
+
+function readMetaCookie(name: string): string | undefined {
+  const value = getCookie(name);
+  return value || undefined;
 }
 
 function readAttribution(): Attribution | null {
@@ -172,6 +202,70 @@ function safeSetLocalStorage(key: string, value: string): void {
   }
 }
 
+function syncMetaIdentifiers(attribution: Attribution, currentTouch?: Omit<AttributionTouch, 'touch_at'>): Attribution {
+  const updates: Partial<Attribution> = {};
+  const metaFbp = readMetaCookie(META_FBP_COOKIE);
+  const existingFbc = readMetaCookie(META_FBC_COOKIE);
+  const fbclid = currentTouch?.fbclid || attribution.last_touch.fbclid || attribution.first_touch.fbclid;
+
+  if (metaFbp && attribution.meta_fbp !== metaFbp) {
+    updates.meta_fbp = metaFbp;
+  }
+
+  if (existingFbc && attribution.meta_fbc !== existingFbc) {
+    updates.meta_fbc = existingFbc;
+  } else if (!existingFbc && fbclid) {
+    const generatedFbc = buildMetaFbc(fbclid);
+    setCookie(META_FBC_COOKIE, generatedFbc, COOKIE_DAYS);
+    if (attribution.meta_fbc !== generatedFbc) {
+      updates.meta_fbc = generatedFbc;
+    }
+  }
+
+  if (!updates.meta_fbp && !updates.meta_fbc) {
+    return attribution;
+  }
+
+  const next = { ...attribution, ...updates };
+  writeAttribution(next);
+  return next;
+}
+
+function currentUrl(): string {
+  return typeof window !== 'undefined' ? window.location.href : '';
+}
+
+function buildMetaUserData(attribution: Attribution | null, extraUserData?: Record<string, unknown>) {
+  const payload: Record<string, unknown> = {
+    external_id: attribution?.attribution_id,
+    fbp: attribution?.meta_fbp,
+    fbc: attribution?.meta_fbc,
+    client_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+  };
+
+  return {
+    ...payload,
+    ...(extraUserData || {}),
+  };
+}
+
+async function sendMetaServerEvent(payload: MetaServerEventPayload): Promise<void> {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const { error } = await supabase.functions.invoke('meta-conversions', {
+      body: payload,
+    });
+
+    if (error) {
+      console.warn('[Meta CAPI] invoke failed:', error.message);
+    }
+  } catch (error) {
+    console.warn('[Meta CAPI] invoke failed:', error);
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // API pública: atribuição
 // ─────────────────────────────────────────────────────────────
@@ -201,7 +295,7 @@ export function initAttribution(): Attribution {
     }
     existing.last_seen_at = now;
     writeAttribution(existing);
-    return existing;
+    return syncMetaIdentifiers(existing, currentTouch);
   }
 
   // Nova session
@@ -218,7 +312,7 @@ export function initAttribution(): Attribution {
   setCookie(AID_KEY, attribution_id, COOKIE_DAYS);
   writeAttribution(attribution);
 
-  return attribution;
+  return syncMetaIdentifiers(attribution, currentTouch);
 }
 
 /** Lê a atribuição atual sem modificá-la. */
@@ -256,15 +350,26 @@ function dlPush(payload: Record<string, unknown>): void {
 // Funções de tracking
 // ─────────────────────────────────────────────────────────────
 
-export function trackPageViewed(path: string): void {
+export function trackPageViewed(path: string): string {
   const attribution = getAttribution();
+  const eventId = makeEventId('page_view');
+
   dlPush({
     event: 'page_view',
-    event_id: makeEventId('page_view'),
+    event_id: eventId,
     page_path: path,
-    page_location: typeof window !== 'undefined' ? window.location.href : '',
+    page_location: currentUrl(),
     attribution_id: attribution?.attribution_id ?? null,
   });
+
+  void sendMetaServerEvent({
+    event_name: 'PageView',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+  });
+
+  return eventId;
 }
 
 export interface TrackViewItemParams {
@@ -275,14 +380,16 @@ export interface TrackViewItemParams {
   price: number;
 }
 
-export function trackViewItem(params: TrackViewItemParams): void {
+export function trackViewItem(params: TrackViewItemParams): string {
   const { productId, productTitle, variantId, variantTitle, price } = params;
   const itemId = gidToNumericId(productId);
   const attribution = getAttribution();
+  const eventId = makeEventId('view_item');
+  const variantNumId = variantId ? gidToNumericId(variantId) : undefined;
 
   dlPush({
     event: 'view_item',
-    event_id: makeEventId('view_item'),
+    event_id: eventId,
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -292,13 +399,36 @@ export function trackViewItem(params: TrackViewItemParams): void {
           item_id: itemId,
           item_name: productTitle,
           item_variant: variantTitle,
-          item_variant_id: variantId ? gidToNumericId(variantId) : undefined,
+          item_variant_id: variantNumId,
           price,
           quantity: 1,
         },
       ],
     },
   });
+
+  void sendMetaServerEvent({
+    event_name: 'ViewContent',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+    custom_data: {
+      currency: 'BRL',
+      value: price,
+      content_type: 'product',
+      content_name: productTitle,
+      content_ids: [itemId],
+      contents: [
+        {
+          id: variantNumId || itemId,
+          quantity: 1,
+          item_price: price,
+        },
+      ],
+    },
+  });
+
+  return eventId;
 }
 
 export interface TrackAddToCartParams {
@@ -310,16 +440,17 @@ export interface TrackAddToCartParams {
   quantity: number;
 }
 
-export function trackAddToCart(params: TrackAddToCartParams): void {
+export function trackAddToCart(params: TrackAddToCartParams): string {
   const { productId, variantId, productTitle, variantTitle, price, quantity } =
     params;
   const itemId = gidToNumericId(productId);
   const variantNumId = gidToNumericId(variantId);
   const attribution = getAttribution();
+  const eventId = makeEventId('add_to_cart');
 
   dlPush({
     event: 'add_to_cart',
-    event_id: makeEventId('add_to_cart'),
+    event_id: eventId,
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -336,6 +467,30 @@ export function trackAddToCart(params: TrackAddToCartParams): void {
       ],
     },
   });
+
+  void sendMetaServerEvent({
+    event_name: 'AddToCart',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+    custom_data: {
+      currency: 'BRL',
+      value: price * quantity,
+      content_type: 'product',
+      content_name: productTitle,
+      content_ids: [itemId],
+      contents: [
+        {
+          id: variantNumId,
+          quantity,
+          item_price: price,
+        },
+      ],
+      num_items: quantity,
+    },
+  });
+
+  return eventId;
 }
 
 export interface BeginCheckoutItem {
@@ -351,14 +506,17 @@ export function trackBeginCheckout(params: {
   items: BeginCheckoutItem[];
   value: number;
   coupon?: string | null;
-}): void {
+}): string {
   const { cartId, items, value, coupon } = params;
   const attribution = getAttribution();
+  const eventId = makeEventId('begin_checkout');
   void cartId; // mantido na assinatura para compat
+  const contentIds = items.map((item) => gidToNumericId(item.productId));
+  const numItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   dlPush({
     event: 'begin_checkout',
-    event_id: makeEventId('begin_checkout'),
+    event_id: eventId,
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       currency: 'BRL',
@@ -373,6 +531,82 @@ export function trackBeginCheckout(params: {
       })),
     },
   });
+
+  void sendMetaServerEvent({
+    event_name: 'InitiateCheckout',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+    custom_data: {
+      currency: 'BRL',
+      value,
+      coupon: coupon ?? undefined,
+      content_type: 'product',
+      content_ids: contentIds,
+      num_items: numItems,
+      contents: items.map((item) => ({
+        id: gidToNumericId(item.productId),
+        quantity: item.quantity,
+        item_price: item.price,
+      })),
+    },
+  });
+
+  return eventId;
+}
+
+export interface TrackAddPaymentInfoItem extends BeginCheckoutItem {}
+
+export function trackAddPaymentInfo(params: {
+  items: TrackAddPaymentInfoItem[];
+  value: number;
+  coupon?: string | null;
+}): string {
+  const { items, value, coupon } = params;
+  const attribution = getAttribution();
+  const eventId = makeEventId('add_payment_info');
+  const contentIds = items.map((item) => gidToNumericId(item.productId));
+  const numItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  dlPush({
+    event: 'add_payment_info',
+    event_id: eventId,
+    attribution_id: attribution?.attribution_id ?? null,
+    ecommerce: {
+      currency: 'BRL',
+      value,
+      coupon: coupon ?? undefined,
+      items: items.map((item) => ({
+        item_id: gidToNumericId(item.productId),
+        item_name: item.productTitle,
+        item_variant: item.variantTitle,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    },
+  });
+
+  void sendMetaServerEvent({
+    event_name: 'AddPaymentInfo',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+    custom_data: {
+      currency: 'BRL',
+      value,
+      coupon: coupon ?? undefined,
+      content_type: 'product',
+      content_ids: contentIds,
+      num_items: numItems,
+      contents: items.map((item) => ({
+        id: gidToNumericId(item.productId),
+        quantity: item.quantity,
+        item_price: item.price,
+      })),
+    },
+  });
+
+  return eventId;
 }
 
 export interface TrackPurchaseItem {
@@ -395,13 +629,14 @@ export function trackPurchase(params: {
   tax?: number;
   shipping?: number;
   coupon?: string | null;
-}): void {
+}): string {
   const { transactionId, items, value, tax, shipping, coupon } = params;
   const attribution = getAttribution();
+  const eventId = makeEventId('purchase');
 
   dlPush({
     event: 'purchase',
-    event_id: makeEventId('purchase'),
+    event_id: eventId,
     attribution_id: attribution?.attribution_id ?? null,
     ecommerce: {
       transaction_id: transactionId,
@@ -420,4 +655,29 @@ export function trackPurchase(params: {
       })),
     },
   });
+
+  void sendMetaServerEvent({
+    event_name: 'Purchase',
+    event_id: eventId,
+    event_source_url: currentUrl(),
+    user_data: buildMetaUserData(attribution),
+    custom_data: {
+      currency: 'BRL',
+      value,
+      order_id: transactionId,
+      content_type: 'product',
+      content_ids: items.map((item) => gidToNumericId(item.productId)),
+      num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+      contents: items.map((item) => ({
+        id: item.variantId ? gidToNumericId(item.variantId) : gidToNumericId(item.productId),
+        quantity: item.quantity,
+        item_price: item.price,
+      })),
+      tax: tax ?? undefined,
+      shipping: shipping ?? undefined,
+      coupon: coupon ?? undefined,
+    },
+  });
+
+  return eventId;
 }

@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.shopify-lead-capture]
 verify_jwt = false
+
+[functions.meta-conversions]
+verify_jwt = false
