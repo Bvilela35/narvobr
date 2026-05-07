@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.meta-conversions]
 verify_jwt = false
+
+[functions.checkout-bridge]
+verify_jwt = false
+
+[functions.shopify-orders-paid]
+verify_jwt = false

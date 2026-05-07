@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useCepStore } from "@/stores/cepStore";
 import { Minus, Plus, Trash2, ExternalLink, Loader2, ArrowLeft, Gift, Check, Truck, ArrowRight, ShieldCheck, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import { getAttribution, trackBeginCheckout } from "@/lib/analytics";
 import { formatInstallmentText } from "@/lib/installments";
 import { normalizeCep, formatCep, getShippingRegion } from "@/lib/shipping";
@@ -101,7 +102,7 @@ export default function Carrinho() {
     if (notes.length > 0) parsedUrl.searchParams.set("note", notes.join(" | "));
 
     // Sprint 1: dispara begin_checkout no dataLayer → GTM → GA4/Meta/Google Ads
-    trackBeginCheckout({
+    const beginCheckoutEventId = trackBeginCheckout({
       cartId,
       items: items.map((item) => ({
         productId: item.product.node.id,
@@ -114,8 +115,50 @@ export default function Carrinho() {
       coupon: discountCode,
     });
 
-    // Use window.location.assign to force a full navigation (bypasses SPA router)
-    window.location.assign(parsedUrl.toString());
+    const bridgeBody = {
+      attribution_id: attribution?.attribution_id,
+      cart_id: cartId,
+      cart_token: cartId,
+      event_id: beginCheckoutEventId,
+      ga_client_id: attribution?.ga_client_id,
+      meta_fbp: attribution?.meta_fbp,
+      meta_fbc: attribution?.meta_fbc,
+      value: total,
+      currency: "BRL",
+      coupon: discountCode,
+      items: items.map((item) => ({
+        product_id: item.product.node.id,
+        product_title: item.product.node.title,
+        variant_id: item.variantId,
+        variant_title: item.variantTitle,
+        price: parseFloat(item.price.amount),
+        quantity: item.quantity,
+      })),
+      last_utm_source: lastTouch?.utm_source,
+      last_utm_medium: lastTouch?.utm_medium,
+      last_utm_campaign: lastTouch?.utm_campaign,
+      last_utm_content: lastTouch?.utm_content,
+      last_utm_term: lastTouch?.utm_term,
+      last_gclid: lastTouch?.gclid,
+      last_fbclid: lastTouch?.fbclid,
+      last_ttclid: lastTouch?.ttclid,
+    };
+
+    const redirectToCheckout = () => {
+      window.location.assign(parsedUrl.toString());
+    };
+
+    const bridgePromise = supabase.functions.invoke("checkout-bridge", {
+      body: bridgeBody,
+    }).catch((error) => {
+      console.warn("[Checkout bridge] invoke failed:", error);
+      return null;
+    });
+
+    void Promise.race([
+      bridgePromise,
+      new Promise((resolve) => window.setTimeout(resolve, 900)),
+    ]).finally(redirectToCheckout);
   };
 
   const formatPrice = (value: number) =>
