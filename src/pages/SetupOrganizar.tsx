@@ -561,7 +561,14 @@ export default function SetupOrganizar() {
         <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-md border-t border-foreground/10 px-4 py-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Combo</p>
-            <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
+            {instCount > 1 ? (
+              <p className="text-base font-semibold truncate leading-tight">
+                {instCount}x {formatPrice(instVal)}
+                <span className="block text-[10px] font-normal text-muted-foreground">ou {formatPrice(totalPrice)} à vista</span>
+              </p>
+            ) : (
+              <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
+            )}
           </div>
           <button
             onClick={scrollToBuy}
