@@ -9,7 +9,7 @@ const LeadCapturePopup = lazy(() =>
   import("./LeadCapturePopup").then((module) => ({ default: module.LeadCapturePopup }))
 );
 
-const NAKED_ROUTES = ["/setup-organizar"];
+const NAKED_ROUTES: string[] = [];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
