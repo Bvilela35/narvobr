@@ -151,41 +151,18 @@ export default function SetupOrganizar() {
         quantity: 1,
       });
 
-      const checkoutUrl = useCartStore.getState().getCheckoutUrl();
-      if (!checkoutUrl) {
-        setError("Não foi possível abrir o checkout. Tente novamente.");
-        setSubmitting(false);
-        return;
-      }
-
-      trackBeginCheckout({
-        cartId: useCartStore.getState().cartId,
-        items: [
-          {
-            productId: nField.node.id,
-            productTitle: nField.node.title,
-            variantTitle: fieldVariant.title,
-            price: fieldPrice,
-            quantity: 1,
-          },
-          {
-            productId: nSpine.node.id,
-            productTitle: nSpine.node.title,
-            variantTitle: spineVariant.title,
-            price: spinePrice,
-            quantity: 1,
-          },
-        ],
-        value: totalPrice,
-      });
-
-      window.open(checkoutUrl, "_blank");
+      // Abre o carrinho lateral, mesmo fluxo dos demais produtos
+      window.dispatchEvent(new Event("narvo:open-cart"));
     } catch (e) {
-      console.error("[SetupOrganizar] checkout error", e);
-      setError("Erro ao montar o combo. Tente novamente.");
+      console.error("[SetupOrganizar] add to cart error", e);
+      setError("Erro ao adicionar o combo ao carrinho. Tente novamente.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const scrollToBuy = () => {
+    document.getElementById("comprar")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const loading = loadingField || loadingSpine;
