@@ -1,4 +1,5 @@
 import { Suspense, lazy, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
@@ -7,6 +8,8 @@ import { TrustPillars } from "./TrustPillars";
 const LeadCapturePopup = lazy(() =>
   import("./LeadCapturePopup").then((module) => ({ default: module.LeadCapturePopup }))
 );
+
+const NAKED_ROUTES = ["/setup-organizar"];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);

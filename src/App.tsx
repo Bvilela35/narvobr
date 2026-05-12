@@ -30,6 +30,7 @@ const NossaHistoria = lazy(() => import("./pages/NossaHistoria"));
 const MateriaisDesign = lazy(() => import("./pages/MateriaisDesign"));
 const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 const Calculadora = lazy(() => import("./pages/Calculadora"));
+const SetupOrganizar = lazy(() => import("./pages/SetupOrganizar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -81,6 +82,7 @@ function AppContent() {
           <Route path="/termos-de-servico" element={<TermosDeServico />} />
           <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="/calculadora" element={<Calculadora />} />
+          <Route path="/setup-organizar" element={<SetupOrganizar />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
