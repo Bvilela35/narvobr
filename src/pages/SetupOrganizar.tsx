@@ -271,7 +271,7 @@ export default function SetupOrganizar() {
               <span>·</span>
               <span>2 cores</span>
               <span>·</span>
-              <span>Frete Brasil</span>
+              <span>Frete grátis Brasil</span>
             </div>
           </motion.div>
         </div>
@@ -378,7 +378,7 @@ export default function SetupOrganizar() {
             {[
               { icon: Wrench, label: "Aço Carbono" },
               { icon: ShieldCheck, label: "Pintura Eletrostática" },
-              { icon: Truck, label: "Frete Brasil" },
+              { icon: Truck, label: "Frete grátis Brasil" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="bg-[#0f3d2e] p-6 flex flex-col items-start gap-3">
                 <Icon className="w-5 h-5 text-[#b6e36d]" strokeWidth={1.5} />
@@ -469,7 +469,7 @@ export default function SetupOrganizar() {
                 )}
 
                 <ul className="mt-6 grid sm:grid-cols-3 gap-3 text-xs text-muted-foreground">
-                  {["Frete para todo Brasil", "Garantia 12 meses", "Devolução em 7 dias"].map((t) => (
+                  {["Frete grátis para todo Brasil", "Garantia 12 meses", "Devolução em 7 dias"].map((t) => (
                     <li key={t} className="flex items-center gap-2">
                       <Check className="w-3.5 h-3.5 text-[#0f3d2e]" />
                       {t}
