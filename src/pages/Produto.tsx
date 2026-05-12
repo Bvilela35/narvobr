@@ -14,6 +14,7 @@ import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { InstallmentModal } from "@/components/InstallmentModal";
 import ProductHighlights from "@/components/ProductHighlights";
+import { ClientsMarquee } from "@/components/ClientsMarquee";
 import { fetchProducts } from "@/lib/shopify";
 import { trackViewItem, trackAddToCart } from "@/lib/analytics";
 import "./Produto.css";
@@ -1152,6 +1153,9 @@ export default function Produto() {
           )}
         </div>
       </nav>
+
+      {/* Régua de clientes — exclusivo N-Field */}
+      {handle === "n-field" && <ClientsMarquee />}
 
       {/* Seção: Descrição */}
       {hasDescricao && (
