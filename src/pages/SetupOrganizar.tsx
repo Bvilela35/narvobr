@@ -292,8 +292,6 @@ export default function SetupOrganizar() {
         </div>
       </section>
 
-      </section>
-
       {/* STORIES BAR */}
       <SetupStoriesBar stories={STORIES} />
 
