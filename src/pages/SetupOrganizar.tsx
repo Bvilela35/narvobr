@@ -11,6 +11,9 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { getColorHex } from "@/lib/colorSwatches";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
+import { CostOfDistraction } from "@/components/setup/CostOfDistraction";
+import { DesignSection } from "@/components/setup/DesignSection";
+import { SpecsSection } from "@/components/setup/SpecsSection";
 import {
   Accordion,
   AccordionContent,
