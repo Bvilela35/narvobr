@@ -6,7 +6,7 @@ import { Loader2, ShieldCheck, Truck, Wrench, ArrowRight, Check } from "lucide-r
 import { useProductByHandle } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
-import { trackAddToCart, trackBeginCheckout, trackViewItem } from "@/lib/analytics";
+import { trackAddToCart, trackViewItem } from "@/lib/analytics";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
@@ -151,41 +151,18 @@ export default function SetupOrganizar() {
         quantity: 1,
       });
 
-      const checkoutUrl = useCartStore.getState().getCheckoutUrl();
-      if (!checkoutUrl) {
-        setError("Não foi possível abrir o checkout. Tente novamente.");
-        setSubmitting(false);
-        return;
-      }
-
-      trackBeginCheckout({
-        cartId: useCartStore.getState().cartId,
-        items: [
-          {
-            productId: nField.node.id,
-            productTitle: nField.node.title,
-            variantTitle: fieldVariant.title,
-            price: fieldPrice,
-            quantity: 1,
-          },
-          {
-            productId: nSpine.node.id,
-            productTitle: nSpine.node.title,
-            variantTitle: spineVariant.title,
-            price: spinePrice,
-            quantity: 1,
-          },
-        ],
-        value: totalPrice,
-      });
-
-      window.open(checkoutUrl, "_blank");
+      // Abre o carrinho lateral, mesmo fluxo dos demais produtos
+      window.dispatchEvent(new Event("narvo:open-cart"));
     } catch (e) {
-      console.error("[SetupOrganizar] checkout error", e);
-      setError("Erro ao montar o combo. Tente novamente.");
+      console.error("[SetupOrganizar] add to cart error", e);
+      setError("Erro ao adicionar o combo ao carrinho. Tente novamente.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const scrollToBuy = () => {
+    document.getElementById("comprar")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const loading = loadingField || loadingSpine;
@@ -563,15 +540,10 @@ export default function SetupOrganizar() {
             <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
           </div>
           <button
-            onClick={handleBuy}
-            disabled={submitting || isCartLoading}
-            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0f3d2e] text-[#b6e36d] font-semibold text-sm disabled:opacity-60"
+            onClick={scrollToBuy}
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0f3d2e] text-[#b6e36d] font-semibold text-sm"
           >
-            {submitting || isCartLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>Comprar <ArrowRight className="w-4 h-4" /></>
-            )}
+            Comprar <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       )}
