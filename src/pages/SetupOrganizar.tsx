@@ -254,11 +254,15 @@ export default function SetupOrganizar() {
                 className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full bg-[#b6e36d] text-[#0f3d2e] font-semibold text-sm tracking-wide hover:bg-[#c8ec88] transition-colors"
               >
                 Montar meu setup
-                {totalPrice > 0 && <span className="opacity-80">— {formatPrice(totalPrice)}</span>}
+                {instCount > 1 && (
+                  <span className="opacity-80">— {instCount}x {formatPrice(instVal)}</span>
+                )}
                 <ArrowRight className="w-4 h-4" />
               </a>
-              {installmentText && (
-                <span className="text-sm text-white/75">ou {installmentText} sem juros</span>
+              {totalPrice > 0 && (
+                <span className="text-xs text-white/60 uppercase tracking-[0.16em]">
+                  ou {formatPrice(totalPrice)} à vista
+                </span>
               )}
             </div>
 
@@ -429,11 +433,18 @@ export default function SetupOrganizar() {
                     <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1">
                       Total do combo
                     </p>
-                    <p className="text-3xl md:text-4xl font-semibold">{formatPrice(totalPrice)}</p>
-                    {instCount > 1 && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        ou {instCount}x de {formatPrice(instVal)} sem juros
-                      </p>
+                    {instCount > 1 ? (
+                      <>
+                        <p className="text-3xl md:text-4xl font-semibold leading-tight">
+                          {instCount}x <span className="tabular-nums">{formatPrice(instVal)}</span>
+                          <span className="text-base md:text-lg font-medium text-muted-foreground ml-1">sem juros</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ou {formatPrice(totalPrice)} à vista
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-3xl md:text-4xl font-semibold">{formatPrice(totalPrice)}</p>
                     )}
                   </div>
                 </div>
@@ -550,7 +561,14 @@ export default function SetupOrganizar() {
         <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-md border-t border-foreground/10 px-4 py-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Combo</p>
-            <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
+            {instCount > 1 ? (
+              <p className="text-base font-semibold truncate leading-tight">
+                {instCount}x {formatPrice(instVal)}
+                <span className="block text-[10px] font-normal text-muted-foreground">ou {formatPrice(totalPrice)} à vista</span>
+              </p>
+            ) : (
+              <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
+            )}
           </div>
           <button
             onClick={scrollToBuy}
