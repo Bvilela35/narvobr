@@ -341,6 +341,9 @@ export default function SetupOrganizar() {
         </div>
       </section>
 
+      {/* CUSTO DA DISTRAÇÃO */}
+      <CostOfDistraction />
+
       {/* MATERIAL */}
       <section className="relative py-24 md:py-32 px-6 md:px-10 overflow-hidden bg-[#0f3d2e] text-white">
         <img
