@@ -12,7 +12,7 @@ export function ClientsMarquee() {
   const items = [...CLIENTS, ...CLIENTS];
 
   return (
-    <section className="pdp__content-section" aria-label="Clientes corporativos">
+    <section className="pdp__content-section" style={{ paddingBottom: 2 }} aria-label="Clientes corporativos">
       <div className="pdp__content-section-inner">
         <div className="text-center mb-6">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
