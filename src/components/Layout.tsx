@@ -14,6 +14,8 @@ const NAKED_ROUTES = ["/setup-organizar"];
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [enableLeadCapture, setEnableLeadCapture] = useState(false);
+  const location = useLocation();
+  const isNaked = NAKED_ROUTES.some((p) => location.pathname.startsWith(p));
 
   useEffect(() => {
     const handler = () => setCartOpen(true);
@@ -39,6 +41,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       });
     };
   }, [enableLeadCapture]);
+
+  if (isNaked) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
