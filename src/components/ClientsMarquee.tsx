@@ -12,9 +12,9 @@ export function ClientsMarquee() {
   const items = [...CLIENTS, ...CLIENTS];
 
   return (
-    <section className="pdp__content-section" style={{ paddingBottom: 2 }} aria-label="Clientes corporativos">
+    <section className="pdp__content-section" style={{ paddingTop: 16, paddingBottom: 4 }} aria-label="Clientes corporativos">
       <div className="pdp__content-section-inner">
-        <div className="text-center mb-6">
+        <div className="text-center mb-2">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
             Quem confia na Narvo
           </p>
