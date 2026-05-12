@@ -6,7 +6,7 @@ import { Loader2, ShieldCheck, Truck, Wrench, ArrowRight, Check } from "lucide-r
 import { useProductByHandle } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
-import { trackAddToCart, trackBeginCheckout, trackViewItem } from "@/lib/analytics";
+import { trackAddToCart, trackViewItem } from "@/lib/analytics";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
