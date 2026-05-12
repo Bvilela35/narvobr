@@ -11,6 +11,9 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { getColorHex } from "@/lib/colorSwatches";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
+import { CostOfDistraction } from "@/components/setup/CostOfDistraction";
+import { DesignSection } from "@/components/setup/DesignSection";
+import { SpecsSection } from "@/components/setup/SpecsSection";
 import {
   Accordion,
   AccordionContent,
@@ -338,6 +341,9 @@ export default function SetupOrganizar() {
         </div>
       </section>
 
+      {/* CUSTO DA DISTRAÇÃO */}
+      <CostOfDistraction />
+
       {/* MATERIAL */}
       <section className="relative py-24 md:py-32 px-6 md:px-10 overflow-hidden bg-[#0f3d2e] text-white">
         <img
@@ -464,6 +470,12 @@ export default function SetupOrganizar() {
           </div>
         </div>
       </section>
+
+      {/* DESIGN */}
+      <DesignSection fieldImage={fieldImage} />
+
+      {/* SPECS & USO */}
+      <SpecsSection />
 
       {/* SOCIAL PROOF (logos) */}
       <section className="py-14 md:py-20 px-6 md:px-10 bg-[#f8f8f8] border-y border-foreground/5">
