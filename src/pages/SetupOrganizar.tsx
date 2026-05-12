@@ -433,11 +433,18 @@ export default function SetupOrganizar() {
                     <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1">
                       Total do combo
                     </p>
-                    <p className="text-3xl md:text-4xl font-semibold">{formatPrice(totalPrice)}</p>
-                    {instCount > 1 && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        ou {instCount}x de {formatPrice(instVal)} sem juros
-                      </p>
+                    {instCount > 1 ? (
+                      <>
+                        <p className="text-3xl md:text-4xl font-semibold leading-tight">
+                          {instCount}x <span className="tabular-nums">{formatPrice(instVal)}</span>
+                          <span className="text-base md:text-lg font-medium text-muted-foreground ml-1">sem juros</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ou {formatPrice(totalPrice)} à vista
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-3xl md:text-4xl font-semibold">{formatPrice(totalPrice)}</p>
                     )}
                   </div>
                 </div>
