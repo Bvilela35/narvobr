@@ -491,16 +491,46 @@ export default function SetupOrganizar() {
       <SpecsSection />
 
       {/* SOCIAL PROOF (logos) */}
-      <section className="py-14 md:py-20 px-6 md:px-10 bg-[#f8f8f8] border-y border-foreground/5">
+      <section className="py-20 md:py-32 px-6 md:px-10 bg-[#0f3d2e] text-white">
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-center text-xs uppercase tracking-[0.25em] text-muted-foreground mb-8">
-            Quem confia na Narvo
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 md:gap-x-20 gap-y-6 opacity-60">
-            <img src="/optimized/home/netflix-logo-320.png" alt="Netflix" className="h-6 md:h-8 w-auto" />
-            <img src="/optimized/home/amazon-logo-320.png" alt="Amazon" className="h-7 md:h-9 w-auto" />
-            <img src="/optimized/home/linkedin-logo-320.png" alt="LinkedIn" className="h-5 md:h-6 w-auto" />
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-12 md:mb-16"
+          >
+            <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#b6e36d] mb-5">
+              Confiado por times de alta performance
+            </p>
+            <h2 className="text-3xl md:text-5xl font-semibold leading-[1.05] tracking-tight max-w-3xl mx-auto">
+              Quem organiza o setup,<br />
+              <span className="font-light text-white/70">organiza a operação.</span>
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.9, delay: 0.2 }}
+            className="flex flex-wrap items-center justify-center gap-x-14 md:gap-x-24 gap-y-10 brightness-0 invert"
+          >
+            <img src="/optimized/home/netflix-logo-320.png" alt="Netflix" className="h-8 md:h-12 w-auto" />
+            <img src="/optimized/home/amazon-logo-320.png" alt="Amazon" className="h-9 md:h-14 w-auto" />
+            <img src="/optimized/home/linkedin-logo-320.png" alt="LinkedIn" className="h-7 md:h-10 w-auto" />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center text-xs md:text-sm text-white/60 mt-12 md:mt-16 max-w-xl mx-auto leading-relaxed"
+          >
+            Profissionais de tecnologia, design e operação escolhem Narvo para
+            ancorar o setup que sustenta o trabalho que importa.
+          </motion.p>
         </div>
       </section>
 
