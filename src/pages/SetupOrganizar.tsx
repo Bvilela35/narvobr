@@ -52,6 +52,18 @@ const FAQS = [
   },
 ] as const;
 
+/**
+ * STORIES da landing — substitua os campos `thumbnail` e `video` pelos arquivos reais.
+ * Sugestão: subir em `public/setup-stories/` e referenciar como `/setup-stories/arquivo.mp4`.
+ */
+const STORIES: SetupStory[] = [
+  { label: "Antes & Depois", thumbnail: "", video: "" },
+  { label: "Cabos invisíveis", thumbnail: "", video: "" },
+  { label: "Material", thumbnail: "", video: "" },
+  { label: "Instalação", thumbnail: "", video: "" },
+  { label: "No escritório", thumbnail: "", video: "" },
+];
+
 export default function SetupOrganizar() {
   const { data: nField, isLoading: loadingField } = useProductByHandle("n-field");
   const { data: nSpine, isLoading: loadingSpine } = useProductByHandle("n-spine");
