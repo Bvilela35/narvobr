@@ -562,24 +562,39 @@ function VariantPicker({ label, variants, selectedId, onSelect }: VariantPickerP
   return (
     <div>
       <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">{label}</p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2.5">
         {variants.map((v) => {
           const node = v.node;
           const isSelected = node.id === selectedId;
           const colorOption =
             node.selectedOptions.find((o) => /cor|color/i.test(o.name))?.value ?? node.title;
+          const hex = getColorHex(colorOption);
           return (
             <button
               key={node.id}
               onClick={() => onSelect(node.id)}
               disabled={!node.availableForSale}
-              className={`px-4 py-2 rounded-full text-sm border transition-all ${
+              aria-label={colorOption}
+              aria-pressed={isSelected}
+              className={`group inline-flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full text-sm border transition-all ${
                 isSelected
-                  ? "border-[#0f3d2e] bg-[#0f3d2e] text-white"
+                  ? "border-[#0f3d2e] bg-background shadow-[0_0_0_1px_#0f3d2e_inset]"
                   : "border-foreground/15 bg-background hover:border-foreground/40"
               } disabled:opacity-40 disabled:line-through`}
             >
-              {colorOption}
+              <span
+                className={`w-7 h-7 rounded-full border ${
+                  isSelected ? "border-[#0f3d2e]" : "border-foreground/20"
+                }`}
+                style={{
+                  backgroundColor: hex ?? "transparent",
+                  backgroundImage: hex
+                    ? undefined
+                    : "linear-gradient(135deg,#e5e5e5 0%,#f5f5f5 50%,#cfcfcf 100%)",
+                }}
+                aria-hidden
+              />
+              <span className="font-medium">{colorOption}</span>
             </button>
           );
         })}
