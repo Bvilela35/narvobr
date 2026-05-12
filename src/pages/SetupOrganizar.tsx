@@ -9,6 +9,7 @@ import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { trackAddToCart, trackBeginCheckout, trackViewItem } from "@/lib/analytics";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { ReviewsSection } from "@/components/ReviewsSection";
+import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
 import {
   Accordion,
   AccordionContent,
@@ -50,6 +51,18 @@ const FAQS = [
     a: "Sim. Você tem 7 dias corridos após o recebimento para devolver, conforme o Código de Defesa do Consumidor.",
   },
 ] as const;
+
+/**
+ * STORIES da landing — substitua os campos `thumbnail` e `video` pelos arquivos reais.
+ * Sugestão: subir em `public/setup-stories/` e referenciar como `/setup-stories/arquivo.mp4`.
+ */
+const STORIES: SetupStory[] = [
+  { label: "Antes & Depois", thumbnail: "", video: "" },
+  { label: "Cabos invisíveis", thumbnail: "", video: "" },
+  { label: "Material", thumbnail: "", video: "" },
+  { label: "Instalação", thumbnail: "", video: "" },
+  { label: "No escritório", thumbnail: "", video: "" },
+];
 
 export default function SetupOrganizar() {
   const { data: nField, isLoading: loadingField } = useProductByHandle("n-field");
@@ -278,6 +291,9 @@ export default function SetupOrganizar() {
           </motion.div>
         </div>
       </section>
+
+      {/* STORIES BAR */}
+      <SetupStoriesBar stories={STORIES} />
 
       {/* BEFORE / AFTER */}
       <section className="bg-background">
