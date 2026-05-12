@@ -1124,6 +1124,9 @@ export default function Produto() {
         </div>
       </section>
 
+      {/* Régua de clientes — exclusivo N-Field */}
+      {handle === "n-field" && <ClientsMarquee />}
+
       {/* Section Navigation Menu */}
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
         <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
@@ -1153,9 +1156,6 @@ export default function Produto() {
           )}
         </div>
       </nav>
-
-      {/* Régua de clientes — exclusivo N-Field */}
-      {handle === "n-field" && <ClientsMarquee />}
 
       {/* Seção: Descrição */}
       {hasDescricao && (
