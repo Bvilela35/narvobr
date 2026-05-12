@@ -540,15 +540,10 @@ export default function SetupOrganizar() {
             <p className="text-base font-semibold truncate">{formatPrice(totalPrice)}</p>
           </div>
           <button
-            onClick={handleBuy}
-            disabled={submitting || isCartLoading}
-            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0f3d2e] text-[#b6e36d] font-semibold text-sm disabled:opacity-60"
+            onClick={scrollToBuy}
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#0f3d2e] text-[#b6e36d] font-semibold text-sm"
           >
-            {submitting || isCartLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>Comprar <ArrowRight className="w-4 h-4" /></>
-            )}
+            Comprar <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       )}
