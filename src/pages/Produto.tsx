@@ -14,6 +14,8 @@ import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { InstallmentModal } from "@/components/InstallmentModal";
 import ProductHighlights from "@/components/ProductHighlights";
+import { NFieldStory } from "@/components/produto/NFieldStory";
+import { DeferredSection } from "@/components/DeferredSection";
 
 import { fetchProducts } from "@/lib/shopify";
 import { trackViewItem, trackAddToCart } from "@/lib/analytics";
