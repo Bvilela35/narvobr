@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Loader2, ShieldCheck, Truck, Wrench, ArrowRight, Check } from "lucide-react";
+import { Loader2, ShieldCheck, Truck, Wrench, ArrowRight, Check, Zap, PackageCheck } from "lucide-react";
 import { useProductByHandle } from "@/hooks/useShopify";
 import { useCartStore } from "@/stores/cartStore";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
@@ -374,11 +374,13 @@ export default function SetupOrganizar() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-px bg-white/10 rounded-2xl overflow-hidden">
             {[
+              { icon: PackageCheck, label: "Envio imediato" },
+              { icon: Zap, label: "Envio ultrarrápido" },
+              { icon: Truck, label: "Frete grátis Brasil" },
               { icon: Wrench, label: "Aço Carbono" },
               { icon: ShieldCheck, label: "Pintura Eletrostática" },
-              { icon: Truck, label: "Frete grátis Brasil" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="bg-[#0f3d2e] p-6 flex flex-col items-start gap-3">
                 <Icon className="w-5 h-5 text-[#b6e36d]" strokeWidth={1.5} />
@@ -469,7 +471,7 @@ export default function SetupOrganizar() {
                 )}
 
                 <ul className="mt-6 grid sm:grid-cols-3 gap-3 text-xs text-muted-foreground">
-                  {["Frete grátis para todo Brasil", "Garantia 12 meses", "Devolução em 7 dias"].map((t) => (
+                  {["Envio imediato · ultrarrápido", "Frete grátis para todo Brasil", "Garantia 12 meses"].map((t) => (
                     <li key={t} className="flex items-center gap-2">
                       <Check className="w-3.5 h-3.5 text-[#0f3d2e]" />
                       {t}
