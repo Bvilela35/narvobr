@@ -1,4 +1,5 @@
 import { Suspense, lazy, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { CartDrawer } from "./CartDrawer";
@@ -8,9 +9,13 @@ const LeadCapturePopup = lazy(() =>
   import("./LeadCapturePopup").then((module) => ({ default: module.LeadCapturePopup }))
 );
 
+const NAKED_ROUTES = ["/setup-organizar"];
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [enableLeadCapture, setEnableLeadCapture] = useState(false);
+  const location = useLocation();
+  const isNaked = NAKED_ROUTES.some((p) => location.pathname.startsWith(p));
 
   useEffect(() => {
     const handler = () => setCartOpen(true);
@@ -36,6 +41,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       });
     };
   }, [enableLeadCapture]);
+
+  if (isNaked) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
