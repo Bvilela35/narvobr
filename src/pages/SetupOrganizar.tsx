@@ -471,6 +471,12 @@ export default function SetupOrganizar() {
         </div>
       </section>
 
+      {/* DESIGN */}
+      <DesignSection fieldImage={fieldImage} />
+
+      {/* SPECS & USO */}
+      <SpecsSection />
+
       {/* SOCIAL PROOF (logos) */}
       <section className="py-14 md:py-20 px-6 md:px-10 bg-[#f8f8f8] border-y border-foreground/5">
         <div className="max-w-[1400px] mx-auto">
