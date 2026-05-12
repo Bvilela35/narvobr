@@ -14,7 +14,7 @@ import { MobileBulletOverlay } from "@/components/MobileBulletOverlay";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { InstallmentModal } from "@/components/InstallmentModal";
 import ProductHighlights from "@/components/ProductHighlights";
-import { ClientsMarquee } from "@/components/ClientsMarquee";
+
 import { fetchProducts } from "@/lib/shopify";
 import { trackViewItem, trackAddToCart } from "@/lib/analytics";
 import "./Produto.css";
@@ -1123,10 +1123,6 @@ export default function Produto() {
           </div>
         </div>
       </section>
-
-      {/* Régua de clientes — exclusivo N-Field */}
-      {handle === "n-field" && <ClientsMarquee />}
-
       {/* Section Navigation Menu */}
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
         <hr style={{ border: 'none', borderTop: '1px solid #e5e5e5', margin: 0 }} />
