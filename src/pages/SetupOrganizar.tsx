@@ -292,6 +292,11 @@ export default function SetupOrganizar() {
         </div>
       </section>
 
+      </section>
+
+      {/* STORIES BAR */}
+      <SetupStoriesBar stories={STORIES} />
+
       {/* BEFORE / AFTER */}
       <section className="bg-background">
         <BeforeAfter />
