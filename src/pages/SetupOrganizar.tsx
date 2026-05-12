@@ -8,6 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { calcInstallments, formatInstallmentText } from "@/lib/installments";
 import { trackAddToCart, trackViewItem } from "@/lib/analytics";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { getColorHex } from "@/lib/colorSwatches";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SetupStoriesBar, type SetupStory } from "@/components/SetupStoriesBar";
 import {
